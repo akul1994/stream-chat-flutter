@@ -298,7 +298,17 @@ class MessageInputState extends State<MessageInput> {
         child: child,
       );
     }
-    return child;
+    return WillPopScope(
+        onWillPop: () async{
+          if (_openFilePickerSection) {
+            setState(() {
+              _openFilePickerSection = false;
+            });
+            return false;
+          }
+          return true;
+        },
+        child: child);
   }
 
   Flex _buildTextField(BuildContext context) {
