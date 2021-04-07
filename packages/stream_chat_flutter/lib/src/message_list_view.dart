@@ -131,7 +131,7 @@ class MessageListView extends StatefulWidget {
     this.emptyBuilder,
     this.messageListBuilder,
     this.errorWidgetBuilder,
-    this.customAttachmentBuilders,
+    this.customAttachmentBuilders, this.listPaddingBottom = 0,
   }) : super(key: key);
 
   /// Function used to build a custom message widget
@@ -208,6 +208,8 @@ class MessageListView extends StatefulWidget {
   /// Attachment builders for the default message widget
   /// Please change this in the [MessageWidget] if you are using a custom implementation
   final Map<String, AttachmentBuilder> customAttachmentBuilders;
+
+  final double listPaddingBottom;
 
   @override
   _MessageListViewState createState() => _MessageListViewState();
@@ -385,7 +387,7 @@ class _MessageListViewState extends State<MessageListView> {
                     _inBetweenList = true;
                   },
                   child: ScrollablePositionedList.separated(
-                    padding: EdgeInsets.only(bottom: 40),
+                    padding: EdgeInsets.only(bottom: widget.listPaddingBottom),
                     key: ValueKey(initialIndex + initialAlignment),
                     itemPositionsListener: _itemPositionListener,
                     addAutomaticKeepAlives: true,
