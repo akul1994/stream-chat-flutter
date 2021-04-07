@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter/src/reaction_picker.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
@@ -61,6 +63,25 @@ class MessageActionsModal extends StatefulWidget {
 
 class _MessageActionsModalState extends State<MessageActionsModal> {
   bool _showActions = true;
+
+  bool deleteAllowed = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => init(context));
+    super.initState();
+  }
+
+  void init(BuildContext context)
+  {
+    if(widget.showDeleteMessage) {
+      deleteAllowed = checkDeleteAllowed();
+      if (deleteAllowed)
+        startDeleteTimer();
+      else
+        _start = 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,8 +243,8 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                       if (widget.showFlagButton)
                                         _buildFlagButton(context),
                                       if (widget.showDeleteMessage)
-                                        _buildDeleteButton(context),
-                                     // _buildPinButton(context)
+                                          _buildDeleteButton(context,deleteAllowed),
+                                      // _buildPinButton(context)
                                     ].insertBetween(
                                       Container(
                                         height: 1,
@@ -278,6 +299,13 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   }
 
   void _showDeleteDialog() async {
+
+    if(!deleteAllowed || _start<=0)
+      {
+        Fluttertoast.showToast(msg: "Message can only be deleted within 60 seconds of sending");
+        return;
+      }
+
     setState(() {
       _showActions = false;
     });
@@ -293,7 +321,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       cancelText: 'CANCEL',
     );
 
-    if (answer) {
+    if (answer==true) {
       try {
         Navigator.pop(context);
         await StreamChannel.of(context).channel.deleteMessage(widget.message);
@@ -484,9 +512,14 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     );
   }
 
-  Widget _buildDeleteButton(BuildContext context) {
+  Widget _buildDeleteButton(BuildContext context,bool allowed) {
     final isDeleteFailed =
         widget.message.status == MessageSendingStatus.failed_delete;
+
+    allowed = allowed && _start>0;
+
+
+
     return InkWell(
       onTap: () => _showDeleteDialog(),
       child: Padding(
@@ -494,11 +527,19 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.delete(
-              color: Colors.red,
+              color: allowed ? Colors.red : Colors.grey,
             ),
             const SizedBox(width: 16),
             Text(
               isDeleteFailed ? 'Retry Deleting Message' : 'Delete Message',
+              style: StreamChatTheme.of(context)
+                  .textTheme
+                  .body
+                  .copyWith(color:  allowed ? Colors.red : Colors.grey),
+            ),
+            if(allowed)
+            Text(
+              '(${_start}s)',
               style: StreamChatTheme.of(context)
                   .textTheme
                   .body
@@ -512,11 +553,11 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
   Widget _buildPinButton(BuildContext context) {
     return InkWell(
-      onTap: () => (){
+      onTap: () => () {
         StreamChat.of(context).client.pinMessage(
-          widget.message,
-          Duration(days: 1),
-        );
+              widget.message,
+              Duration(days: 1),
+            );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
@@ -713,5 +754,47 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         ),
       ),
     );
+  }
+
+  Timer _timer;
+  int _start = 6;
+
+  bool checkDeleteAllowed() {
+    var duration =
+        DateTime.now().difference(widget.message.createdAt.toLocal());
+    print("Duration is ${duration.inSeconds}");
+    _start = 60 -duration.inSeconds;
+    // _start = 6;
+    if (duration.inSeconds <= 60 && _start >=0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void startDeleteTimer() {
+    print("TImer start");
+    _timer?.cancel();
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
