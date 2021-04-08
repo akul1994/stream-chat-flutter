@@ -68,7 +68,8 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => init(context));
+    //TODO : Enable time based edit
+    //WidgetsBinding.instance.addPostFrameCallback((_) => init(context));
     super.initState();
   }
 
@@ -300,11 +301,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
   void _showDeleteDialog() async {
 
-    if(!deleteAllowed || _start<=0)
+    //TODO : Enable time based edit
+    /*if(!deleteAllowed || _start<=0)
       {
         Fluttertoast.showToast(msg: "Message can only be deleted within 60 seconds of sending");
         return;
-      }
+      }*/
 
     setState(() {
       _showActions = false;
@@ -516,7 +518,9 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     final isDeleteFailed =
         widget.message.status == MessageSendingStatus.failed_delete;
 
-    allowed = allowed && _start>0;
+    allowed = true;
+    //TODO : Enable time based edit
+   // allowed = allowed && _start>0;
 
 
 
@@ -537,14 +541,15 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                   .body
                   .copyWith(color:  allowed ? Colors.red : Colors.grey),
             ),
-            if(allowed)
+            //TODO : Enable time based edit
+            /* if(allowed)
             Text(
               '(${_start}s)',
               style: StreamChatTheme.of(context)
                   .textTheme
                   .body
                   .copyWith(color: Colors.red),
-            ),
+            ),*/
           ],
         ),
       ),
