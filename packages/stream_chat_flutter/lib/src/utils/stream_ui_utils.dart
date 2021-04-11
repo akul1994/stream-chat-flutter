@@ -20,6 +20,11 @@ class StreamUiUtils {
     }
   }
 
+  static Decoration circle_r24 = BoxDecoration(
+    shape: BoxShape.rectangle,
+    borderRadius: BorderRadius.circular(24),
+  );
+
   static Decoration cardShadow = BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.all(
