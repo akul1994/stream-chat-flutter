@@ -16,6 +16,7 @@ import 'package:stream_chat_flutter/src/message_list_view.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/src/user_avatar.dart';
+import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 import 'package:stream_chat_flutter/src/video_service.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 import 'package:substring_highlight/substring_highlight.dart';
@@ -253,21 +254,24 @@ class MessageInputState extends State<MessageInput> {
             children: [
               if (_hasQuotedMessage)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: StreamSvgIcon.reply(
-                          color: StreamChatTheme.of(context)
-                              .colorTheme
-                              .greyGainsboro,
+                      Opacity(
+                        opacity: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: StreamSvgIcon.reply(
+                            color: StreamChatTheme.of(context)
+                                .colorTheme
+                                .greyGainsboro,
+                          ),
                         ),
                       ),
                       Text(
-                        'Reply to Message',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        'Reply Back',
+                        style: TextStyle(fontWeight: FontWeight.w500,color: MainAppColorHelper.greyNeutral5()),
                       ),
                       IconButton(
                         visualDensity: VisualDensity.compact,
@@ -278,7 +282,7 @@ class MessageInputState extends State<MessageInput> {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8, 0, 0, 8),
                 child: _buildTextField(context),
               ),
               if (widget.parentMessage != null)
@@ -395,7 +399,7 @@ class MessageInputState extends State<MessageInput> {
 
   Widget _animateSendButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+      padding: const EdgeInsets.fromLTRB(8, 2, 0, 2),
       child: AnimatedCrossFade(
         crossFadeState: (_messageIsPresent || _attachments.isNotEmpty)
             ? CrossFadeState.showFirst
@@ -477,14 +481,15 @@ class MessageInputState extends State<MessageInput> {
                   keyboardType: widget.keyboardType,
                   controller: textEditingController,
                   focusNode: _focusNode,
-                  style: theme.textTheme.body,
+                  style: theme.ownMessageTheme.messageText.copyWith(fontSize: 18),
                   autofocus: false,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: _getHint(),
                     hintStyle: theme.textTheme.body.copyWith(
-                      color: theme.colorTheme.grey,
+                      color: Colors.grey.withOpacity(0.65),
+                      fontSize: 16
                     ),
                     border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent)),
@@ -592,7 +597,7 @@ class MessageInputState extends State<MessageInput> {
     if (_attachments.isNotEmpty) {
       return 'Add a comment or send';
     }
-    return 'Type a message';
+    return 'Message Members';
   }
 
   void _checkEmoji(String s, BuildContext context) {
@@ -1977,8 +1982,8 @@ class MessageInputState extends State<MessageInput> {
 
   Widget _buildIdleSendButton(BuildContext context) {
     return StreamSvgIcon(
-      height: 35,
-      width: 35,
+      height: 50,
+      width: 50,
       assetName: _getIdleSendIcon(),
       color: StreamChatTheme.of(context).messageInputTheme.sendButtonIdleColor,
     );
@@ -1988,8 +1993,8 @@ class MessageInputState extends State<MessageInput> {
     return GestureDetector(
       onTap: () => sendMessage(),
       child: StreamSvgIcon(
-        height: 35,
-        width: 35,
+        height: 50,
+        width: 50,
         assetName: _getSendIcon(),
         color: StreamChatTheme.of(context).messageInputTheme.sendButtonColor,
       ),

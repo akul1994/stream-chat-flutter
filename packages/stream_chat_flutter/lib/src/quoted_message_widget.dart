@@ -313,6 +313,6 @@ class QuotedMessageWidget extends StatelessWidget {
     if (_containsScrapeUrl) {
       return StreamChatTheme.of(context).colorTheme.blueAlice;
     }
-    return MainAppColorHelper.greyNeutral6();
+    return MainAppColorHelper.greyNeutral7();
   }
 }
