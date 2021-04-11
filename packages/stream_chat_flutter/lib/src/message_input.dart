@@ -254,7 +254,7 @@ class MessageInputState extends State<MessageInput> {
             children: [
               if (_hasQuotedMessage)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -274,8 +274,8 @@ class MessageInputState extends State<MessageInput> {
                         style: TextStyle(fontWeight: FontWeight.w500,color: MainAppColorHelper.greyNeutral5()),
                       ),
                       IconButton(
-                        visualDensity: VisualDensity.compact,
-                        icon: StreamSvgIcon.closeSmall(),
+                        // visualDensity: VisualDensity.compact,
+                        icon: StreamSvgIcon.closeSmall(size: 32,color: MainAppColorHelper.greyNeutral5()),
                         onPressed: widget.onQuotedMessageCleared,
                       ),
                     ],
