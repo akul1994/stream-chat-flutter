@@ -26,6 +26,7 @@ class ReactionBubble extends StatelessWidget {
   final Color backgroundColor;
   final Color maskColor;
   final bool reverse;
+
   final bool flipTail;
   final bool highlightOwnReactions;
   final double tailCirclesSpacing;
