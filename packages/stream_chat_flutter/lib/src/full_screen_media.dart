@@ -140,14 +140,14 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                                   .lerp(_controller.value),
                             ),
                             onTapUp: (a, b, c) {
-                              setState(() {
-                                _optionsShown = !_optionsShown;
-                              });
-                              if (_controller.isCompleted) {
-                                _controller.reverse();
-                              } else {
-                                _controller.forward();
-                              }
+                              // setState(() {
+                              //   _optionsShown = !_optionsShown;
+                              // });
+                              // if (_controller.isCompleted) {
+                              //   _controller.reverse();
+                              // } else {
+                              //   _controller.forward();
+                              // }
                             },
                           );
                         } else if (attachment.type == 'video') {
