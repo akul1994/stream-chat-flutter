@@ -481,7 +481,7 @@ class MessageInputState extends State<MessageInput> {
                   keyboardType: widget.keyboardType,
                   controller: textEditingController,
                   focusNode: _focusNode,
-                  style: theme.ownMessageTheme.messageText.copyWith(fontSize: 18),
+                  style: theme.ownMessageTheme.messageText.copyWith(fontSize: 16),
                   autofocus: false,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
