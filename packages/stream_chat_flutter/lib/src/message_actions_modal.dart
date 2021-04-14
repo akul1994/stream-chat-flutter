@@ -12,6 +12,7 @@ import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/src/utils.dart';
 
 import 'extension.dart';
+import 'message_action.dart';
 import 'message_input.dart';
 import 'message_widget.dart';
 import 'stream_chat.dart';
@@ -36,6 +37,10 @@ class MessageActionsModal extends StatefulWidget {
   final ShapeBorder attachmentShape;
   final DisplayWidget showUserAvatar;
 
+  final bool showMarkAsTrade;
+
+  final List<MessageAction> customActions;
+
   const MessageActionsModal({
     Key key,
     @required this.message,
@@ -55,6 +60,8 @@ class MessageActionsModal extends StatefulWidget {
     this.messageShape,
     this.attachmentShape,
     this.reverse = false,
+    this.showMarkAsTrade = true,
+    this.customActions,
   }) : super(key: key);
 
   @override
@@ -73,9 +80,8 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     super.initState();
   }
 
-  void init(BuildContext context)
-  {
-    if(widget.showDeleteMessage) {
+  void init(BuildContext context) {
+    if (widget.showDeleteMessage) {
       deleteAllowed = checkDeleteAllowed();
       if (deleteAllowed)
         startDeleteTimer();
@@ -244,7 +250,15 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                       if (widget.showFlagButton)
                                         _buildFlagButton(context),
                                       if (widget.showDeleteMessage)
-                                          _buildDeleteButton(context,deleteAllowed),
+                                        _buildDeleteButton(
+                                            context, deleteAllowed),
+                                      ...widget.customActions.map((action) {
+                                        return _buildCustomAction(
+                                          context,
+                                          action,
+                                        );
+                                      })
+
                                       // _buildPinButton(context)
                                     ].insertBetween(
                                       Container(
@@ -300,7 +314,6 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   }
 
   void _showDeleteDialog() async {
-
     //TODO : Enable time based edit
     /*if(!deleteAllowed || _start<=0)
       {
@@ -323,7 +336,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       cancelText: 'CANCEL',
     );
 
-    if (answer==true) {
+    if (answer == true) {
       try {
         Navigator.pop(context);
         await StreamChannel.of(context).channel.deleteMessage(widget.message);
@@ -514,15 +527,13 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     );
   }
 
-  Widget _buildDeleteButton(BuildContext context,bool allowed) {
+  Widget _buildDeleteButton(BuildContext context, bool allowed) {
     final isDeleteFailed =
         widget.message.status == MessageSendingStatus.failed_delete;
 
     allowed = true;
     //TODO : Enable time based edit
-   // allowed = allowed && _start>0;
-
-
+    // allowed = allowed && _start>0;
 
     return InkWell(
       onTap: () => _showDeleteDialog(),
@@ -539,7 +550,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
               style: StreamChatTheme.of(context)
                   .textTheme
                   .body
-                  .copyWith(color:  allowed ? Colors.red : Colors.grey),
+                  .copyWith(color: allowed ? Colors.red : Colors.grey),
             ),
             //TODO : Enable time based edit
             /* if(allowed)
@@ -626,6 +637,30 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             const SizedBox(width: 16),
             Text(
               'Edit Message',
+              style: StreamChatTheme.of(context).textTheme.body,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMarkAsTradeMessage(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        Navigator.pop(context);
+        _showEditBottomSheet(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
+        child: Row(
+          children: [
+            StreamSvgIcon.edit(
+              color: StreamChatTheme.of(context).primaryIconTheme.color,
+            ),
+            const SizedBox(width: 16),
+            Text(
+              'Mark as Trade',
               style: StreamChatTheme.of(context).textTheme.body,
             ),
           ],
@@ -761,6 +796,28 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     );
   }
 
+  InkWell _buildCustomAction(
+      BuildContext context,
+      MessageAction messageAction,
+      ) {
+    return InkWell(
+      onTap: () {
+        messageAction.onTap?.call(widget.message);
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 16.0),
+        child: Row(
+          children: [
+            messageAction.leading ?? Offstage(),
+            const SizedBox(width: 16),
+            messageAction.title ?? Offstage(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Timer _timer;
   int _start = 6;
 
@@ -768,9 +825,9 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     var duration =
         DateTime.now().difference(widget.message.createdAt.toLocal());
     print("Duration is ${duration.inSeconds}");
-    _start = 60 -duration.inSeconds;
+    _start = 60 - duration.inSeconds;
     // _start = 6;
-    if (duration.inSeconds <= 60 && _start >=0) {
+    if (duration.inSeconds <= 60 && _start >= 0) {
       return true;
     } else {
       return false;

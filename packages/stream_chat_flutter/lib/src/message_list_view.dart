@@ -34,6 +34,8 @@ typedef ThreadTapCallback = void Function(Message, Widget);
 
 typedef OnMessageSwiped = void Function(Message);
 typedef ReplyTapCallback = void Function(Message);
+typedef OnMessageTap = void Function(Message);
+
 
 class MessageDetails {
   /// True if the message belongs to the current user

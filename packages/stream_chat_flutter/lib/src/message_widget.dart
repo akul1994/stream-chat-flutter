@@ -21,6 +21,7 @@ import '../stream_chat_flutter.dart';
 import 'attachment/attachment.dart';
 import 'extension.dart';
 import 'image_group.dart';
+import 'message_action.dart';
 import 'message_text.dart';
 
 typedef AttachmentBuilder = Widget Function(BuildContext, Message, Attachment);
@@ -147,6 +148,9 @@ class MessageWidget extends StatefulWidget {
   /// Function called when quotedMessage is tapped
   final OnQuotedMessageTap onQuotedMessageTap;
 
+  /// List of custom actions shown on message long tap
+  final List<MessageAction> customActions;
+
   ///
   MessageWidget({
     Key key,
@@ -194,7 +198,7 @@ class MessageWidget extends StatefulWidget {
     ),
     this.attachmentPadding = EdgeInsets.zero,
     this.allRead = false,
-    this.onQuotedMessageTap,
+    this.onQuotedMessageTap, this.customActions,
   })  : attachmentBuilders = {
           'image': (context, message, attachment) {
             return ImageAttachment(
@@ -794,6 +798,7 @@ class _MessageWidgetState extends State<MessageWidget>
                   !isFailedState &&
                   widget.onThreadTap != null,
               showFlagButton: widget.showFlagButton,
+              customActions: widget.customActions,
             ),
           );
         });

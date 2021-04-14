@@ -39,5 +39,6 @@ export 'src/info_tile.dart';
 export 'src/stream_chat.dart';
 export 'src/connection_status_builder.dart';
 export 'src/video_thumbnail_image.dart';
+export 'src/message_action.dart';
 
 export 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
