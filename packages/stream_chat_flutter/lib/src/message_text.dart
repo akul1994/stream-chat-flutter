@@ -39,7 +39,7 @@ class _MessageTextState extends State<MessageText> {
     messageText = _replaceMentions(widget.message.text);
 
     //messageText = _replaceHashtags(widget.message.text);
-    messageText = _replaceDollar(widget.message.text);
+    messageText = _replacePlus(widget.message.text);
 
 
     if (messageText.length > 1000) {
@@ -170,6 +170,16 @@ class _MessageTextState extends State<MessageText> {
 
   String _replaceDollar(String text) {
     RegExp exp = new RegExp(r"\$(\w+)");
+    exp.allMatches(text).forEach((match){
+      var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
+      text = text.replaceAll(
+          '${match.group(0)}', replText);
+    });
+    return text;
+  }
+
+  String _replacePlus(String text) {
+    RegExp exp = new RegExp(r"\+(\w+)");
     exp.allMatches(text).forEach((match){
       var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
       text = text.replaceAll(
