@@ -8,21 +8,24 @@ class UrlAttachment extends StatelessWidget {
   final String hostDisplayName;
   final EdgeInsets textPadding;
 
+  Function(String) onLinkTap;
+
   UrlAttachment({
     @required this.urlAttachment,
     @required this.hostDisplayName,
     @required this.textPadding,
+    this.onLinkTap,
   });
 
   @override
   Widget build(BuildContext context) {
-
-
     return GestureDetector(
-      onTap: () => launchURL(
-        context,
-        urlAttachment.ogScrapeUrl,
-      ),
+      onTap: () =>
+          onLinkTap(urlAttachment.ogScrapeUrl) ??
+          launchURL(
+            context,
+            urlAttachment.ogScrapeUrl,
+          ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

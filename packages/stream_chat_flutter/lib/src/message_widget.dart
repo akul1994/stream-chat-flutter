@@ -692,6 +692,7 @@ class _MessageWidgetState extends State<MessageWidget>
       urlAttachment: urlAttachment,
       hostDisplayName: hostDisplayName,
       textPadding: widget.textPadding,
+      onLinkTap : widget.onLinkTap
     );
   }
 
