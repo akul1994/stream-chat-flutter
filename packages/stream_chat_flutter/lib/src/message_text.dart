@@ -38,6 +38,9 @@ class _MessageTextState extends State<MessageText> {
   void initState() {
     messageText = _replaceMentions(widget.message.text);
 
+    messageText = _replaceHashtags(widget.message.text);
+
+
     if (messageText.length > 1000) {
       firstHalfText = messageText.substring(0, 1000) + '...';
       messageToShow = firstHalfText;
@@ -150,6 +153,16 @@ class _MessageTextState extends State<MessageText> {
         ?.forEach((userName) {
       text = text.replaceAll(
           '@$userName', '[@$userName](@${userName.replaceAll(' ', '')})');
+    });
+    return text;
+  }
+
+  String _replaceHashtags(String text) {
+    RegExp exp = new RegExp(r"\B#\w\w+");
+    exp.allMatches(text).forEach((match){
+      var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
+      text = text.replaceAll(
+          '${match.group(0)}', replText);
     });
     return text;
   }
