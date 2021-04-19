@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:emojis/emoji.dart';
+import 'package:emojis/emojis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:stream_chat_flutter/src/reaction_icon.dart';
@@ -168,17 +170,21 @@ class ReactionBubble extends StatelessWidget {
                         ))),
               ),
             ])
-          : Icon(
-              Icons.help_outline_rounded,
-              size: 16,
-              color: (!highlightOwnReactions ||
-                      reaction.user.id == StreamChat.of(context).user.id)
-                  ? MainAppColorHelper.orange()
-                  : StreamChatTheme.of(context)
-                      .colorTheme
-                      .black
-                      .withOpacity(.5),
+          : Text(
+              Emojis.fire,
+              style: TextStyle(fontSize: 16),
             ),
+      // : Icon(
+      //     Icons.help_outline_rounded,
+      //     size: 16,
+      //     color: (!highlightOwnReactions ||
+      //             reaction.user.id == StreamChat.of(context).user.id)
+      //         ? MainAppColorHelper.orange()
+      //         : StreamChatTheme.of(context)
+      //             .colorTheme
+      //             .black
+      //             .withOpacity(.5),
+      //   ),
     );
   }
 
