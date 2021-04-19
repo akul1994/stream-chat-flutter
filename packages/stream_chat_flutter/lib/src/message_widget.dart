@@ -750,7 +750,6 @@ class _MessageWidgetState extends State<MessageWidget>
                 borderColor: widget.messageTheme.reactionsBorderColor,
                 maskColor: widget.messageTheme.reactionsMaskColor,
                 reactions: reactionsList,
-                reactionScores: widget.message.reactionScores,
               ),
             )
           : SizedBox(),

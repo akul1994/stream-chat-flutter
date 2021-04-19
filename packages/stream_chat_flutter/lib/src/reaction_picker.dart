@@ -33,9 +33,18 @@ class _ReactionPickerState extends State<ReactionPicker>
     with TickerProviderStateMixin {
   List<EzAnimation> animations = [];
 
+  Map<String, int> reactionScores;
+
+  @override
+  void initState() {
+    reactionScores = widget.message.reactionScores;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final reactionIcons = StreamChatTheme.of(context).reactionIcons;
+
 
     if (animations.isEmpty && reactionIcons.isNotEmpty) {
       reactionIcons.forEach((element) {
@@ -79,6 +88,9 @@ class _ReactionPickerState extends State<ReactionPicker>
                             -1;
                         var index = reactionIcons.indexOf(reactionIcon);
 
+                        var count = getReactionScore(reactionIcon.type);
+
+
                         return ConstrainedBox(
                           constraints: BoxConstraints.tightFor(
                             height: 24,
@@ -101,24 +113,52 @@ class _ReactionPickerState extends State<ReactionPicker>
                                   return Transform.scale(
                                     alignment: Alignment.center,
                                     scale: animations[index].value,
-                                    child: reactionIcon.emoji == null
-                                        ? StreamSvgIcon(
-                                            assetName: reactionIcon.assetName,
-                                            width: 18,
-                                            height: 18,
-                                            color: MainAppColorHelper.orange(),
-                                            // (!highlightOwnReactions ||
-                                            //         reaction.user.id == StreamChat.of(context).user.id)
-                                            //     ? StreamChatTheme.of(context).colorTheme.accentBlue
-                                            //     : StreamChatTheme.of(context)
-                                            //         .colorTheme
-                                            //         .black
-                                            //         .withOpacity(.5),
-                                          )
-                                        : Text(
-                                            reactionIcon.emoji,
-                                            style: TextStyle(fontSize: 16),
-                                          ),
+                                    child: Stack(
+                                      children: [
+                                        reactionIcon.emoji == null
+                                            ? StreamSvgIcon(
+                                                assetName:
+                                                    reactionIcon.assetName,
+                                                width: 18,
+                                                height: 18,
+                                                color:
+                                                    MainAppColorHelper.orange(),
+                                                // (!highlightOwnReactions ||
+                                                //         reaction.user.id == StreamChat.of(context).user.id)
+                                                //     ? StreamChatTheme.of(context).colorTheme.accentBlue
+                                                //     : StreamChatTheme.of(context)
+                                                //         .colorTheme
+                                                //         .black
+                                                //         .withOpacity(.5),
+                                              )
+                                            : Text(
+                                                reactionIcon.emoji,
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                        Visibility(
+                                          visible: count > 1 ? true : false,
+                                          child: Positioned(
+                                              left: 10,
+                                              top: 9,
+                                              child: Container(
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.white),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.all(1.5),
+                                                    child: Text(
+                                                      count.toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 8,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                  ))),
+                                        ),
+                                      ],
+                                    ),
                                     // child: StreamSvgIcon(
                                     //   assetName: reactionIcon.assetName,
                                     //   height: max(
@@ -193,6 +233,13 @@ class _ReactionPickerState extends State<ReactionPicker>
   void removeReaction(BuildContext context, Reaction reaction) {
     StreamChannel.of(context).channel.deleteReaction(widget.message, reaction);
     pop();
+  }
+
+  int getReactionScore(String type) {
+    if (reactionScores != null && reactionScores.isNotEmpty) {
+      return reactionScores[type] ?? 0;
+    }
+    return 0;
   }
 
   @override

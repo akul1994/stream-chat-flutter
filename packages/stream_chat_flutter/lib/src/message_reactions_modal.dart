@@ -247,7 +247,7 @@ class MessageReactionsModal extends StatelessWidget {
                     backgroundColor: messageTheme.reactionsBackgroundColor,
                     maskColor: StreamChatTheme.of(context).colorTheme.white,
                     tailCirclesSpacing: 1,
-                    highlightOwnReactions: false,
+                    highlightOwnReactions: true,
                   ),
                 ),
                 bottom: 6,
