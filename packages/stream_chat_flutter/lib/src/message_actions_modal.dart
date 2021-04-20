@@ -514,7 +514,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.iconFlag(
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: Colors.red,
             ),
             const SizedBox(width: 16),
             Text(
