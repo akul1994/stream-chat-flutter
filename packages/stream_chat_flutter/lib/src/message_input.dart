@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emoji.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:stream_chat_flutter/src/media_list_view.dart';
 import 'package:stream_chat_flutter/src/message_list_view.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
@@ -108,6 +111,7 @@ class MessageInput extends StatefulWidget {
     this.focusNode,
     this.quotedMessage,
     this.onQuotedMessageCleared,
+    this.sharedMedia,
   }) : super(key: key);
 
   /// Message to edit
@@ -155,6 +159,8 @@ class MessageInput extends StatefulWidget {
 
   ///
   final VoidCallback onQuotedMessageCleared;
+
+  final List<SharedMediaFile> sharedMedia;
 
   @override
   MessageInputState createState() => MessageInputState();
@@ -231,6 +237,8 @@ class MessageInputState extends State<MessageInput> {
         _openFilePickerSection = false;
       }
     });
+
+    if (widget.sharedMedia != null) addSharedIntentFile(widget.sharedMedia);
   }
 
   @override
@@ -271,11 +279,14 @@ class MessageInputState extends State<MessageInput> {
                       ),
                       Text(
                         'Reply Back',
-                        style: TextStyle(fontWeight: FontWeight.w500,color: MainAppColorHelper.greyNeutral5()),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: MainAppColorHelper.greyNeutral5()),
                       ),
                       IconButton(
                         // visualDensity: VisualDensity.compact,
-                        icon: StreamSvgIcon.closeSmall(size: 32,color: MainAppColorHelper.greyNeutral5()),
+                        icon: StreamSvgIcon.closeSmall(
+                            size: 32, color: MainAppColorHelper.greyNeutral5()),
                         onPressed: widget.onQuotedMessageCleared,
                       ),
                     ],
@@ -303,7 +314,7 @@ class MessageInputState extends State<MessageInput> {
       );
     }
     return WillPopScope(
-        onWillPop: () async{
+        onWillPop: () async {
           if (_openFilePickerSection) {
             setState(() {
               _openFilePickerSection = false;
@@ -481,16 +492,15 @@ class MessageInputState extends State<MessageInput> {
                   keyboardType: widget.keyboardType,
                   controller: textEditingController,
                   focusNode: _focusNode,
-                  style: theme.ownMessageTheme.messageText.copyWith(fontSize: 16),
-                  autofocus: false,
+                  style:
+                      theme.ownMessageTheme.messageText.copyWith(fontSize: 16),
+                  autofocus: true,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: _getHint(),
                     hintStyle: theme.textTheme.body.copyWith(
-                      color: Colors.grey.withOpacity(0.65),
-                      fontSize: 16
-                    ),
+                        color: Colors.grey.withOpacity(0.65), fontSize: 16),
                     border: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent)),
                     focusedBorder: OutlineInputBorder(
@@ -1914,7 +1924,9 @@ class MessageInputState extends State<MessageInput> {
       }
     }
 
-    setState(() => _inputEnabled = true);
+    await handleFiles(file, attachmentType, true);
+
+    /* setState(() => _inputEnabled = true);
 
     if (file == null) return;
 
@@ -1967,6 +1979,122 @@ class MessageInputState extends State<MessageInput> {
         _showErrorAlert(
           'The file is too large to upload. The file size limit is 20MB.',
         );
+      }
+    }
+
+    setState(() {
+      _attachments.update(attachment.id, (it) {
+        return it.copyWith(
+          file: file,
+          extraData: {...it.extraData}..update('file_size', (_) => file.size),
+        );
+      });
+    });*/
+  }
+
+  Future<void> addSharedIntentFile(List<SharedMediaFile> sharedMedia) async {
+
+    await Future.forEach(sharedMedia,(element) async {
+      var up = File(
+          element.path);
+
+      var size = await up.length();
+
+      Uint8List bytes;
+
+      bytes = await up.readAsBytes();
+
+
+      var fileName = up.path.split('/').last;
+
+      var file = AttachmentFile(
+        name: fileName,
+        bytes: bytes,
+        path: element.path,
+        size: size,
+      );
+
+      String type;
+
+      switch(element.type)
+      {
+
+        case SharedMediaType.IMAGE:
+          type = 'image';
+          break;
+        case SharedMediaType.VIDEO:
+          type = 'video';
+          break;
+        case SharedMediaType.FILE:
+          type = 'file';
+          break;
+      }
+
+      await handleFiles(file, type, true);
+    });
+
+
+
+
+  }
+
+  Future<void> handleFiles(AttachmentFile file, String attachmentType,
+      [bool camera = false]) async {
+    setState(() => _inputEnabled = true);
+
+    if (file == null) return;
+
+    final mimeType = file.path.split('/').last.mimeType;
+
+    final extraDataMap = <String, dynamic>{};
+
+    if (camera) {
+      if (mimeType.type == 'video' || mimeType.type == 'image') {
+        attachmentType = mimeType.type;
+      }
+    } else {
+      attachmentType = 'file';
+    }
+
+    if (mimeType?.subtype != null) {
+      extraDataMap['mime_type'] = mimeType.subtype.toLowerCase();
+    }
+
+    if (file.size != null) {
+      extraDataMap['file_size'] = file.size;
+    }
+
+    final attachment = Attachment(
+      file: file,
+      type: attachmentType,
+      extraData: extraDataMap.isNotEmpty ? extraDataMap : null,
+    );
+
+    _attachments[attachment.id] = attachment;
+
+    if (file.size > _kMaxAttachmentSize) {
+      if (attachmentType == 'video') {
+        final mediaInfo = await VideoService.compressVideo(file.path);
+
+        if (mediaInfo.filesize > _kMaxAttachmentSize) {
+          _showErrorAlert(
+            'The file is too large to upload. The file size limit is 20MB. We tried compressing it, but it was not enough.',
+          );
+          _attachments.remove(attachment.id);
+          return;
+        }
+        file = AttachmentFile(
+          name: file.name,
+          size: mediaInfo.filesize,
+          bytes: await mediaInfo.file.readAsBytes(),
+          path: mediaInfo.path,
+        );
+      } else {
+        _showErrorAlert(
+          'The file is too large to upload. The file size limit is 20MB.',
+        );
+        _attachments.remove(attachment.id);
+        return;
       }
     }
 
