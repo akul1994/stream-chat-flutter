@@ -494,7 +494,7 @@ class MessageInputState extends State<MessageInput> {
                   focusNode: _focusNode,
                   style:
                       theme.ownMessageTheme.messageText.copyWith(fontSize: 16),
-                  autofocus: true,
+                  autofocus: false,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     isDense: true,
