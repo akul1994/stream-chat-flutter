@@ -87,6 +87,9 @@ class QuotedMessageWidget extends StatelessWidget {
 
   final GestureTapCallback onTap;
 
+  final void Function(String) onLinkTap;
+
+
   ///
   QuotedMessageWidget({
     Key key,
@@ -97,7 +100,7 @@ class QuotedMessageWidget extends StatelessWidget {
     this.textLimit = 170,
     this.attachmentThumbnailBuilders,
     this.padding = const EdgeInsets.all(8),
-    this.onTap,
+    this.onTap, this.onLinkTap,
   }) : super(key: key);
 
   bool get _hasAttachments => message.attachments?.isNotEmpty == true;
@@ -143,6 +146,7 @@ class QuotedMessageWidget extends StatelessWidget {
             transform: Matrix4.rotationY(reverse ? pi : 0),
             alignment: Alignment.center,
             child: MessageText(
+              onLinkTap: onLinkTap,
               message: msg,
               messageTheme: messageTheme
               // isOnlyEmoji && _containsText

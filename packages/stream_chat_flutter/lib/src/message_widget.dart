@@ -550,6 +550,7 @@ class _MessageWidgetState extends State<MessageWidget>
         ? () => widget.onQuotedMessageTap(widget.message.quotedMessageId)
         : null;
     return QuotedMessageWidget(
+      onLinkTap: widget.onLinkTap,
       onTap: onTap,
       message: widget.message.quotedMessage,
       messageTheme: isMyMessage
