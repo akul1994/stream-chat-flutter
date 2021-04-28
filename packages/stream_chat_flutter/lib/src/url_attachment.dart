@@ -83,21 +83,23 @@ class UrlAttachment extends StatelessWidget {
                 if (urlAttachment.title != null)
                   Text(
                     urlAttachment.title.trim(),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: StreamChatTheme.of(context)
                         .textTheme
                         .body
                         .copyWith(fontWeight: FontWeight.w700),
                   ),
-                // if (urlAttachment.text != null)
-                //   Text(
-                //     urlAttachment.text,
-                //     style: StreamChatTheme.of(context)
-                //         .textTheme
-                //         .body
-                //         .copyWith(fontWeight: FontWeight.w400),
-                //   ),
+                if (urlAttachment.text != null)
+                  Text(
+                    urlAttachment.text,
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
+                    style: StreamChatTheme.of(context)
+                        .textTheme
+                        .body
+                        .copyWith(fontWeight: FontWeight.w400),
+                  ),
               ],
             ),
           ),
