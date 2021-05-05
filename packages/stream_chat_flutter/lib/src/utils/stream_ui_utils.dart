@@ -9,14 +9,19 @@ class StreamUiUtils {
     if (!isCall) {
       return null;
     }
+
+
+
     if (!reverse) {
       return BoxDecoration(
           border: Border(
-              right: BorderSide(color: MainAppColorHelper.black(), width: 5)));
+            right: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
+          ));
     } else {
       return BoxDecoration(
           border: Border(
-              left: BorderSide(color: MainAppColorHelper.black(), width: 5)));
+            left: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
+          ));
     }
   }
 
