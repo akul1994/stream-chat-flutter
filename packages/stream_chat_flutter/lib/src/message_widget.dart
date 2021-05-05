@@ -429,68 +429,56 @@ class _MessageWidgetState extends State<MessageWidget>
                                                   ),
                                                 )
                                               : Container(
-                                                  decoration:
-                                                      StreamUiUtils.cardShadow,
-                                                  child: Card(
-                                                    clipBehavior:
-                                                        Clip.antiAlias,
-                                                    elevation: 0.0,
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal: (isFailedState
-                                                              ? 15.0
-                                                              : 0.0)
-                                                          // + (widget.showUserAvatar ==
-                                                          //         DisplayWidget
-                                                          //             .gone
-                                                          //     ? 0
-                                                          //     : 4.0),
-                                                    ),
-                                                    color:
-                                                        _getBackgroundColor(),
-                                                    child: Container(
-                                                      decoration: StreamUiUtils
-                                                          .getMsgBubbleDecor(
-                                                              reverse,
-                                                              isCall),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          if (widget
-                                                                  .showUserAvatar ==
-                                                              DisplayWidget
-                                                                  .show)
-                                                            _buildUserAvatar2(),
-                                                          if (hasQuotedMessage)
-                                                            _buildQuotedMessage(),
-                                                          if (hasNonUrlAttachments)
-                                                            _parseAttachments(),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .end,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <
-                                                                Widget>[
-                                                              // if (hasQuotedMessage)
-                                                              //   _buildQuotedMessage(),
-                                                              // if (hasNonUrlAttachments)
-                                                              //   _parseAttachments(),
-                                                              if (!isGiphy)
-                                                                _buildTextBubble(),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: (isFailedState
+                                                        ? 15.0
+                                                        : 0.0)),
+                                                decoration: StreamUiUtils.cardShadow(_getBackgroundColor()),
+                                                child: ClipPath(
+                                                  clipper: ShapeBorderClipper(
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.all(Radius.circular(8))
+                                                      )
+                                                  ),
+                                                  child: Container(
+                                                    decoration: StreamUiUtils
+                                                        .getMsgBubbleDecor(
+                                                            reverse, isCall),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        if (widget
+                                                                .showUserAvatar ==
+                                                            DisplayWidget.show)
+                                                          _buildUserAvatar2(),
+                                                        if (hasQuotedMessage)
+                                                          _buildQuotedMessage(),
+                                                        if (hasNonUrlAttachments)
+                                                          _parseAttachments(),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            // if (hasQuotedMessage)
+                                                            //   _buildQuotedMessage(),
+                                                            // if (hasNonUrlAttachments)
+                                                            //   _parseAttachments(),
+                                                            if (!isGiphy)
+                                                              _buildTextBubble(),
+                                                          ],
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
+                                              ),
                                         ),
                                         if (widget.showReactionPickerIndicator)
                                           Positioned(

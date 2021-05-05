@@ -335,7 +335,7 @@ class MessageInputState extends State<MessageInput> {
         if (widget.actionsLocation == ActionsLocation.left)
           ...widget.actions ?? [],
         _buildTextInput(context),
-        _animateSendButton(context),
+        _buildIdleSendButton(context),
         if (widget.actionsLocation == ActionsLocation.right)
           ...widget.actions ?? [],
       ],

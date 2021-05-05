@@ -3,25 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 
 class StreamUiUtils {
-
-
   static BoxDecoration getMsgBubbleDecor(bool reverse, bool isCall) {
     if (!isCall) {
       return null;
     }
 
-
-
     if (!reverse) {
       return BoxDecoration(
           border: Border(
-            right: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
-          ));
+        right: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
+      ));
     } else {
       return BoxDecoration(
           border: Border(
-            left: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
-          ));
+        left: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
+      ));
     }
   }
 
@@ -30,17 +26,17 @@ class StreamUiUtils {
     borderRadius: BorderRadius.circular(24),
   );
 
-  static Decoration cardShadow = BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.all(
-      Radius.circular(8.0),
-    ),
-    boxShadow: <BoxShadow>[
-      BoxShadow(
-          color: Colors.black12,
-          blurRadius: 16.0,
-          offset: Offset(0.0, 14.0),
-          spreadRadius: -9),
-    ],
-  );
+  static Decoration cardShadow(Color bgColor) {
+    return BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+            color: Colors.black12,
+            blurRadius: 16.0,
+            offset: Offset(0.0, 14.0),
+            spreadRadius: -9),
+      ],
+    );
+  }
 }
