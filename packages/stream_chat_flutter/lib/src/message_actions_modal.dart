@@ -252,6 +252,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                       if (widget.showDeleteMessage)
                                         _buildDeleteButton(
                                             context, deleteAllowed),
+                                      if(widget.customActions!=null && widget.customActions.isNotEmpty)
                                       ...widget.customActions.map((action) {
                                         return _buildCustomAction(
                                           context,
