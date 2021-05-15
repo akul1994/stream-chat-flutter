@@ -39,4 +39,19 @@ class StreamUiUtils {
       ],
     );
   }
+
+  static Decoration cardShadowEmoji(Color bgColor) {
+    return BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: Colors.grey.shade50),
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+            color: Colors.black12,
+            blurRadius: 16.0,
+            offset: Offset(0.0, 14.0),
+            spreadRadius: -9),
+      ],
+    );
+  }
 }
