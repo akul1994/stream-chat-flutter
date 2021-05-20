@@ -333,9 +333,9 @@ class _MessageWidgetState extends State<MessageWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final avatarWidth = widget.messageTheme.avatarTheme.constraints.maxWidth;
-    var leftPadding =
-        widget.showUserAvatar != DisplayWidget.gone ? avatarWidth + 8.5 : 0.5;
+   // final avatarWidth = widget.messageTheme.avatarTheme.constraints.maxWidth;
+    var leftPadding = 0.5;
+    //     widget.showUserAvatar != DisplayWidget.gone ? avatarWidth + 8.5 : 0.5;
 
     return Material(
       type: MaterialType.transparency,
@@ -1034,7 +1034,7 @@ class _MessageWidgetState extends State<MessageWidget>
               width: 4,
             ),
             Text(
-              user.name,
+              getFirstName(user),
               style: theme.messageText.copyWith(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,

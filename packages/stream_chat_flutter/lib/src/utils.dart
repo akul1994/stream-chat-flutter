@@ -172,6 +172,12 @@ Future<bool> showInfoDialog(
 String getRandomPicUrl(User user) =>
     'https://getstream.io/random_png/?id=${user.id}&name=${user.name}';
 
+String getFirstName(User user) {
+  var name = user?.name ?? 'User';
+  var names = name.split(' ');
+  return names[0];
+}
+
 /// Get websiteName from [hostName]
 String getWebsiteName(String hostName) {
   switch (hostName) {
