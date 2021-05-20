@@ -55,63 +55,66 @@ class _MessageTextState extends State<MessageText> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        MarkdownBody(
-          data: messageToShow,
-          onTapLink: (
-            String link,
-            String href,
-            String title,
-          ) {
-            if (link.startsWith('@')) {
-              final mentionedUser = widget.message.mentionedUsers.firstWhere(
-                (u) => '@${u.name}' == link,
-                orElse: () => null,
-              );
+    return Container(
+      constraints: BoxConstraints(minWidth: 72),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MarkdownBody(
+            data: messageToShow,
+            onTapLink: (
+              String link,
+              String href,
+              String title,
+            ) {
+              if (link.startsWith('@')) {
+                final mentionedUser = widget.message.mentionedUsers.firstWhere(
+                  (u) => '@${u.name}' == link,
+                  orElse: () => null,
+                );
 
-              if (widget.onMentionTap != null) {
-                widget.onMentionTap(mentionedUser);
+                if (widget.onMentionTap != null) {
+                  widget.onMentionTap(mentionedUser);
+                } else {
+                  print('tap on ${mentionedUser.name}');
+                }
               } else {
-                print('tap on ${mentionedUser.name}');
+                if (widget.onLinkTap != null) {
+                  widget.onLinkTap(link);
+                } else {
+                  launchURL(context, link);
+                }
               }
-            } else {
-              if (widget.onLinkTap != null) {
-                widget.onLinkTap(link);
-              } else {
-                launchURL(context, link);
-              }
-            }
-          },
-          styleSheet: MarkdownStyleSheet.fromTheme(
-            Theme.of(context).copyWith(
-              textTheme: Theme.of(context).textTheme.apply(
-                    bodyColor: widget.messageTheme.messageText.color,
-                    decoration: widget.messageTheme.messageText.decoration,
-                    decorationColor:
-                        widget.messageTheme.messageText.decorationColor,
-                    decorationStyle:
-                        widget.messageTheme.messageText.decorationStyle,
-                    fontFamily: widget.messageTheme.messageText.fontFamily,
-                  ),
-            ),
-          ).copyWith(
-            a: widget.messageTheme.messageLinks,
-            p: widget.messageTheme.messageText,
-          ),
-        ),
-        if (messageLengthState != MessageLengthState.normal)
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
-            child: InkWell(onTap: () {
-              onShowMoreClick();
             },
-                child: Text(getShowMoreText(), style: widget.messageTheme.messageText.copyWith(
-                  color: Colors.blue
-                ), )),
-          )
-      ],
+            styleSheet: MarkdownStyleSheet.fromTheme(
+              Theme.of(context).copyWith(
+                textTheme: Theme.of(context).textTheme.apply(
+                      bodyColor: widget.messageTheme.messageText.color,
+                      decoration: widget.messageTheme.messageText.decoration,
+                      decorationColor:
+                          widget.messageTheme.messageText.decorationColor,
+                      decorationStyle:
+                          widget.messageTheme.messageText.decorationStyle,
+                      fontFamily: widget.messageTheme.messageText.fontFamily,
+                    ),
+              ),
+            ).copyWith(
+              a: widget.messageTheme.messageLinks,
+              p: widget.messageTheme.messageText,
+            ),
+          ),
+          if (messageLengthState != MessageLengthState.normal)
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
+              child: InkWell(onTap: () {
+                onShowMoreClick();
+              },
+                  child: Text(getShowMoreText(), style: widget.messageTheme.messageText.copyWith(
+                    color: Colors.blue
+                  ), )),
+            )
+        ],
+      ),
     );
   }
 

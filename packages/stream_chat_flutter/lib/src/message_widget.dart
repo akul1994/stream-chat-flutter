@@ -333,7 +333,7 @@ class _MessageWidgetState extends State<MessageWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-   // final avatarWidth = widget.messageTheme.avatarTheme.constraints.maxWidth;
+    // final avatarWidth = widget.messageTheme.avatarTheme.constraints.maxWidth;
     var leftPadding = 0.5;
     //     widget.showUserAvatar != DisplayWidget.gone ? avatarWidth + 8.5 : 0.5;
 
@@ -400,6 +400,7 @@ class _MessageWidgetState extends State<MessageWidget>
                                                           true
                                                       ? 18
                                                       : 0,
+
                                                 )
                                               : EdgeInsets.zero,
                                           child: (widget.message.isDeleted &&
@@ -429,56 +430,64 @@ class _MessageWidgetState extends State<MessageWidget>
                                                   ),
                                                 )
                                               : Container(
-                                                margin: EdgeInsets.symmetric(
-                                                    horizontal: (isFailedState
-                                                        ? 15.0
-                                                        : 0.0)),
-                                                decoration: StreamUiUtils.cardShadow(_getBackgroundColor()),
-                                                child: ClipPath(
-                                                  clipper: ShapeBorderClipper(
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.all(Radius.circular(8))
-                                                      )
-                                                  ),
-                                                  child: Container(
-                                                    decoration: StreamUiUtils
-                                                        .getMsgBubbleDecor(
-                                                            reverse, isCall),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        if (widget
-                                                                .showUserAvatar ==
-                                                            DisplayWidget.show)
-                                                          _buildUserAvatar2(),
-                                                        if (hasQuotedMessage)
-                                                          _buildQuotedMessage(),
-                                                        if (hasNonUrlAttachments)
-                                                          _parseAttachments(),
-                                                        Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: <Widget>[
-                                                            // if (hasQuotedMessage)
-                                                            //   _buildQuotedMessage(),
-                                                            // if (hasNonUrlAttachments)
-                                                            //   _parseAttachments(),
-                                                            if (!isGiphy)
-                                                              _buildTextBubble(),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                  margin: EdgeInsets.symmetric(
+                                                      horizontal: (isFailedState
+                                                          ? 15.0
+                                                          : 0.0)),
+                                                  decoration:
+                                                      StreamUiUtils.cardShadow(
+                                                          _getBackgroundColor()),
+                                                  child: ClipPath(
+                                                    clipper: ShapeBorderClipper(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            8)))),
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(bottom: 14),
+                                                      decoration: StreamUiUtils
+                                                          .getMsgBubbleDecor(
+                                                              reverse, isCall),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          if (widget
+                                                                  .showUserAvatar ==
+                                                              DisplayWidget
+                                                                  .show)
+                                                            _buildUserAvatar2(),
+                                                          if (hasQuotedMessage)
+                                                            _buildQuotedMessage(),
+                                                          if (hasNonUrlAttachments)
+                                                            _parseAttachments(),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .end,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: <Widget>[
+                                                              // if (hasQuotedMessage)
+                                                              //   _buildQuotedMessage(),
+                                                              // if (hasNonUrlAttachments)
+                                                              //   _parseAttachments(),
+                                                              if (!isGiphy)
+                                                                _buildTextBubble(),
+                                                            ],
+                                                          ),
+                                                         // SizedBox(height: 6,)
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
                                         ),
                                         if (widget.showReactionPickerIndicator)
                                           Positioned(
@@ -505,10 +514,17 @@ class _MessageWidgetState extends State<MessageWidget>
                                 ),
                               ],
                             ),
-                            if (showBottomRow) SizedBox(height: 20.0),
+                            if (showBottomRow && isDeleted)
+                              SizedBox(height: 16.0),
                           ],
                         ),
-                        if (showBottomRow)
+                        if(!isDeleted && showBottomRow)
+                        Positioned(
+                            right: reverse ? null : !isCall ? 4 : 12,
+                            left: reverse ? !isCall ? 4 : 12 : null,
+                            bottom: 3,
+                            child: _bottomRow),
+                        if (isDeleted)
                           Padding(
                             padding: EdgeInsets.only(left: leftPadding),
                             child: _bottomRow,
@@ -620,49 +636,46 @@ class _MessageWidgetState extends State<MessageWidget>
           widget.message.user.name,
           style: widget.messageTheme.messageAuthor,
         ),
+      if (showSendingIndicator) _buildSendingIndicator(),
       if (showTimeStamp)
         Text(
           Jiffy(widget.message.createdAt.toLocal()).jm,
           style: widget.messageTheme.createdAt,
         ),
-      if (showSendingIndicator) _buildSendingIndicator(),
+
     ]);
 
     final showThreadTail = !(hasUrlAttachments || isGiphy || isOnlyEmoji) &&
         (showThreadReplyIndicator || showInChannel);
 
     return Flex(
-      direction: Axis.horizontal,
-      clipBehavior: Clip.none,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        if (showThreadTail)
-          Container(
-            margin: EdgeInsets.only(
-              bottom: widget.messageTheme.replies.fontSize / 2,
-            ),
-            child: CustomPaint(
-              size: const Size(16, 32),
-              painter: _ThreadReplyPainter(
-                context: context,
-                color: widget.messageTheme.messageBorderColor,
+        direction: Axis.horizontal,
+        clipBehavior: Clip.none,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showThreadTail)
+            Container(
+              margin: EdgeInsets.only(
+                bottom: widget.messageTheme.replies.fontSize / 2,
+              ),
+              child: CustomPaint(
+                size: const Size(16, 32),
+                painter: _ThreadReplyPainter(
+                  context: context,
+                  color: widget.messageTheme.messageBorderColor,
+                ),
               ),
             ),
-          ),
-        ...children.map(
-          (child) => Transform(
-            transform: Matrix4.rotationY(widget.reverse ? pi : 0),
-            alignment: Alignment.center,
-            child: Container(
-              height: 16,
-              child: Center(
-                child: child,
-              ),
+          ...children.map(
+            (child) => Transform(
+              transform: Matrix4.rotationY(widget.reverse ? pi : 0),
+              alignment: Alignment.center,
+              child: child,
             ),
           ),
-        ),
-      ].insertBetween(const SizedBox(width: 8.0)),
-    );
+        ].insertBetween(SizedBox(width: 2)),);
   }
 
   Widget _buildUrlAttachment() {
@@ -952,7 +965,11 @@ class _MessageWidgetState extends State<MessageWidget>
       );
     }
 
+    var user = widget.message.user;
+    final ownId = StreamChat.of(context).user.id;
+    var isOwn = user.id == ownId;
     Widget child = SendingIndicator(
+      isOwn: isOwn,
       message: message,
       isMessageRead: isMessageRead,
       size: style.fontSize,
@@ -972,7 +989,9 @@ class _MessageWidgetState extends State<MessageWidget>
         ],
       );
     }
-    return child;
+    return Padding(
+        padding: EdgeInsets.only(bottom: 2),
+        child: child);
   }
 
   Widget _buildUserAvatar() => Transform(

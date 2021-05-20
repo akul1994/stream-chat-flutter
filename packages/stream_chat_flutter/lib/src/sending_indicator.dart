@@ -7,11 +7,14 @@ class SendingIndicator extends StatelessWidget {
   final bool isMessageRead;
   final double size;
 
+  final bool isOwn;
+
   const SendingIndicator({
     Key key,
     this.message,
     this.isMessageRead = false,
     this.size = 12,
+    this.isOwn = false,
   }) : super(key: key);
 
   @override
@@ -22,7 +25,8 @@ class SendingIndicator extends StatelessWidget {
         color: StreamChatTheme.of(context).colorTheme.accentBlue,
       );
     }
-    if (message.status == MessageSendingStatus.sent || message.status == null) {
+    if (isOwn && (message.status == MessageSendingStatus.sent ||
+        message.status == null)) {
       return StreamSvgIcon.checkAll(
         size: size,
         color: IconTheme.of(context).color.withOpacity(0.5),

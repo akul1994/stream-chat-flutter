@@ -190,14 +190,17 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                 attachmentPadding: EdgeInsets.all(
                                   hasFileAttachment ? 4 : 2,
                                 ),
-                                showTimestamp: false,
+                                showTimestamp: true,
                                 translateUserAvatar: false,
                                 padding: const EdgeInsets.all(0),
-                                textPadding: EdgeInsets.symmetric(
-                                  vertical: 8.0,
-                                  horizontal: widget.message.text.isOnlyEmoji
+                                textPadding: EdgeInsets.only(
+                                  top: 8.0,
+                                  left: widget.message.text.isOnlyEmoji
                                       ? 0
-                                      : 16.0,
+                                      : 8.0,
+                                  right: widget.message.text.isOnlyEmoji
+                                      ? 0
+                                      : 8.0,
                                 ),
                                 showReactionPickerIndicator:
                                     widget.showReactions &&
