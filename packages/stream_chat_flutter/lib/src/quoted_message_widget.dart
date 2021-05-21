@@ -6,6 +6,7 @@ import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 import 'package:video_player/video_player.dart';
 
+import '../stream_chat_flutter.dart';
 import 'attachment/attachment.dart';
 import 'extension.dart';
 import 'message_text.dart';
@@ -14,9 +15,9 @@ import 'user_avatar.dart';
 import 'utils.dart';
 
 typedef QuotedMessageAttachmentThumbnailBuilder = Widget Function(
-  BuildContext,
-  Attachment,
-);
+    BuildContext,
+    Attachment,
+    );
 
 class _VideoAttachmentThumbnail extends StatefulWidget {
   final Size size;
@@ -81,13 +82,15 @@ class QuotedMessageWidget extends StatelessWidget {
 
   /// Map that defines a thumbnail builder for an attachment type
   final Map<String, QuotedMessageAttachmentThumbnailBuilder>
-      attachmentThumbnailBuilders;
+  attachmentThumbnailBuilders;
 
   final EdgeInsetsGeometry padding;
 
   final GestureTapCallback onTap;
 
   final void Function(String) onLinkTap;
+
+  final DisplayWidget showUserAvatar;
 
 
   ///
@@ -100,14 +103,14 @@ class QuotedMessageWidget extends StatelessWidget {
     this.textLimit = 170,
     this.attachmentThumbnailBuilders,
     this.padding = const EdgeInsets.all(8),
-    this.onTap, this.onLinkTap,
+    this.onTap, this.onLinkTap, this.showUserAvatar = DisplayWidget.gone
   }) : super(key: key);
 
   bool get _hasAttachments => message.attachments?.isNotEmpty == true;
 
   bool get _containsScrapeUrl =>
       message.attachments?.any((element) => element.ogScrapeUrl != null) ==
-      true;
+          true;
 
   bool get _containsText => message?.text?.isNotEmpty == true;
 
@@ -146,9 +149,9 @@ class QuotedMessageWidget extends StatelessWidget {
             transform: Matrix4.rotationY(reverse ? pi : 0),
             alignment: Alignment.center,
             child: MessageText(
-              onLinkTap: onLinkTap,
-              message: msg,
-              messageTheme: messageTheme
+                onLinkTap: onLinkTap,
+                message: msg,
+                messageTheme: messageTheme
               // isOnlyEmoji && _containsText
               //     ? messageTheme.copyWith(
               //         messageText: messageTheme.messageText.copyWith(
@@ -169,8 +172,11 @@ class QuotedMessageWidget extends StatelessWidget {
         color: _getBackgroundColor(context),
         border: showBorder
             ? Border.all(
-                color: StreamChatTheme.of(context).colorTheme.greyGainsboro,
-              )
+          color: StreamChatTheme
+              .of(context)
+              .colorTheme
+              .greyGainsboro,
+        )
             : null,
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(12),
@@ -180,12 +186,24 @@ class QuotedMessageWidget extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.all(8),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: reverse
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         mainAxisAlignment:
+        reverse ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if(showUserAvatar==DisplayWidget.show)
+            _buildUserAvatar2(context),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment:
             reverse ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: reverse ? children.reversed.toList() : children,
+            children: reverse ? children.reversed.toList() : children,
+          ),
+        ],
       ),
     );
   }
@@ -209,12 +227,67 @@ class QuotedMessageWidget extends StatelessWidget {
     return AttachmentError(size: size);
   }
 
+  Widget _buildUserAvatar2(BuildContext context) {
+    var user = message.user;
+    final ownId = StreamChat
+        .of(context)
+        .user
+        .id;
+    if (user.id == ownId) {
+      return SizedBox.shrink();
+    }
+    var theme = messageTheme;
+
+    var imgUrl = '';
+
+    final streamChatTheme = StreamChatTheme.of(context);
+
+    final hasImage = user.extraData?.containsKey('image') == true &&
+        user.extraData['image'] != null &&
+        user.extraData['image'] != '';
+
+    if (hasImage) {
+      imgUrl = user.extraData['image'];
+    }
+
+    return Transform(
+      transform: Matrix4.rotationY(reverse ? pi : 0),
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            imgUrl.isNotEmpty
+                ? CircleAvatar(radius: 8, backgroundImage: NetworkImage(imgUrl))
+                : CircleAvatar(
+              radius: 8,
+              backgroundImage: NetworkImage(getRandomPicUrl(user)),
+            ),
+            SizedBox(
+              width: 4,
+            ),
+            Text(
+              getFirstName(user),
+              style: theme.messageText.copyWith(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: MainAppColorHelper.orange()),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _parseAttachments(BuildContext context) {
     Widget child;
     Attachment attachment;
     if (_containsScrapeUrl) {
       attachment = message.attachments.firstWhere(
-        (element) => element.ogScrapeUrl != null,
+            (element) => element.ogScrapeUrl != null,
       );
       child = _buildUrlAttachment(attachment);
     } else {
@@ -265,7 +338,7 @@ class QuotedMessageWidget extends StatelessWidget {
   }
 
   Map<String, QuotedMessageAttachmentThumbnailBuilder>
-      get _defaultAttachmentBuilder {
+  get _defaultAttachmentBuilder {
     return {
       'image': (_, attachment) {
         return ImageAttachment(
@@ -296,7 +369,7 @@ class QuotedMessageWidget extends StatelessWidget {
             );
           },
           imageUrl:
-              attachment.thumbUrl ?? attachment.imageUrl ?? attachment.assetUrl,
+          attachment.thumbUrl ?? attachment.imageUrl ?? attachment.assetUrl,
           errorWidget: (context, url, error) {
             return AttachmentError(size: size);
           },
@@ -315,7 +388,10 @@ class QuotedMessageWidget extends StatelessWidget {
 
   Color _getBackgroundColor(BuildContext context) {
     if (_containsScrapeUrl) {
-      return StreamChatTheme.of(context).colorTheme.blueAlice;
+      return StreamChatTheme
+          .of(context)
+          .colorTheme
+          .blueAlice;
     }
     return MainAppColorHelper.greyNeutral7();
   }

@@ -566,6 +566,7 @@ class _MessageWidgetState extends State<MessageWidget>
           ? StreamChatTheme.of(context).otherMessageTheme
           : StreamChatTheme.of(context).ownMessageTheme,
       reverse: widget.reverse,
+      showUserAvatar: widget.showUserAvatar,
       padding: EdgeInsets.only(
           right: 8, left: 8, top: 8, bottom: hasNonUrlAttachments ? 8 : 0),
     );
