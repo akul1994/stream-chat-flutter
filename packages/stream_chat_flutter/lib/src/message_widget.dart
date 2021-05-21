@@ -446,7 +446,7 @@ class _MessageWidgetState extends State<MessageWidget>
                                                                         .circular(
                                                                             8)))),
                                                     child: Container(
-                                                      padding: EdgeInsets.only(bottom: 14),
+                                                      padding: EdgeInsets.only(bottom: 16),
                                                       decoration: StreamUiUtils
                                                           .getMsgBubbleDecor(
                                                               reverse, isCall),
@@ -462,22 +462,25 @@ class _MessageWidgetState extends State<MessageWidget>
                                                               DisplayWidget
                                                                   .show)
                                                             _buildUserAvatar2(),
-                                                          if (hasQuotedMessage)
-                                                            _buildQuotedMessage(),
-                                                          if (hasNonUrlAttachments)
-                                                            _parseAttachments(),
+                                                          // if (hasQuotedMessage)
+                                                          //   _buildQuotedMessage(),
+                                                          // if (hasNonUrlAttachments)
+                                                          //   _parseAttachments(),
                                                           Column(
                                                             crossAxisAlignment:
+                                                                widget.reverse ?
                                                                 CrossAxisAlignment
-                                                                    .end,
+                                                                    .end :
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             mainAxisSize:
                                                                 MainAxisSize
                                                                     .min,
                                                             children: <Widget>[
-                                                              // if (hasQuotedMessage)
-                                                              //   _buildQuotedMessage(),
-                                                              // if (hasNonUrlAttachments)
-                                                              //   _parseAttachments(),
+                                                              if (hasQuotedMessage)
+                                                                _buildQuotedMessage(),
+                                                              if (hasNonUrlAttachments)
+                                                                _parseAttachments(),
                                                               if (!isGiphy)
                                                                 _buildTextBubble(),
                                                             ],
