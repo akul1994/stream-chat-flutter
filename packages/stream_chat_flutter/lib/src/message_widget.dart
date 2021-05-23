@@ -1085,14 +1085,14 @@ class _MessageWidgetState extends State<MessageWidget>
                     onLinkTap: widget.onLinkTap,
                     message: widget.message,
                     onMentionTap: widget.onMentionTap,
-                    messageTheme: widget.messageTheme
-                    //isOnlyEmoji
-                    // ? widget.messageTheme.copyWith(
-                    //     messageText:
-                    //         widget.messageTheme.messageText.copyWith(
-                    //     fontSize: 42,
-                    //   ))
-                    // : widget.messageTheme,
+                    messageTheme:
+                    isOnlyEmoji
+                    ? widget.messageTheme.copyWith(
+                        messageText:
+                            widget.messageTheme.messageText.copyWith(
+                        fontSize: 40,
+                      ))
+                    : widget.messageTheme,
                     ),
           ),
           if (hasUrlAttachments && !hasQuotedMessage) _buildUrlAttachment(),

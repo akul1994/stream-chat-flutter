@@ -2131,7 +2131,7 @@ class MessageInputState extends State<MessageInput> {
 
   String _getIdleSendIcon() {
     if (_commandEnabled) {
-      return 'Icon_search.svg';
+      return 'Icon_circle_right.svg';
     } else {
       return 'Icon_circle_right.svg';
     }
@@ -2141,7 +2141,7 @@ class MessageInputState extends State<MessageInput> {
     if (widget.editMessage != null) {
       return 'Icon_circle_up.svg';
     } else if (_commandEnabled) {
-      return 'Icon_search.svg';
+      return 'Icon_circle_right.svg';
     } else {
       return 'Icon_circle_up.svg';
     }
