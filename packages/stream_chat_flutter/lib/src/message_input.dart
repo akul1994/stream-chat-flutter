@@ -593,7 +593,7 @@ class MessageInputState extends State<MessageInput> {
 
         _checkCommands(s.trim(), context);
 
-        _checkMentions(s, context);
+        //_checkMentions(s, context);
 
         _checkEmoji(s, context);
       },
