@@ -36,7 +36,6 @@ typedef OnMessageSwiped = void Function(Message);
 typedef ReplyTapCallback = void Function(Message);
 typedef OnMessageTap = void Function(Message);
 
-
 class MessageDetails {
   /// True if the message belongs to the current user
   bool isMyMessage;
@@ -134,6 +133,7 @@ class MessageListView extends StatefulWidget {
     this.messageListBuilder,
     this.errorWidgetBuilder,
     this.customAttachmentBuilders,
+    this.padding,
   }) : super(key: key);
 
   /// Function used to build a custom message widget
@@ -211,6 +211,8 @@ class MessageListView extends StatefulWidget {
   /// Please change this in the [MessageWidget] if you are using a custom implementation
   final Map<String, AttachmentBuilder> customAttachmentBuilders;
 
+
+  final EdgeInsets padding;
 
   @override
   _MessageListViewState createState() => _MessageListViewState();
@@ -335,9 +337,8 @@ class _MessageListViewState extends State<MessageListView> {
     _messageListLength = newMessagesListLength;
 
     return Theme(
-      data: Theme.of(context).copyWith(
-          accentColor: MainAppColorHelper.orange()
-      ),
+      data:
+          Theme.of(context).copyWith(accentColor: MainAppColorHelper.orange()),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -359,7 +360,8 @@ class _MessageListViewState extends State<MessageListView> {
               }
 
               return InfoTile(
-                showMessage: widget.showConnectionStateTile ? showStatus : false,
+                showMessage:
+                    widget.showConnectionStateTile ? showStatus : false,
                 tileAnchor: Alignment.topCenter,
                 childAnchor: Alignment.topCenter,
                 message: statusString,
@@ -396,6 +398,7 @@ class _MessageListViewState extends State<MessageListView> {
                     physics: widget.scrollPhysics,
                     itemScrollController: _scrollController,
                     reverse: true,
+                    padding: widget.padding,
                     itemCount:
                         messages.length + 2 + (_isThreadConversation ? 1 : 0),
                     separatorBuilder: (context, i) {
@@ -405,8 +408,9 @@ class _MessageListViewState extends State<MessageListView> {
                         final replyCount = widget.parentMessage.replyCount;
                         return Container(
                           decoration: BoxDecoration(
-                            gradient:
-                                StreamChatTheme.of(context).colorTheme.bgGradient,
+                            gradient: StreamChatTheme.of(context)
+                                .colorTheme
+                                .bgGradient,
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
