@@ -21,6 +21,7 @@ class ReactionBubble extends StatelessWidget {
     this.highlightOwnReactions = true,
     this.tailCirclesSpacing = 0,
     this.reactionScores,
+    this.reactionIcons,
   }) : super(key: key);
 
   final List<Reaction> reactions;
@@ -28,6 +29,7 @@ class ReactionBubble extends StatelessWidget {
   final Color backgroundColor;
   final Color maskColor;
   final bool reverse;
+  final List<ReactionIcon> reactionIcons;
 
   final bool flipTail;
   final bool highlightOwnReactions;
@@ -36,7 +38,8 @@ class ReactionBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final reactionIcons = StreamChatTheme.of(context).reactionIcons;
+    final reactionIcons =
+        this.reactionIcons ?? StreamChatTheme.of(context).reactionIcons;
     final totalReactions = reactions.length;
     final offset = totalReactions > 1 ? 16.0 : 2.0;
     return Transform(

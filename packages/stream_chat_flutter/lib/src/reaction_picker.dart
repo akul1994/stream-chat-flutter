@@ -20,10 +20,12 @@ class ReactionPicker extends StatefulWidget {
     Key key,
     @required this.message,
     @required this.messageTheme,
+    this.reactionIcons,
   }) : super(key: key);
 
   final Message message;
   final MessageTheme messageTheme;
+  final List<ReactionIcon> reactionIcons;
 
   @override
   _ReactionPickerState createState() => _ReactionPickerState();
@@ -43,7 +45,8 @@ class _ReactionPickerState extends State<ReactionPicker>
 
   @override
   Widget build(BuildContext context) {
-    final reactionIcons = StreamChatTheme.of(context).reactionIcons;
+    final reactionIcons =
+        widget.reactionIcons ?? StreamChatTheme.of(context).reactionIcons;
 
     return Material(
       borderRadius: BorderRadius.circular(24),
