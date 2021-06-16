@@ -1059,7 +1059,7 @@ class _MessageWidgetState extends State<MessageWidget>
             Text(
               getFirstName(user),
               style: theme.messageText.copyWith(
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: MainAppColorHelper.orange()),
             )
