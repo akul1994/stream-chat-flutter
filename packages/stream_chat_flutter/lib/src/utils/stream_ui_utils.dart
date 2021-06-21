@@ -8,9 +8,13 @@ class StreamUiUtils {
       return null;
     }
 
+    // return BoxDecoration(
+    //     borderRadius: BorderRadius.circular(8),
+    //     border: Border.all(width: 2, color: MainAppColorHelper.black()));
+
     if (!reverse) {
       return BoxDecoration(
-          border: Border(
+      border: Border(
         right: BorderSide(width: 8.0, color: MainAppColorHelper.black()),
       ));
     } else {
