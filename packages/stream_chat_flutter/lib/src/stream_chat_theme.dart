@@ -6,6 +6,7 @@ import 'package:stream_chat_flutter/src/channel_preview.dart';
 import 'package:stream_chat_flutter/src/message_input.dart';
 import 'package:stream_chat_flutter/src/reaction_icon.dart';
 import 'package:stream_chat_flutter/src/utils.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
 /// Inherited widget providing the [StreamChatThemeData] to the widget tree
@@ -46,11 +47,14 @@ class StreamChatThemeData {
   /// The text themes used in the widgets
   final TextTheme textTheme;
 
-  /// The text themes used in the widgets
+  /// The color themes used in the widgets
   final ColorTheme colorTheme;
 
   /// Theme of the [ChannelPreview]
   final ChannelPreviewTheme channelPreviewTheme;
+
+  /// Theme of the [ChannelListHeader]
+  final ChannelListHeaderTheme channelListHeaderTheme;
 
   /// Theme of the chat widgets dedicated to a channel
   final ChannelTheme channelTheme;
@@ -61,7 +65,7 @@ class StreamChatThemeData {
   /// Theme of other users messages
   final MessageTheme otherMessageTheme;
 
-  /// Theme of other users messages
+  /// Theme dedicated to the [MessageInput] widget
   final MessageInputTheme messageInputTheme;
 
   /// The widget that will be built when the channel image is unavailable
@@ -80,6 +84,7 @@ class StreamChatThemeData {
   const StreamChatThemeData({
     this.textTheme,
     this.colorTheme,
+    this.channelListHeaderTheme,
     this.channelPreviewTheme,
     this.channelTheme,
     this.otherMessageTheme,
@@ -99,9 +104,7 @@ class StreamChatThemeData {
         accentBlue: theme.accentColor,
       ),
       defaultTheme.textTheme,
-    ).copyWith(
-        // primaryIconTheme: theme.primaryIconTheme,
-        );
+    );
     return defaultTheme.merge(customizedTheme) ?? customizedTheme;
   }
 
@@ -117,9 +120,12 @@ class StreamChatThemeData {
     Widget Function(BuildContext, Channel) defaultChannelImage,
     Widget Function(BuildContext, User) defaultUserImage,
     IconThemeData primaryIconTheme,
+    ChannelListHeaderTheme channelListHeaderTheme,
     List<ReactionIcon> reactionIcons,
   }) =>
       StreamChatThemeData(
+        channelListHeaderTheme:
+            channelListHeaderTheme ?? this.channelListHeaderTheme,
         textTheme: textTheme ?? this.textTheme,
         colorTheme: colorTheme ?? this.colorTheme,
         primaryIconTheme: primaryIconTheme ?? this.primaryIconTheme,
@@ -136,6 +142,9 @@ class StreamChatThemeData {
   StreamChatThemeData merge(StreamChatThemeData other) {
     if (other == null) return this;
     return copyWith(
+      channelListHeaderTheme:
+          channelListHeaderTheme?.merge(other.channelListHeaderTheme) ??
+              other.channelListHeaderTheme,
       textTheme: textTheme?.merge(other.textTheme) ?? other.textTheme,
       colorTheme: colorTheme?.merge(other.colorTheme) ?? other.colorTheme,
       primaryIconTheme: other.primaryIconTheme,
@@ -190,6 +199,17 @@ class StreamChatThemeData {
             color: colorTheme.black.withOpacity(.5),
           ),
           indicatorIconSize: 16.0),
+      channelListHeaderTheme: ChannelListHeaderTheme(
+        avatarTheme: AvatarTheme(
+          borderRadius: BorderRadius.circular(20),
+          constraints: BoxConstraints.tightFor(
+            height: 40,
+            width: 40,
+          ),
+        ),
+        color: colorTheme.white,
+        title: textTheme.headlineBold,
+      ),
       channelTheme: ChannelTheme(
         channelHeaderTheme: ChannelHeaderTheme(
           avatarTheme: AvatarTheme(
@@ -201,9 +221,8 @@ class StreamChatThemeData {
           ),
           color: colorTheme.white,
           title: textTheme.headlineBold,
-          lastMessageAt: TextStyle(
-            fontSize: 11,
-            color: colorTheme.black.withOpacity(.5),
+          subtitle: textTheme.footnote.copyWith(
+            color: Color(0xff7A7A7A),
           ),
         ),
       ),
@@ -250,12 +269,27 @@ class StreamChatThemeData {
         ),
       ),
       messageInputTheme: MessageInputTheme(
+        borderRadius: BorderRadius.circular(20),
         sendAnimationDuration: Duration(milliseconds: 300),
         actionButtonColor: colorTheme.accentBlue,
         actionButtonIdleColor: colorTheme.grey,
+        expandButtonColor: colorTheme.accentBlue,
         sendButtonColor: colorTheme.accentBlue,
         sendButtonIdleColor: colorTheme.greyGainsboro,
         inputBackground: colorTheme.white,
+        inputTextStyle: textTheme.body,
+        idleBorderGradient: LinearGradient(
+          colors: [
+            colorTheme.greyGainsboro,
+            colorTheme.greyGainsboro,
+          ],
+        ),
+        activeBorderGradient: LinearGradient(
+          colors: [
+            colorTheme.greyGainsboro,
+            colorTheme.greyGainsboro,
+          ],
+        ),
       ),
       reactionIcons: [
         ReactionIcon(
@@ -813,26 +847,26 @@ class ChannelPreviewTheme {
 
 class ChannelHeaderTheme {
   final TextStyle title;
-  final TextStyle lastMessageAt;
+  final TextStyle subtitle;
   final AvatarTheme avatarTheme;
   final Color color;
 
   const ChannelHeaderTheme({
     this.title,
-    this.lastMessageAt,
+    this.subtitle,
     this.avatarTheme,
     this.color,
   });
 
   ChannelHeaderTheme copyWith({
     TextStyle title,
-    TextStyle lastMessageAt,
+    TextStyle subtitle,
     AvatarTheme avatarTheme,
     Color color,
   }) =>
       ChannelHeaderTheme(
         title: title ?? this.title,
-        lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+        subtitle: subtitle ?? this.subtitle,
         avatarTheme: avatarTheme ?? this.avatarTheme,
         color: color ?? this.color,
       );
@@ -841,8 +875,48 @@ class ChannelHeaderTheme {
     if (other == null) return this;
     return copyWith(
       title: title?.merge(other.title) ?? other.title,
-      lastMessageAt:
-          lastMessageAt?.merge(other.lastMessageAt) ?? other.lastMessageAt,
+      subtitle: subtitle?.merge(other.subtitle) ?? other.subtitle,
+      avatarTheme: avatarTheme?.merge(other.avatarTheme) ?? other.avatarTheme,
+      color: other.color,
+    );
+  }
+}
+
+/// Theme dedicated to the [ChannelListHeader]
+class ChannelListHeaderTheme {
+  /// Style of the title text
+  final TextStyle title;
+
+  /// Theme dedicated to the userAvatar
+  final AvatarTheme avatarTheme;
+
+  /// Background color of the appbar
+  final Color color;
+
+  /// Returns a new [ChannelListHeaderTheme]
+  const ChannelListHeaderTheme({
+    this.title,
+    this.avatarTheme,
+    this.color,
+  });
+
+  /// Returns a new [ChannelListHeaderTheme] replacing some of its properties
+  ChannelListHeaderTheme copyWith({
+    TextStyle title,
+    AvatarTheme avatarTheme,
+    Color color,
+  }) =>
+      ChannelListHeaderTheme(
+        title: title ?? this.title,
+        avatarTheme: avatarTheme ?? this.avatarTheme,
+        color: color ?? this.color,
+      );
+
+  /// Merges [this] [ChannelListHeaderTheme] with the [other]
+  ChannelListHeaderTheme merge(ChannelListHeaderTheme other) {
+    if (other == null) return this;
+    return copyWith(
+      title: title?.merge(other.title) ?? other.title,
       avatarTheme: avatarTheme?.merge(other.avatarTheme) ?? other.avatarTheme,
       color: other.color,
     );
@@ -866,8 +940,26 @@ class MessageInputTheme {
   /// Background color of [MessageInput] action buttons
   final Color actionButtonIdleColor;
 
+  /// Background color of [MessageInput] expand button
+  final Color expandButtonColor;
+
   /// Background color of [MessageInput]
   final Color inputBackground;
+
+  /// TextStyle of [MessageInput]
+  final TextStyle inputTextStyle;
+
+  /// InputDecoration of [MessageInput]
+  final InputDecoration inputDecoration;
+
+  /// Border gradient when the [MessageInput] is not focused
+  final Gradient idleBorderGradient;
+
+  /// Border gradient when the [MessageInput] is focused
+  final Gradient activeBorderGradient;
+
+  /// Border radius of [MessageInput]
+  final BorderRadius borderRadius;
 
   /// Returns a new [MessageInputTheme]
   const MessageInputTheme({
@@ -877,6 +969,12 @@ class MessageInputTheme {
     this.actionButtonIdleColor,
     this.sendButtonIdleColor,
     this.inputBackground,
+    this.inputTextStyle,
+    this.inputDecoration,
+    this.activeBorderGradient,
+    this.idleBorderGradient,
+    this.borderRadius,
+    this.expandButtonColor,
   });
 
   /// Returns a new [MessageInputTheme] replacing some of its properties
@@ -887,6 +985,12 @@ class MessageInputTheme {
     Color sendButtonColor,
     Color actionButtonIdleColor,
     Color sendButtonIdleColor,
+    Color expandButtonColor,
+    TextStyle inputTextStyle,
+    InputDecoration inputDecoration,
+    Gradient activeBorderGradient,
+    Gradient idleBorderGradient,
+    BorderRadius borderRadius,
   }) =>
       MessageInputTheme(
         sendAnimationDuration:
@@ -896,7 +1000,13 @@ class MessageInputTheme {
         sendButtonColor: sendButtonColor ?? this.sendButtonColor,
         actionButtonIdleColor:
             actionButtonIdleColor ?? this.actionButtonIdleColor,
+        expandButtonColor: expandButtonColor ?? this.expandButtonColor,
+        inputTextStyle: inputTextStyle ?? this.inputTextStyle,
         sendButtonIdleColor: sendButtonIdleColor ?? this.sendButtonIdleColor,
+        inputDecoration: inputDecoration ?? this.inputDecoration,
+        activeBorderGradient: activeBorderGradient ?? this.activeBorderGradient,
+        idleBorderGradient: idleBorderGradient ?? this.idleBorderGradient,
+        borderRadius: borderRadius ?? this.borderRadius,
       );
 
   /// Merges [this] [MessageInputTheme] with the [other]
@@ -909,6 +1019,13 @@ class MessageInputTheme {
       actionButtonIdleColor: other.actionButtonIdleColor,
       sendButtonColor: other.sendButtonColor,
       sendButtonIdleColor: other.sendButtonIdleColor,
+      inputTextStyle: other.inputTextStyle,
+      inputDecoration: inputDecoration?.merge(other.inputDecoration) ??
+          other.inputDecoration,
+      activeBorderGradient: other.activeBorderGradient,
+      idleBorderGradient: other.idleBorderGradient,
+      borderRadius: other.borderRadius,
+      expandButtonColor: other.expandButtonColor,
     );
   }
 }

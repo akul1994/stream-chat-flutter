@@ -1,3 +1,15 @@
+## 1.5.3
+
+- fix: `StreamChatClient.connect` returns quicker when you're using the persistence package
+
+## 1.5.2
+
+- fix: `queryChannels` should throw exceptions only if no data is present in cache.
+
+## 1.5.1
+
+- Minor fixes and improvements
+
 ## 1.5.0
 
 - Minor fixes and improvements
