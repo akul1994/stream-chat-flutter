@@ -522,10 +522,13 @@ class ColorTheme {
     this.highlight = const Color(0xfffbf4dd),
     this.overlay = const Color.fromRGBO(0, 0, 0, 0.2),
     this.overlayDark = const Color.fromRGBO(0, 0, 0, 0.6),
-    this.bgGradient = const LinearGradient(
+    this.bgGradient =  const LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Color(0xfff7f7f7), Color(0xfffcfcfc)],
+      colors: [
+        Color(0xff101214),
+        Color(0xff070a0d),
+      ],
       stops: [0, 1],
     ),
     this.borderTop = const Effect(

@@ -57,7 +57,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      vsync: this,
+      // vsync: this,
       duration: Duration(milliseconds: 300),
     );
     _pageController = PageController(initialPage: widget.startIndex);
@@ -244,7 +244,7 @@ class VideoPackage {
 
   ChewieController get chewieController => _chewieController;
 
-  bool get initialized => _videoPlayerController.value.isInitialized;
+  bool get initialized => _videoPlayerController.value.initialized;
 
   VideoPackage(
     Attachment attachment, {

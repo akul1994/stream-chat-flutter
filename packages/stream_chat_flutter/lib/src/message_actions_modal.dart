@@ -36,6 +36,7 @@ class MessageActionsModal extends StatefulWidget {
   final ShapeBorder messageShape;
   final ShapeBorder attachmentShape;
   final DisplayWidget showUserAvatar;
+  final BorderRadius attachmentBorderRadiusGeometry;
 
   final bool showMarkAsTrade;
 
@@ -61,7 +62,7 @@ class MessageActionsModal extends StatefulWidget {
     this.attachmentShape,
     this.reverse = false,
     this.showMarkAsTrade = true,
-    this.customActions,
+    this.customActions, this.attachmentBorderRadiusGeometry,
   }) : super(key: key);
 
   @override

@@ -58,7 +58,6 @@ extension InputDecorationX on InputDecoration {
       helperMaxLines: other?.helperMaxLines,
       hintText: other?.hintText,
       hintStyle: hintStyle?.merge(other.hintStyle) ?? other.hintStyle,
-      hintTextDirection: other?.hintTextDirection,
       hintMaxLines: other?.hintMaxLines,
       errorText: other?.errorText,
       errorStyle: errorStyle?.merge(other.errorStyle) ?? other.errorStyle,
@@ -100,5 +99,5 @@ extension InputDecorationX on InputDecoration {
 
 extension BuildContextX on BuildContext {
   double get textScaleFactor =>
-      MediaQuery.maybeOf(this)?.textScaleFactor ?? 1.0;
+      MediaQuery.of(this)?.textScaleFactor ?? 1.0;
 }

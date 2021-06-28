@@ -14,6 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:stream_chat_flutter/src/media_list_view.dart';
 import 'package:stream_chat_flutter/src/message_list_view.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
@@ -1262,7 +1263,7 @@ class MessageInputState extends State<MessageInput> {
                                                 .substring(textEditingController
                                                     .selection.start),
                                         selection: TextSelection.collapsed(
-                                          offset: rejoin.length,
+                                          //offset: rejoin.length,
                                         ),
                                       );
                                       _debounce.cancel();
@@ -1408,7 +1409,7 @@ class MessageInputState extends State<MessageInput> {
           textEditingController.text
               .substring(textEditingController.selection.start),
       selection: TextSelection.collapsed(
-        offset: rejoin.length,
+        //offset: rejoin.length,
       ),
     );
 
