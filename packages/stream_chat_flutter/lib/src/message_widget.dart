@@ -765,7 +765,7 @@ class _MessageWidgetState extends State<MessageWidget>
           Jiffy(widget.message.createdAt.toLocal()).jm,
           style: widget.messageTheme.createdAt,
         ),
-      if (showSendingIndicator) _buildSendingIndicator(),
+     // if (showSendingIndicator) _buildSendingIndicator(),
     ]);
 
     final showThreadTail = !(hasUrlAttachments || isGiphy || isOnlyEmoji) &&
@@ -804,7 +804,7 @@ class _MessageWidgetState extends State<MessageWidget>
             return mappedChild;
           },
         ),
-      ].insertBetween(const SizedBox(width: 8.0)),
+      ].insertBetween(const SizedBox(width: 0.0)),
     );
   }
 

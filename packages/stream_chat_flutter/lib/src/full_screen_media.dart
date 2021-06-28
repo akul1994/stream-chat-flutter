@@ -57,7 +57,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      // vsync: this,
+      vsync: this,
       duration: Duration(milliseconds: 300),
     );
     _pageController = PageController(initialPage: widget.startIndex);

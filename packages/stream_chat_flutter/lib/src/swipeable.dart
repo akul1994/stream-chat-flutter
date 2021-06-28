@@ -42,9 +42,9 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _moveController =
-        AnimationController(duration: _animationDuration, );
+        AnimationController(duration: _animationDuration,vsync : this );
     _iconMoveController =
-        AnimationController(duration: _animationDuration, );
+        AnimationController(duration: _animationDuration,vsync : this  );
     _moveAnimation = Tween<Offset>(begin: Offset.zero, end: Offset(1.0, 0.0))
         .animate(_moveController);
     _iconTransitionAnimation =
