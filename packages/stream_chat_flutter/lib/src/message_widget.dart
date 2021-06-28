@@ -454,7 +454,9 @@ class _MessageWidgetState extends State<MessageWidget>
       child: Portal(
         child: InkWell(
           onTap: () {
-            widget.onMessageTap(widget.message);
+            if(widget.onMessageTap!=null) {
+              widget.onMessageTap(widget.message);
+            }
           },
           onLongPress: widget.message.isDeleted && !isFailedState
               ? null
