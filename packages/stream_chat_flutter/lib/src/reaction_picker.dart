@@ -332,7 +332,7 @@ class _ReactionPickerState extends State<ReactionPicker>
     StreamChannel.of(context).channel.sendReaction(
           widget.message,
           reactionType,
-          enforceUnique: true,
+          enforceUnique: false,
         );
     pop();
   }

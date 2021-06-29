@@ -12,6 +12,7 @@ import 'package:stream_chat_flutter/src/message_actions_modal.dart';
 import 'package:stream_chat_flutter/src/message_reactions_modal.dart';
 import 'package:stream_chat_flutter/src/quoted_message_widget.dart';
 import 'package:stream_chat_flutter/src/reaction_bubble.dart';
+import 'package:stream_chat_flutter/src/reaction_bubble_custom.dart';
 import 'package:stream_chat_flutter/src/url_attachment.dart';
 import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 import 'package:stream_chat_flutter/src/utils/data_keys.dart';
@@ -454,9 +455,9 @@ class _MessageWidgetState extends State<MessageWidget>
       child: Portal(
         child: InkWell(
           onTap: () {
-            if(widget.onMessageTap!=null) {
-              widget.onMessageTap(widget.message);
-            }
+            // if(widget.onMessageTap!=null) {
+            //   widget.onMessageTap(widget.message);
+            // }
           },
           onLongPress: widget.message.isDeleted && !isFailedState
               ? null
@@ -494,141 +495,118 @@ class _MessageWidgetState extends State<MessageWidget>
                                 // if (widget.showUserAvatar == DisplayWidget.hide)
                                 //   SizedBox(width: avatarWidth + 4),
                                 Flexible(
-                                  child: PortalEntry(
-                                    portal: Container(
-                                      transform:
-                                          Matrix4.translationValues(-12, 0, 0),
-                                      constraints:
-                                          BoxConstraints(maxWidth: 22 * 6.0),
-                                      child: _buildReactionIndicator(context),
-                                    ),
-                                    portalAnchor: Alignment(-1.0, -1.0),
-                                    childAnchor: Alignment(1, -1.0),
-                                    child: Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Padding(
-                                          padding: widget.showReactions
-                                              ? EdgeInsets.only(
-                                                  top: widget
-                                                              .message
-                                                              .reactionCounts
-                                                              ?.isNotEmpty ==
-                                                          true
-                                                      ? 18
-                                                      : 0,
-                                                )
-                                              : EdgeInsets.zero,
-                                          child: (widget.message.isDeleted &&
-                                                  !isFailedState)
-                                              ? Transform(
-                                                  alignment: Alignment.center,
-                                                  transform: Matrix4.rotationY(
-                                                      widget.reverse ? pi : 0),
-                                                  child: Container(
-                                                    margin: EdgeInsets.symmetric(
-                                                        horizontal:
-                                                            widget.showUserAvatar ==
-                                                                    DisplayWidget
-                                                                        .gone
-                                                                ? 0
-                                                                : 4.0),
-                                                    child: DeletedMessage(
-                                                      reverse: widget.reverse,
-                                                      borderRadiusGeometry: widget
-                                                          .borderRadiusGeometry,
-                                                      borderSide:
-                                                          widget.borderSide,
-                                                      shape: widget.shape,
-                                                      messageTheme:
-                                                          widget.messageTheme,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Container(
-                                                  margin: EdgeInsets.symmetric(
-                                                      horizontal: (isFailedState
-                                                          ? 15.0
-                                                          : 0.0)),
-                                                  decoration:
-                                                      StreamUiUtils.cardShadow(
-                                                          _getBackgroundColor()),
-                                                  child: ClipPath(
-                                                    clipper: ShapeBorderClipper(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8)))),
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(bottom: 16),
-                                                      decoration: StreamUiUtils
-                                                          .getMsgBubbleDecor(
-                                                              reverse, isCall),
-                                                      child: Column(
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      (widget.message.isDeleted &&
+                                              !isFailedState)
+                                          ? Transform(
+                                              alignment: Alignment.center,
+                                              transform: Matrix4.rotationY(
+                                                  widget.reverse ? pi : 0),
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        widget.showUserAvatar ==
+                                                                DisplayWidget
+                                                                    .gone
+                                                            ? 0
+                                                            : 4.0),
+                                                child: DeletedMessage(
+                                                  reverse: widget.reverse,
+                                                  borderRadiusGeometry: widget
+                                                      .borderRadiusGeometry,
+                                                  borderSide:
+                                                      widget.borderSide,
+                                                  shape: widget.shape,
+                                                  messageTheme:
+                                                      widget.messageTheme,
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: (isFailedState
+                                                      ? 15.0
+                                                      : 0.0)),
+                                              decoration:
+                                                  StreamUiUtils.cardShadow(
+                                                      _getBackgroundColor()),
+                                              child: ClipPath(
+                                                clipper: ShapeBorderClipper(
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .all(Radius
+                                                                    .circular(
+                                                                        8)))),
+                                                child: Container(
+                                                  padding: EdgeInsets.only(bottom: 16),
+                                                  decoration: StreamUiUtils
+                                                      .getMsgBubbleDecor(
+                                                          reverse, isCall),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      if (widget
+                                                              .showUserAvatar ==
+                                                          DisplayWidget
+                                                              .show)
+                                                        _buildUserAvatar2(),
+                                                      // if (hasQuotedMessage)
+                                                      //   _buildQuotedMessage(),
+                                                      // if (hasNonUrlAttachments)
+                                                      //   _parseAttachments(),
+                                                      Column(
                                                         crossAxisAlignment:
+                                                            widget.reverse ?
+                                                            CrossAxisAlignment
+                                                                .end :
                                                             CrossAxisAlignment
                                                                 .start,
                                                         mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          if (widget
-                                                                  .showUserAvatar ==
-                                                              DisplayWidget
-                                                                  .show)
-                                                            _buildUserAvatar2(),
-                                                          // if (hasQuotedMessage)
-                                                          //   _buildQuotedMessage(),
-                                                          // if (hasNonUrlAttachments)
-                                                          //   _parseAttachments(),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                widget.reverse ?
-                                                                CrossAxisAlignment
-                                                                    .end :
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              if (hasQuotedMessage)
-                                                                _buildQuotedMessage(),
-                                                              if (hasNonUrlAttachments)
-                                                                _parseAttachments(),
-                                                              if (!isGiphy)
-                                                                _buildTextBubble(),
-                                                            ],
-                                                          ),
-                                                         // SizedBox(height: 6,)
+                                                            MainAxisSize
+                                                                .min,
+                                                        children: <Widget>[
+                                                          if (hasQuotedMessage)
+                                                            _buildQuotedMessage(),
+                                                          if (hasNonUrlAttachments)
+                                                            _parseAttachments(),
+                                                          if (!isGiphy)
+                                                            _buildTextBubble(),
+
                                                         ],
                                                       ),
-                                                    ),
+                                                     // SizedBox(height: 6,)
+                                                    ],
                                                   ),
-                                                ),
-                                        ),
-                                        if (widget.showReactionPickerIndicator)
-                                          Positioned(
-                                            right: 4,
-                                            top: -8,
-                                            child: Transform(
-                                              transform: Matrix4.rotationY(
-                                                  widget.reverse ? pi : 0),
-                                              child: CustomPaint(
-                                                painter: ReactionBubblePainter(
-                                                  StreamChatTheme.of(context)
-                                                      .colorTheme
-                                                      .white,
-                                                  Colors.transparent,
-                                                  Colors.transparent,
-                                                  tailCirclesSpace: 1,
                                                 ),
                                               ),
                                             ),
+                                      if (widget.showReactionPickerIndicator)
+                                        Positioned(
+                                          right: 4,
+                                          top: -8,
+                                          child: Transform(
+                                            transform: Matrix4.rotationY(
+                                                widget.reverse ? pi : 0),
+                                            child: CustomPaint(
+                                              painter: ReactionBubblePainter(
+                                                StreamChatTheme.of(context)
+                                                    .colorTheme
+                                                    .white,
+                                                Colors.transparent,
+                                                Colors.transparent,
+                                                tailCirclesSpace: 1,
+                                              ),
+                                            ),
                                           ),
-                                      ],
-                                    ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -655,6 +633,14 @@ class _MessageWidgetState extends State<MessageWidget>
                             bottom: showBottomRow ? 18 : -2,
                             child: StreamSvgIcon.error(size: 20),
                           ),
+                        Positioned(
+                            left: reverse ? null : !isCall ? 64 : 108,
+                          //  left: reverse ? !isCall ? 0 : 12 : null,
+                            //right: -32,
+                            //right: reverse ? null : !isCall ? 64 : 32,
+                            right: !reverse ? null : !isCall ? 0 : 0,
+                            bottom: -26,
+                            child: _buildReactionIndicator(context)),
                       ],
                     ),
                   ],
@@ -874,7 +860,10 @@ class _MessageWidgetState extends State<MessageWidget>
               !widget.message.isDeleted)
           ? GestureDetector(
               onTap: () => _showMessageReactionsModalBottomSheet(context),
-              child: ReactionBubble(
+              child: ReactionBubbleCustom(
+                onTap: (reaction) {
+                  _showMessageReactionsModalBottomSheet(context);
+                },
                 key: ValueKey('${widget.message.id}.reactions'),
                 reverse: widget.reverse,
                 flipTail: widget.reverse,
@@ -882,6 +871,7 @@ class _MessageWidgetState extends State<MessageWidget>
                 borderColor: widget.messageTheme.reactionsBorderColor,
                 maskColor: widget.messageTheme.reactionsMaskColor,
                 reactions: reactionsList,
+                reactionScores: widget.message.reactionScores,
               ),
             )
           : SizedBox(),
