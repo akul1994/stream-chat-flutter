@@ -459,6 +459,34 @@ class _MessageWidgetState extends State<MessageWidget>
             //   widget.onMessageTap(widget.message);
             // }
           },
+          onDoubleTap: () {
+            try {
+              final reactionIcons = StreamChatTheme.of(context).reactionIcons;
+              Reaction reaction;
+              try {
+                if (widget.message.ownReactions != null) {
+                  reaction = widget.message?.ownReactions?.firstWhere(
+                      (element) => element.type == reactionIcons[0].type);
+                }
+              } catch (e, s) {}
+              if (reaction == null) {
+                StreamChannel.of(context).channel.sendReaction(
+                      widget.message,
+                      reactionIcons[0].type,
+                      enforceUnique: false,
+                    );
+              } else if (widget.message.reactionCounts
+                      ?.containsKey(reaction?.type) ==
+                  true) {
+                StreamChannel.of(context).channel.deleteReaction(
+                      widget.message,
+                      reaction,
+                    );
+              }
+            } catch (e, s) {
+              print(e);
+            }
+          },
           onLongPress: widget.message.isDeleted && !isFailedState
               ? null
               : () => onLongPress(context),
@@ -497,14 +525,18 @@ class _MessageWidgetState extends State<MessageWidget>
                                 Flexible(
                                   child: PortalEntry(
                                     portal: Container(
-                                      transform:
-                                      Matrix4.translationValues(!reverse ? 0 : 0, 22, 0),
+                                      transform: Matrix4.translationValues(
+                                          !reverse ? 0 : 0, 22, 0),
                                       // constraints:
                                       // BoxConstraints(maxWidth: 22 * 6.0),
                                       child: _buildReactionIndicator(context),
                                     ),
-                                    portalAnchor: reverse ? Alignment.bottomRight : Alignment.bottomLeft,
-                                    childAnchor: reverse ? Alignment.bottomRight : Alignment.bottomLeft,
+                                    portalAnchor: reverse
+                                        ? Alignment.bottomRight
+                                        : Alignment.bottomLeft,
+                                    childAnchor: reverse
+                                        ? Alignment.bottomRight
+                                        : Alignment.bottomLeft,
                                     // portalAnchor: Alignment.bottomLeft,
                                     // childAnchor:  Alignment.bottomRight,
                                     child: Stack(
@@ -548,12 +580,13 @@ class _MessageWidgetState extends State<MessageWidget>
                                                   clipper: ShapeBorderClipper(
                                                       shape: RoundedRectangleBorder(
                                                           borderRadius:
-                                                              BorderRadius
-                                                                  .all(Radius
+                                                              BorderRadius.all(
+                                                                  Radius
                                                                       .circular(
                                                                           8)))),
                                                   child: Container(
-                                                    padding: EdgeInsets.only(bottom: 16),
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 16),
                                                     decoration: StreamUiUtils
                                                         .getMsgBubbleDecor(
                                                             reverse, isCall),
@@ -566,23 +599,21 @@ class _MessageWidgetState extends State<MessageWidget>
                                                       children: [
                                                         if (widget
                                                                 .showUserAvatar ==
-                                                            DisplayWidget
-                                                                .show)
+                                                            DisplayWidget.show)
                                                           _buildUserAvatar2(),
                                                         // if (hasQuotedMessage)
                                                         //   _buildQuotedMessage(),
                                                         // if (hasNonUrlAttachments)
                                                         //   _parseAttachments(),
                                                         Column(
-                                                          crossAxisAlignment:
-                                                              widget.reverse ?
-                                                              CrossAxisAlignment
-                                                                  .end :
-                                                              CrossAxisAlignment
+                                                          crossAxisAlignment: widget
+                                                                  .reverse
+                                                              ? CrossAxisAlignment
+                                                                  .end
+                                                              : CrossAxisAlignment
                                                                   .start,
                                                           mainAxisSize:
-                                                              MainAxisSize
-                                                                  .min,
+                                                              MainAxisSize.min,
                                                           children: <Widget>[
                                                             if (hasQuotedMessage)
                                                               _buildQuotedMessage(),
@@ -590,10 +621,9 @@ class _MessageWidgetState extends State<MessageWidget>
                                                               _parseAttachments(),
                                                             if (!isGiphy)
                                                               _buildTextBubble(),
-
                                                           ],
                                                         ),
-                                                       // SizedBox(height: 6,)
+                                                        // SizedBox(height: 6,)
                                                       ],
                                                     ),
                                                   ),
@@ -628,12 +658,20 @@ class _MessageWidgetState extends State<MessageWidget>
                               SizedBox(height: 16.0),
                           ],
                         ),
-                        if(!isDeleted && showBottomRow)
-                        Positioned(
-                            right: reverse ? null : !isCall ? 4 : 12,
-                            left: reverse ? !isCall ? 4 : 12 : null,
-                            bottom: 3,
-                            child: _bottomRow),
+                        if (!isDeleted && showBottomRow)
+                          Positioned(
+                              right: reverse
+                                  ? null
+                                  : !isCall
+                                      ? 4
+                                      : 12,
+                              left: reverse
+                                  ? !isCall
+                                      ? 4
+                                      : 12
+                                  : null,
+                              bottom: 3,
+                              child: _bottomRow),
                         if (isDeleted)
                           Padding(
                             padding: EdgeInsets.only(left: leftPadding),
@@ -766,7 +804,7 @@ class _MessageWidgetState extends State<MessageWidget>
           Jiffy(widget.message.createdAt.toLocal()).jm,
           style: widget.messageTheme.createdAt,
         ),
-     // if (showSendingIndicator) _buildSendingIndicator(),
+      // if (showSendingIndicator) _buildSendingIndicator(),
     ]);
 
     final showThreadTail = !(hasUrlAttachments || isGiphy || isOnlyEmoji) &&
@@ -902,7 +940,7 @@ class _MessageWidgetState extends State<MessageWidget>
             channel: channel,
             child: MessageActionsModal(
               attachmentBorderRadiusGeometry:
-              widget.attachmentBorderRadiusGeometry,
+                  widget.attachmentBorderRadiusGeometry,
               showUserAvatar: widget.showUserAvatar,
               messageTheme: widget.messageTheme,
               messageShape: widget.shape ?? _getDefaultShape(context),
@@ -1092,9 +1130,7 @@ class _MessageWidgetState extends State<MessageWidget>
         ],
       );
     }
-    return Padding(
-        padding: EdgeInsets.only(bottom: 2),
-        child: child);
+    return Padding(padding: EdgeInsets.only(bottom: 2), child: child);
   }
 
   Widget _buildUserAvatar() => Transform(
