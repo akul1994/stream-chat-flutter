@@ -498,13 +498,13 @@ class _MessageWidgetState extends State<MessageWidget>
                                   child: PortalEntry(
                                     portal: Container(
                                       transform:
-                                      Matrix4.translationValues(!reverse ? 48 : 0, 24, 0),
-                                      constraints:
-                                      BoxConstraints(maxWidth: 22 * 6.0),
+                                      Matrix4.translationValues(!reverse ? 0 : 0, 22, 0),
+                                      // constraints:
+                                      // BoxConstraints(maxWidth: 22 * 6.0),
                                       child: _buildReactionIndicator(context),
                                     ),
-                                    portalAnchor: Alignment.bottomLeft,
-                                    childAnchor:  Alignment.bottomLeft,
+                                    portalAnchor: reverse ? Alignment.bottomRight : Alignment.bottomLeft,
+                                    childAnchor: reverse ? Alignment.bottomRight : Alignment.bottomLeft,
                                     // portalAnchor: Alignment.bottomLeft,
                                     // childAnchor:  Alignment.bottomRight,
                                     child: Stack(
