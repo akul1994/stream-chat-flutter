@@ -206,7 +206,6 @@ class MessageInput extends StatefulWidget {
 
   final List<SharedMediaFile> sharedMedia;
 
-
   /// Customize the tile for the mentions overlay
   final MentionTileBuilder mentionsTileBuilder;
 
@@ -455,32 +454,45 @@ class MessageInputState extends State<MessageInput> {
   }
 
   Widget _animateSendButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 2, 0, 2),
-      child: AnimatedCrossFade(
-        crossFadeState: (_messageIsPresent || _attachments.isNotEmpty)
-            ? CrossFadeState.showFirst
-            : CrossFadeState.showSecond,
-        firstChild: _buildSendButton(context),
-        secondChild: _buildIdleSendButton(context),
-        duration:
-            StreamChatTheme.of(context).messageInputTheme.sendAnimationDuration,
-        alignment: Alignment.center,
-      ),
-    );
+    final sendButton = widget.activeSendButton != null
+        ? InkWell(
+            onTap: sendMessage,
+            child: widget.activeSendButton,
+          )
+        : _buildSendButton(context);
+    return sendButton;
+    // return AnimatedCrossFade(
+    //   crossFadeState: (_messageIsPresent || _attachments.isNotEmpty)
+    //       ? CrossFadeState.showFirst
+    //       : CrossFadeState.showSecond,
+    //   firstChild: sendButton,
+    //   secondChild: widget.idleSendButton ?? _buildIdleSendButton(context),
+    //   duration:
+    //   StreamChatTheme.of(context).messageInputTheme.sendAnimationDuration,
+    //   alignment: Alignment.center,
+    // );
   }
 
   Widget _buildExpandActionsButton() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: AnimatedCrossFade(
         crossFadeState: _actionsShrunk
             ? CrossFadeState.showFirst
             : CrossFadeState.showSecond,
         firstChild: IconButton(
           onPressed: () => setState(() => _actionsShrunk = false),
-          icon: StreamSvgIcon.emptyCircleLeft(
-            color: StreamChatTheme.of(context).colorTheme.accentBlue,
+          icon: Transform.rotate(
+            alignment: Alignment.center,
+            angle: (widget.actionsLocation == ActionsLocation.right ||
+                    widget.actionsLocation == ActionsLocation.rightInside)
+                ? pi
+                : 0,
+            child: StreamSvgIcon.emptyCircleLeft(
+              color: StreamChatTheme.of(context)
+                  .messageInputTheme
+                  .expandButtonColor,
+            ),
           ),
           padding: const EdgeInsets.all(0),
           constraints: BoxConstraints.tightFor(
@@ -491,10 +503,12 @@ class MessageInputState extends State<MessageInput> {
         ),
         secondChild: FittedBox(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+            children: <Widget>[
               if (!widget.disableAttachments) _buildAttachmentButton(),
-              if (widget.editMessage == null &&
+              if (widget.showCommandsButton &&
+                  widget.editMessage == null &&
                   StreamChannel.of(context)
                           .channel
                           ?.config
@@ -502,6 +516,7 @@ class MessageInputState extends State<MessageInput> {
                           ?.isNotEmpty ==
                       true)
                 _buildCommandButton(),
+              ...widget.actions ?? [],
             ].insertBetween(const SizedBox(width: 8)),
           ),
         ),
@@ -512,6 +527,177 @@ class MessageInputState extends State<MessageInput> {
   }
 
   Expanded _buildTextInput(BuildContext context) {
+    final theme = StreamChatTheme.of(context);
+    final margin = (widget.sendButtonLocation == SendButtonLocation.inside
+            ? const EdgeInsets.only(right: 8.0)
+            : EdgeInsets.zero) +
+        (widget.actionsLocation != ActionsLocation.left
+            ? const EdgeInsets.only(left: 8.0)
+            : EdgeInsets.zero);
+    return Expanded(
+      child: Center(
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          margin: margin,
+          decoration: BoxDecoration(
+            borderRadius: theme.messageInputTheme.borderRadius,
+            gradient: _focusNode.hasFocus
+                ? theme.messageInputTheme.activeBorderGradient
+                : theme.messageInputTheme.idleBorderGradient,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(1.5),
+            child: Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: theme.messageInputTheme.borderRadius,
+                color: theme.messageInputTheme.inputBackground,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildReplyToMessage(),
+                  _buildAttachments(),
+                  LimitedBox(
+                    maxHeight: widget.maxHeight,
+                    child: TextField(
+                      key: Key('messageInputText'),
+                      enabled: _inputEnabled,
+                      minLines: null,
+                      maxLines: null,
+                      onSubmitted: (_) => sendMessage(),
+                      keyboardType: widget.keyboardType,
+                      controller: textEditingController,
+                      focusNode: _focusNode,
+                      style: theme.messageInputTheme.inputTextStyle,
+                      autofocus: widget.autofocus,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: _getInputDecoration(),
+                      textCapitalization: TextCapitalization.sentences,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _getInputDecoration() {
+    final theme = StreamChatTheme.of(context);
+    final passedDecoration = theme.messageInputTheme.inputDecoration;
+    return InputDecoration(
+      isDense: true,
+      hintText: _getHint(),
+      hintStyle: theme.messageInputTheme.inputTextStyle.copyWith(
+        color: theme.colorTheme.grey,
+      ),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+        ),
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(16, 12, 13, 11),
+      prefixIcon: _commandEnabled
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    constraints: BoxConstraints.tight(Size(64, 24)),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: theme.colorTheme.accentBlue,
+                    ),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        StreamSvgIcon.lightning(
+                          color: Colors.white,
+                          size: 16.0,
+                        ),
+                        Text(
+                          _chosenCommand?.name?.toUpperCase() ?? '',
+                          style: StreamChatTheme.of(context)
+                              .textTheme
+                              .footnoteBold
+                              .copyWith(
+                                color: Colors.white,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : (widget.actionsLocation == ActionsLocation.leftInside
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildExpandActionsButton(),
+                  ],
+                )
+              : null),
+      suffixIconConstraints: BoxConstraints.tightFor(height: 40),
+      prefixIconConstraints: BoxConstraints.tightFor(height: 40),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (_commandEnabled)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: IconButton(
+                icon: StreamSvgIcon.closeSmall(),
+                splashRadius: 24,
+                padding: const EdgeInsets.all(0),
+                constraints: BoxConstraints.tightFor(
+                  height: 24,
+                  width: 24,
+                ),
+                onPressed: () {
+                  setState(() => _commandEnabled = false);
+                },
+              ),
+            ),
+          if (!_commandEnabled &&
+              widget.actionsLocation == ActionsLocation.rightInside)
+            _buildExpandActionsButton(),
+          if (widget.sendButtonLocation == SendButtonLocation.inside)
+            _animateSendButton(context),
+        ],
+      ),
+    ).merge(passedDecoration);
+  }
+
+  /*Expanded _buildTextInput(BuildContext context) {
     final theme = StreamChatTheme.of(context);
     final margin = (widget.sendButtonLocation == SendButtonLocation.inside
             ? const EdgeInsets.only(right: 8.0)
@@ -618,7 +804,7 @@ class MessageInputState extends State<MessageInput> {
         ),
       ),
     );
-  }
+  }*/
 
   Timer _debounce;
 
@@ -645,7 +831,9 @@ class MessageInputState extends State<MessageInput> {
               ((widget.actions?.length ?? 0) +
                       (widget.showCommandsButton ? 1 : 0) +
                       (widget.disableAttachments ? 0 : 1) >
-                  1);
+                  1) &&
+              StreamChannel.of(context).channel?.config?.commands?.isNotEmpty ==
+                  true;
         });
 
         _commandsOverlay?.remove();
@@ -1263,8 +1451,8 @@ class MessageInputState extends State<MessageInput> {
                                                 .substring(textEditingController
                                                     .selection.start),
                                         selection: TextSelection.collapsed(
-                                          //offset: rejoin.length,
-                                        ),
+                                            //offset: rejoin.length,
+                                            ),
                                       );
                                       _debounce.cancel();
                                       _mentionsOverlay?.remove();
@@ -1409,8 +1597,8 @@ class MessageInputState extends State<MessageInput> {
           textEditingController.text
               .substring(textEditingController.selection.start),
       selection: TextSelection.collapsed(
-        //offset: rejoin.length,
-      ),
+          //offset: rejoin.length,
+          ),
     );
 
     _emojiOverlay?.remove();
@@ -1921,17 +2109,14 @@ class MessageInputState extends State<MessageInput> {
   }
 
   Future<void> addSharedIntentFile(List<SharedMediaFile> sharedMedia) async {
-
-    await Future.forEach(sharedMedia,(element) async {
-      var up = File(
-          element.path);
+    await Future.forEach(sharedMedia, (element) async {
+      var up = File(element.path);
 
       var size = await up.length();
 
       Uint8List bytes;
 
       bytes = await up.readAsBytes();
-
 
       var fileName = up.path.split('/').last;
 
@@ -1944,9 +2129,7 @@ class MessageInputState extends State<MessageInput> {
 
       String type;
 
-      switch(element.type)
-      {
-
+      switch (element.type) {
         case SharedMediaType.IMAGE:
           type = 'image';
           break;
@@ -1960,10 +2143,6 @@ class MessageInputState extends State<MessageInput> {
 
       await handleFiles(file, type, true);
     });
-
-
-
-
   }
 
   Future<void> handleFiles(AttachmentFile file, String attachmentType,
@@ -2037,11 +2216,15 @@ class MessageInputState extends State<MessageInput> {
   }
 
   Widget _buildIdleSendButton(BuildContext context) {
-    return StreamSvgIcon(
-      height: 50,
-      width: 50,
-      assetName: _getIdleSendIcon(),
-      color: StreamChatTheme.of(context).messageInputTheme.sendButtonIdleColor,
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: StreamSvgIcon(
+        height: 50,
+        width: 50,
+        assetName: _getIdleSendIcon(),
+        color:
+            StreamChatTheme.of(context).messageInputTheme.sendButtonIdleColor,
+      ),
     );
   }
 
@@ -2051,7 +2234,7 @@ class MessageInputState extends State<MessageInput> {
       child: StreamSvgIcon(
         height: 50,
         width: 50,
-        assetName: _getSendIcon(),
+        assetName: _getIdleSendIcon(),
         color: StreamChatTheme.of(context).messageInputTheme.sendButtonColor,
       ),
     );
