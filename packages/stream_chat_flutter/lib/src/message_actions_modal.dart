@@ -158,15 +158,16 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                         MessageSendingStatus.sent ||
                                     widget.message.status == null))
                               Align(
-                                alignment: Alignment(
-                                    user.id == widget.message.user.id
-                                        ? (divFactor > 1.0
-                                            ? 0.0
-                                            : (1.0 - divFactor))
-                                        : (divFactor > 1.0
-                                            ? 0.0
-                                            : -(1.0 - divFactor)),
-                                    0.0),
+                                alignment: Alignment.topLeft,
+                                // alignment: Alignment(
+                                //     user.id == widget.message.user.id
+                                //         ? (divFactor > 1.0
+                                //             ? 0.0
+                                //             : (1.0 - divFactor))
+                                //         : (divFactor > 1.0
+                                //             ? 0.0
+                                //             : -(1.0 - divFactor)),
+                                //     0.0),
                                 child: ReactionPicker(
                                   message: widget.message,
                                   messageTheme: widget.messageTheme,

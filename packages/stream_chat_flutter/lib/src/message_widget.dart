@@ -634,11 +634,11 @@ class _MessageWidgetState extends State<MessageWidget>
                             child: StreamSvgIcon.error(size: 20),
                           ),
                         Positioned(
-                            left: reverse ? null : !isCall ? 64 : 108,
+                            left: reverse ? null : !isCall ? 64 : 90,
                           //  left: reverse ? !isCall ? 0 : 12 : null,
                             //right: -32,
                             //right: reverse ? null : !isCall ? 64 : 32,
-                            right: !reverse ? null : !isCall ? 0 : 0,
+                           // right: !reverse ? null : !isCall ? 0 : 0,
                             bottom: -26,
                             child: _buildReactionIndicator(context)),
                       ],

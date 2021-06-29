@@ -102,12 +102,12 @@ class ReactionBubbleCustom extends StatelessWidget {
 
     int count = getReactionScore(reaction.type);
 
-    return InkWell(
-      onTap: (){
-        onTap(reaction);
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2,vertical: 8),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 2,vertical: 8),
+      child: InkWell(
+        onTap: (){
+          onTap(reaction);
+        },
         child: Material(
           elevation: 1,
           borderRadius: BorderRadius.all(Radius.circular(14)),

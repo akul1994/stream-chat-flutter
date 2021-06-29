@@ -51,105 +51,70 @@ class _ReactionPickerState extends State<ReactionPicker>
     return Material(
       borderRadius: BorderRadius.circular(24),
       color: StreamChatTheme.of(context).colorTheme.white,
-      clipBehavior: Clip.hardEdge,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 8.0,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: reactionIcons
-              .map<Widget>((reactionIcon) {
-                final ownReactionIndex = widget.message.ownReactions
-                        ?.indexWhere(
-                            (reaction) => reaction.type == reactionIcon.type) ??
-                    -1;
-                var index = reactionIcons.indexOf(reactionIcon);
+     // clipBehavior: Clip.hardEdge,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: reactionIcons
+            .map<Widget>((reactionIcon) {
+              final ownReactionIndex = widget.message.ownReactions
+                      ?.indexWhere(
+                          (reaction) => reaction.type == reactionIcon.type) ??
+                  -1;
+              var index = reactionIcons.indexOf(reactionIcon);
 
-                var count = getReactionScore(reactionIcon.type);
+              var count = getReactionScore(reactionIcon.type);
 
-                return ConstrainedBox(
-                  constraints: BoxConstraints.tightFor(
-                    height: 24,
-                    width: 24,
-                  ),
-                  child: RawMaterialButton(
-                    elevation: 0,
-                    padding: const EdgeInsets.all(0),
-                    clipBehavior: Clip.none,
-                    shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    constraints: BoxConstraints.tightFor(
-                      height: 24,
-                      width: 24,
-                    ),
-                    child: Stack(
-                      children: [
-                        reactionIcon.emoji == null
-                            ? StreamSvgIcon(
-                                assetName: reactionIcon.assetName,
-                                width: 18,
-                                height: 18,
-                                color: MainAppColorHelper.orange(),
-                                // (!highlightOwnReactions ||
-                                //         reaction.user.id == StreamChat.of(context).user.id)
-                                //     ? StreamChatTheme.of(context).colorTheme.accentBlue
-                                //     : StreamChatTheme.of(context)
-                                //         .colorTheme
-                                //         .black
-                                //         .withOpacity(.5),
-                              )
-                            : Text(
-                                reactionIcon.emoji,
-                                style: TextStyle(fontSize: 16),
-                              ),
-                        Visibility(
-                          visible: count > 1 ? true : false,
-                          child: Positioned(
-                              left: 10,
-                              top: 9,
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(1.5),
-                                    child: Text(
-                                      count.toString(),
-                                      style: TextStyle(
-                                          fontSize: 8,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ))),
+              return Container(
+                width: 40,
+                height: 40,
+                //color : MainAppColorHelper.orange(),
+                child: RawMaterialButton(
+                  elevation: 0,
+                  padding: EdgeInsets.symmetric(horizontal: 8,vertical: 8),
+                 // clipBehavior: Clip.none,
+                  // shape: ContinuousRectangleBorder(
+                  //   borderRadius: BorderRadius.circular(16),
+                  // ),
+                  child: reactionIcon.emoji == null
+                      ? StreamSvgIcon(
+                          assetName: reactionIcon.assetName,
+                          width: 18,
+                          height: 18,
+                          color: MainAppColorHelper.orange(),
+                          // (!highlightOwnReactions ||
+                          //         reaction.user.id == StreamChat.of(context).user.id)
+                          //     ? StreamChatTheme.of(context).colorTheme.accentBlue
+                          //     : StreamChatTheme.of(context)
+                          //         .colorTheme
+                          //         .black
+                          //         .withOpacity(.5),
+                        )
+                      : Text(
+                          reactionIcon.emoji,
+                          style: TextStyle(fontSize: 16),
                         ),
-                      ],
-                    ),
-                    onPressed: () {
-                      if (ownReactionIndex != -1) {
-                        removeReaction(
-                          context,
-                          widget.message.ownReactions[ownReactionIndex],
-                        );
-                      } else {
-                        sendReaction(
-                          context,
-                          reactionIcon.type,
-                        );
-                      }
-                    },
-                  ),
-                );
-              })
-              .insertBetween(SizedBox(
-                width: 16,
-              ))
-              .toList(),
-        ),
+                  onPressed: () {
+                    if (ownReactionIndex != -1) {
+                      removeReaction(
+                        context,
+                        widget.message.ownReactions[ownReactionIndex],
+                      );
+                    } else {
+                      sendReaction(
+                        context,
+                        reactionIcon.type,
+                      );
+                    }
+                  },
+                ),
+              );
+            })
+            .insertBetween(SizedBox(
+              width: 0,
+            ))
+            .toList(),
       ),
     );
 
