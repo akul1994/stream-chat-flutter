@@ -65,9 +65,9 @@ class ReactionBubbleCustom extends StatelessWidget {
       alignment: Alignment.center,
       child: GestureDetector(
         onTap : (){onTap(reactions[0]);},
-        child: Material(
-            borderRadius: BorderRadius.circular(24),
-            color: MainAppColorHelper.greyNeutral7(),
+        child: Container(
+           // borderRadius: BorderRadius.circular(24),
+            // color: MainAppColorHelper.greyNeutral7(),
           child :
           Padding(
             padding: const EdgeInsets.symmetric(vertical : 4.0,horizontal: 4),
@@ -86,14 +86,14 @@ class ReactionBubbleCustom extends StatelessWidget {
                           context,
                         );
                       }).toList(),
-                    SizedBox(width: 2,),
-                    Text(
-                      totalReactionCount.toString(),
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black),
-                    ),
-                    SizedBox(width: 2,),
+                    // SizedBox(width: 2,),
+                    // Text(
+                    //   totalReactionCount.toString(),
+                    //   style: TextStyle(
+                    //       fontSize: 14,
+                    //       color: Colors.black),
+                    // ),
+                    // SizedBox(width: 2,),
                   ],
                 ),
           )
@@ -132,36 +132,51 @@ class ReactionBubbleCustom extends StatelessWidget {
       onTap: (){
         onTap(reaction);
       },
-      child: Container(
+      child: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: 2.0, vertical: 0
+            horizontal: 4.0,
         ),
-        child: reactionIcon != null
-            ? Row(children: [
+        child: Material(
+          elevation: 2,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 4.0, vertical: 2
+            ),
+            child: reactionIcon != null
+                ? Row(children: [
+                Text(
+                count.toString(),
+            style: TextStyle(
+                fontSize: 14,
+                color: Colors.black),
+            ),
+              SizedBox(width: 2),
+              reactionIcon.emoji == null
+                  ? StreamSvgIcon(
+                assetName: reactionIcon.assetName,
+                width: 18,
+                height: 18,
+                color: MainAppColorHelper.orange(),
+                // (!highlightOwnReactions ||
+                //         reaction.user.id == StreamChat.of(context).user.id)
+                //     ? StreamChatTheme.of(context).colorTheme.accentBlue
+                //     : StreamChatTheme.of(context)
+                //         .colorTheme
+                //         .black
+                //         .withOpacity(.5),
+              )
+                  : Text(
+                reactionIcon.emoji,
+                style: TextStyle(fontSize: 14),
+              ),
 
-          reactionIcon.emoji == null
-              ? StreamSvgIcon(
-            assetName: reactionIcon.assetName,
-            width: 18,
-            height: 18,
-            color: MainAppColorHelper.orange(),
-            // (!highlightOwnReactions ||
-            //         reaction.user.id == StreamChat.of(context).user.id)
-            //     ? StreamChatTheme.of(context).colorTheme.accentBlue
-            //     : StreamChatTheme.of(context)
-            //         .colorTheme
-            //         .black
-            //         .withOpacity(.5),
-          )
-              : Text(
-            reactionIcon.emoji,
-            style: TextStyle(fontSize: 14),
+            ])
+                : Text(
+              Emojis.fire,
+              style: TextStyle(fontSize: 14),
+            ),
           ),
-
-        ])
-            : Text(
-          Emojis.fire,
-          style: TextStyle(fontSize: 14),
         ),
       ),
     );
