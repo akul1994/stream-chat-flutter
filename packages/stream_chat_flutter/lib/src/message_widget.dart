@@ -526,7 +526,7 @@ class _MessageWidgetState extends State<MessageWidget>
                                   child: PortalEntry(
                                     portal: Container(
                                       transform: Matrix4.translationValues(
-                                          !reverse ? 0 : 0, 22, 0),
+                                          !reverse ? 0 : 0, 20, 0),
                                       // constraints:
                                       // BoxConstraints(maxWidth: 22 * 6.0),
                                       child: _buildReactionIndicator(context),

@@ -90,9 +90,8 @@ class ReactionBubbleCustom extends StatelessWidget {
                     Text(
                       totalReactionCount.toString(),
                       style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 14,
+                          color: Colors.black),
                     ),
                     SizedBox(width: 2,),
                   ],
@@ -156,13 +155,13 @@ class ReactionBubbleCustom extends StatelessWidget {
           )
               : Text(
             reactionIcon.emoji,
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 14),
           ),
 
         ])
             : Text(
           Emojis.fire,
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 14),
         ),
       ),
     );
