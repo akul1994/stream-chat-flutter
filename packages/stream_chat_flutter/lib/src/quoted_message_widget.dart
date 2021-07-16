@@ -393,6 +393,6 @@ class QuotedMessageWidget extends StatelessWidget {
           .colorTheme
           .blueAlice;
     }
-    return MainAppColorHelper.greyNeutral7();
+    return reverse ?  Color(0xFF075E54).withOpacity(0.2) : MainAppColorHelper.greyNeutral7();
   }
 }
