@@ -1628,7 +1628,7 @@ class MessageInputState extends State<MessageInput> {
         reverse: true,
         showBorder: !containsUrl,
         message: widget.quotedMessage,
-        messageTheme: StreamChatTheme.of(context).otherMessageTheme,
+        messageTheme: StreamChatTheme.of(context).ownMessageTheme,
         padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
       ),
     );

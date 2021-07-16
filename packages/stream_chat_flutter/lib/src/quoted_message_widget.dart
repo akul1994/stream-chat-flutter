@@ -229,13 +229,13 @@ class QuotedMessageWidget extends StatelessWidget {
 
   Widget _buildUserAvatar2(BuildContext context) {
     var user = message.user;
-    final ownId = StreamChat
-        .of(context)
-        .user
-        .id;
-    if (user.id == ownId) {
-      return SizedBox.shrink();
-    }
+    // final ownId = StreamChat
+    //     .of(context)
+    //     .user
+    //     .id;
+    // if (user.id == ownId) {
+    //   return SizedBox.shrink();
+    // }
     var theme = messageTheme;
 
     var imgUrl = '';
@@ -393,6 +393,6 @@ class QuotedMessageWidget extends StatelessWidget {
           .colorTheme
           .blueAlice;
     }
-    return reverse ?  Color(0xFF075E54).withOpacity(0.2) : MainAppColorHelper.greyNeutral7();
+    return messageTheme.messageBackgroundColor;
   }
 }
