@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:stream_chat_flutter/src/utils/StreamUtils.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
 import 'stream_chat_theme.dart';
@@ -36,11 +37,11 @@ class _MessageTextState extends State<MessageText> {
 
   @override
   void initState() {
-    messageText = _replaceMentions(widget.message.text);
+    messageText =
+        _replaceMentions(widget.message.text).replaceAll('\n', '\\\n');
 
     //messageText = _replaceHashtags(widget.message.text);
-    messageText = _replacePlus(widget.message.text);
-
+    messageText = _replacePlus(messageText);
 
     if (messageText.length > 1000) {
       firstHalfText = messageText.substring(0, 1000) + '...';
@@ -106,34 +107,33 @@ class _MessageTextState extends State<MessageText> {
           if (messageLengthState != MessageLengthState.normal)
             Padding(
               padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
-              child: InkWell(onTap: () {
-                onShowMoreClick();
-              },
-                  child: Text(getShowMoreText(), style: widget.messageTheme.messageText.copyWith(
-                    color: Colors.blue
-                  ), )),
+              child: InkWell(
+                  onTap: () {
+                    onShowMoreClick();
+                  },
+                  child: Text(
+                    getShowMoreText(),
+                    style: widget.messageTheme.messageText
+                        .copyWith(color: Colors.blue),
+                  )),
             )
         ],
       ),
     );
   }
 
-  String onShowMoreClick()
-  {
-    if(messageLengthState==MessageLengthState.clipped)
-      {
-        setState(() {
-          messageLengthState=MessageLengthState.full;
-          messageToShow = messageText;
-        });
-      }
-    else
-      {
-        setState(() {
-          messageLengthState=MessageLengthState.clipped;
-          messageToShow = firstHalfText;
-        });
-      }
+  String onShowMoreClick() {
+    if (messageLengthState == MessageLengthState.clipped) {
+      setState(() {
+        messageLengthState = MessageLengthState.full;
+        messageToShow = messageText;
+      });
+    } else {
+      setState(() {
+        messageLengthState = MessageLengthState.clipped;
+        messageToShow = firstHalfText;
+      });
+    }
   }
 
   String getShowMoreText() {
@@ -152,7 +152,7 @@ class _MessageTextState extends State<MessageText> {
 
   String _replaceMentions(String text) {
     widget.message.mentionedUsers
-        ?.map((u) => u.name)
+        ?.map((u) => StreamUtils.getUserName(u))
         ?.toSet()
         ?.forEach((userName) {
       text = text.replaceAll(
@@ -161,32 +161,43 @@ class _MessageTextState extends State<MessageText> {
     return text;
   }
 
+  /*String _replaceMentions(String text) {
+    widget.message.mentionedUsers?.map((u) => StreamUtils.getUserName(u))?.toSet()?.forEach((userName) {
+      text = text.replaceAll(
+          '@$userName', '***@${userName.replaceAll(' ', '')}***');
+    });
+    return text;
+  }*/
+
   String _replaceHashtags(String text) {
     RegExp exp = new RegExp(r"\B#\w\w+");
-    exp.allMatches(text).forEach((match){
-      var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
-      text = text.replaceAll(
-          '${match.group(0)}', replText);
+    exp.allMatches(text).forEach((match) {
+      var replText =
+          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+              .toUpperCase();
+      text = text.replaceAll('${match.group(0)}', replText);
     });
     return text;
   }
 
   String _replaceDollar(String text) {
     RegExp exp = new RegExp(r"\$(\w+)");
-    exp.allMatches(text).forEach((match){
-      var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
-      text = text.replaceAll(
-          '${match.group(0)}', replText);
+    exp.allMatches(text).forEach((match) {
+      var replText =
+          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+              .toUpperCase();
+      text = text.replaceAll('${match.group(0)}', replText);
     });
     return text;
   }
 
   String _replacePlus(String text) {
     RegExp exp = new RegExp(r"\+(\w+)");
-    exp.allMatches(text).forEach((match){
-      var replText = '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'.toUpperCase();
-      text = text.replaceAll(
-          '${match.group(0)}', replText);
+    exp.allMatches(text).forEach((match) {
+      var replText =
+          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+              .toUpperCase();
+      text = text.replaceAll('${match.group(0)}', replText);
     });
     return text;
   }

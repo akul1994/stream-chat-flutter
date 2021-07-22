@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'extension.dart';
+
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emojis/emoji.dart';
@@ -21,6 +23,7 @@ import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/src/user_avatar.dart';
 import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
+import 'package:stream_chat_flutter/src/utils/StreamUtils.dart';
 import 'package:stream_chat_flutter/src/video_service.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 import 'package:substring_highlight/substring_highlight.dart';
@@ -845,7 +848,7 @@ class MessageInputState extends State<MessageInput> {
 
         _checkCommands(s.trim(), context);
 
-        //_checkMentions(s, context);
+        _checkMentions(s, context);
 
         _checkEmoji(s, context);
       },
@@ -1441,19 +1444,19 @@ class MessageInputState extends State<MessageInput> {
                                     onTap: () {
                                       _mentionedUsers.add(m.user);
 
-                                      splits[splits.length - 1] = m.user.name;
+                                      splits[splits.length - 1] = StreamUtils.getUserName(m.user);
                                       final rejoin = splits.join('@');
 
                                       textEditingController.value =
                                           TextEditingValue(
-                                        text: rejoin +
-                                            textEditingController.text
-                                                .substring(textEditingController
+                                            text: rejoin +
+                                                textEditingController.text
+                                                    .substring(textEditingController
                                                     .selection.start),
-                                        selection: TextSelection.collapsed(
-                                            //offset: rejoin.length,
+                                            selection: TextSelection.collapsed(
+                                              offset: rejoin.length,
                                             ),
-                                      );
+                                          );
                                       _debounce.cancel();
                                       _mentionsOverlay?.remove();
                                       _mentionsOverlay = null;
@@ -2296,7 +2299,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u.name}')).toList(),
+            _mentionedUsers.where((u) => text.contains('@${u.username}')).toList(),
       );
     } else {
       message = (widget.initialMessage ?? Message()).copyWith(
@@ -2304,7 +2307,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u.name}')).toList(),
+            _mentionedUsers.where((u) => text.contains('@${u.username}')).toList(),
         showInChannel: widget.parentMessage != null ? _sendAsDm : null,
       );
     }

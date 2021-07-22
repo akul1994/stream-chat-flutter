@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:stream_chat_flutter/src/utils/StreamUtils.dart';
 
 import '../stream_chat_flutter.dart';
+import 'extension.dart';
 
 /// This widget is used for showing user tiles for mentions
 /// Use [title], [subtitle], [leading], [trailing] for substituting widgets in respective positions
@@ -70,7 +72,7 @@ class MentionTile extends StatelessWidget {
                   ),
                   subtitle ??
                       Text(
-                        '@${member.userId}',
+                        '@${member.user.username}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: StreamChatTheme.of(context)

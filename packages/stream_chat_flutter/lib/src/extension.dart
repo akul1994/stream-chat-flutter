@@ -98,6 +98,13 @@ extension InputDecorationX on InputDecoration {
 }
 
 extension BuildContextX on BuildContext {
-  double get textScaleFactor =>
-      MediaQuery.of(this)?.textScaleFactor ?? 1.0;
+  double get textScaleFactor => MediaQuery.of(this)?.textScaleFactor ?? 1.0;
+}
+
+extension UserExtension on User {
+  /// Shortcut for user name
+  String get username => (extraData?.containsKey('user_name') == true &&
+          extraData['user_name'] != '')
+      ? extraData['user_name']
+      : name;
 }
