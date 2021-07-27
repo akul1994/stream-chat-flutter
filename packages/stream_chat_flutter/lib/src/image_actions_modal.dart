@@ -11,12 +11,12 @@ import '../stream_chat_flutter.dart';
 import 'extension.dart';
 
 class ImageActionsModal extends StatelessWidget {
-  final Message message;
-  final String userName;
-  final String sentAt;
-  final List<Attachment> urls;
+  final Message? message;
+  final String? userName;
+  final String? sentAt;
+  final List<Attachment>? urls;
   final currentIndex;
-  final VoidCallback onShowMessage;
+  final VoidCallback? onShowMessage;
 
   ImageActionsModal(
       {this.message,
@@ -58,7 +58,7 @@ class ImageActionsModal extends StatelessWidget {
                     'Reply',
                     StreamSvgIcon.iconCurveLineLeftUp(
                       size: 24.0,
-                      color: StreamChatTheme.of(context).colorTheme.grey,
+                      color: StreamChatTheme.of(context).colorTheme!.grey,
                     ),
                     () {
                       Navigator.pop(context, ReturnActionType.reply);
@@ -69,58 +69,58 @@ class ImageActionsModal extends StatelessWidget {
                     'Show in Chat',
                     StreamSvgIcon.eye(
                       size: 24.0,
-                      color: StreamChatTheme.of(context).colorTheme.black,
+                      color: StreamChatTheme.of(context).colorTheme!.black,
                     ),
                     onShowMessage,
                   ),
                   _buildButton(
                     context,
-                    'Save ${urls[currentIndex].type == 'video' ? 'Video' : 'Image'}',
+                    'Save ${urls![currentIndex].type == 'video' ? 'Video' : 'Image'}',
                     StreamSvgIcon.iconSave(
                       size: 24.0,
-                      color: StreamChatTheme.of(context).colorTheme.grey,
+                      color: StreamChatTheme.of(context).colorTheme!.grey,
                     ),
                     () async {
-                      var url = urls[currentIndex].imageUrl ??
-                          urls[currentIndex].assetUrl ??
-                          urls[currentIndex].thumbUrl;
+                      var url = urls![currentIndex].imageUrl ??
+                          urls![currentIndex].assetUrl ??
+                          urls![currentIndex].thumbUrl;
 
                       Navigator.pop(context);
 
-                      if (urls[currentIndex].type == 'video') {
-                        await _saveVideo(url);
+                      if (urls![currentIndex].type == 'video') {
+                        await _saveVideo(url!);
                       } else {
-                        await _saveImage(url);
+                        await _saveImage(url!);
                       }
                     },
                   ),
-                  if (StreamChat.of(context).user.id == message.user.id)
+                  if (StreamChat.of(context).user!.id == message!.user!.id)
                     _buildButton(
                       context,
                       'Delete',
                       StreamSvgIcon.delete(
                         size: 24.0,
-                        color: StreamChatTheme.of(context).colorTheme.accentRed,
+                        color: StreamChatTheme.of(context).colorTheme!.accentRed,
                       ),
                       () {
                         final channel = StreamChannel.of(context).channel;
-                        if (message.attachments.length > 1 ||
-                            message.text.isNotEmpty) {
-                          final remainingAttachments = [...message.attachments]
+                        if (message!.attachments.length > 1 ||
+                            message!.text!.isNotEmpty) {
+                          final remainingAttachments = [...message!.attachments]
                             ..removeAt(currentIndex);
-                          channel.updateMessage(message.copyWith(
+                          channel.updateMessage(message!.copyWith(
                             attachments: remainingAttachments,
                           ));
                           Navigator.pop(context);
                           Navigator.pop(context);
                         } else {
-                          channel.deleteMessage(message).then((value) {
+                          channel.deleteMessage(message!).then((value) {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           });
                         }
                       },
-                      color: StreamChatTheme.of(context).colorTheme.accentRed,
+                      color: StreamChatTheme.of(context).colorTheme!.accentRed,
                     ),
                 ]
                     .map<Widget>((e) =>
@@ -129,7 +129,7 @@ class ImageActionsModal extends StatelessWidget {
                       Container(
                         height: 1,
                         color:
-                            StreamChatTheme.of(context).colorTheme.greyWhisper,
+                            StreamChatTheme.of(context).colorTheme!.greyWhisper,
                       ),
                     ),
               ),
@@ -144,11 +144,11 @@ class ImageActionsModal extends StatelessWidget {
     context,
     String title,
     StreamSvgIcon icon,
-    VoidCallback onTap, {
-    Color color,
+    VoidCallback? onTap, {
+    Color? color,
   }) {
     return Material(
-      color: StreamChatTheme.of(context).colorTheme.white,
+      color: StreamChatTheme.of(context).colorTheme!.white,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -160,7 +160,7 @@ class ImageActionsModal extends StatelessWidget {
               Text(
                 title,
                 style: StreamChatTheme.of(context)
-                    .textTheme
+                    .textTheme!
                     .body
                     .copyWith(color: color),
               ),

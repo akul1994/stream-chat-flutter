@@ -3,14 +3,14 @@ import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 /// Used to show the sending status of the message
 class SendingIndicator extends StatelessWidget {
-  final Message message;
+  final Message? message;
   final bool isMessageRead;
-  final double size;
+  final double? size;
 
   final bool isOwn;
 
   const SendingIndicator({
-    Key key,
+    Key? key,
     this.message,
     this.isMessageRead = false,
     this.size = 12,
@@ -22,18 +22,18 @@ class SendingIndicator extends StatelessWidget {
     if (isMessageRead) {
       return StreamSvgIcon.checkAll(
         size: size,
-        color: StreamChatTheme.of(context).colorTheme.accentBlue,
+        color: StreamChatTheme.of(context).colorTheme!.accentBlue,
       );
     }
-    if (isOwn && (message.status == MessageSendingStatus.sent ||
-        message.status == null)) {
+    if (isOwn && (message!.status == MessageSendingStatus.sent ||
+        message!.status == null)) {
       return StreamSvgIcon.checkAll(
         size: size,
-        color: IconTheme.of(context).color.withOpacity(0.5),
+        color: IconTheme.of(context).color!.withOpacity(0.5),
       );
     }
-    if (message.status == MessageSendingStatus.sending ||
-        message.status == MessageSendingStatus.updating) {
+    if (message!.status == MessageSendingStatus.sending ||
+        message!.status == MessageSendingStatus.updating) {
       return Icon(
         Icons.access_time,
         size: size,

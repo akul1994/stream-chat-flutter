@@ -9,16 +9,16 @@ import '../stream_svg_icon.dart';
 import 'attachment_widget.dart';
 
 class GiphyAttachment extends AttachmentWidget {
-  final MessageTheme messageTheme;
-  final ShowMessageCallback onShowMessage;
-  final ValueChanged<ReturnActionType> onReturnAction;
-  final VoidCallback onAttachmentTap;
+  final MessageTheme? messageTheme;
+  final ShowMessageCallback? onShowMessage;
+  final ValueChanged<ReturnActionType>? onReturnAction;
+  final VoidCallback? onAttachmentTap;
 
   const GiphyAttachment({
-    Key key,
-    @required Message message,
-    @required Attachment attachment,
-    Size size,
+    Key? key,
+    required Message message,
+    required Attachment attachment,
+    Size? size,
     this.messageTheme,
     this.onShowMessage,
     this.onReturnAction,
@@ -33,9 +33,9 @@ class GiphyAttachment extends AttachmentWidget {
       return AttachmentError();
     }
     if (attachment.actions != null) {
-      return _buildSendingAttachment(context, imageUrl);
+      return _buildSendingAttachment(context, imageUrl!);
     }
-    return _buildSentAttachment(context, imageUrl);
+    return _buildSentAttachment(context, imageUrl!);
   }
 
   Widget _buildSendingAttachment(BuildContext context, String imageUrl) {
@@ -44,7 +44,7 @@ class GiphyAttachment extends AttachmentWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Card(
-          color: StreamChatTheme.of(context).colorTheme.white,
+          color: StreamChatTheme.of(context).colorTheme!.white,
           elevation: 2,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
@@ -73,10 +73,10 @@ class GiphyAttachment extends AttachmentWidget {
                     if (attachment.title != null)
                       Flexible(
                         child: Text(
-                          attachment.title,
+                          attachment.title!,
                           style: TextStyle(
                             color: StreamChatTheme.of(context)
-                                .colorTheme
+                                .colorTheme!
                                 .black
                                 .withOpacity(0.5),
                           ),
@@ -113,7 +113,7 @@ class GiphyAttachment extends AttachmentWidget {
               ),
               Container(
                 color: StreamChatTheme.of(context)
-                    .colorTheme
+                    .colorTheme!
                     .black
                     .withOpacity(0.2),
                 width: double.infinity,
@@ -128,18 +128,18 @@ class GiphyAttachment extends AttachmentWidget {
                       height: 50,
                       child: TextButton(
                         onPressed: () {
-                          streamChannel.channel.sendAction(message, {
+                          streamChannel.channel.sendAction(message!, {
                             'image_action': 'cancel',
                           });
                         },
                         child: Text(
                           'Cancel',
                           style: StreamChatTheme.of(context)
-                              .textTheme
+                              .textTheme!
                               .bodyBold
                               .copyWith(
                                 color: StreamChatTheme.of(context)
-                                    .colorTheme
+                                    .colorTheme!
                                     .black
                                     .withOpacity(0.5),
                               ),
@@ -150,7 +150,7 @@ class GiphyAttachment extends AttachmentWidget {
                   Container(
                     width: 0.5,
                     color: StreamChatTheme.of(context)
-                        .colorTheme
+                        .colorTheme!
                         .black
                         .withOpacity(0.2),
                     height: 50.0,
@@ -160,18 +160,18 @@ class GiphyAttachment extends AttachmentWidget {
                       height: 50,
                       child: TextButton(
                         onPressed: () {
-                          streamChannel.channel.sendAction(message, {
+                          streamChannel.channel.sendAction(message!, {
                             'image_action': 'shuffle',
                           });
                         },
                         child: Text(
                           'Shuffle',
                           style: StreamChatTheme.of(context)
-                              .textTheme
+                              .textTheme!
                               .bodyBold
                               .copyWith(
                                 color: StreamChatTheme.of(context)
-                                    .colorTheme
+                                    .colorTheme!
                                     .black
                                     .withOpacity(0.5),
                               ),
@@ -182,7 +182,7 @@ class GiphyAttachment extends AttachmentWidget {
                   Container(
                     width: 0.5,
                     color: StreamChatTheme.of(context)
-                        .colorTheme
+                        .colorTheme!
                         .black
                         .withOpacity(0.2),
                     height: 50.0,
@@ -192,7 +192,7 @@ class GiphyAttachment extends AttachmentWidget {
                       height: 50,
                       child: TextButton(
                         onPressed: () {
-                          streamChannel.channel.sendAction(message, {
+                          streamChannel.channel.sendAction(message!, {
                             'image_action': 'send',
                           });
                         },
@@ -200,7 +200,7 @@ class GiphyAttachment extends AttachmentWidget {
                           'Send',
                           style: TextStyle(
                               color: StreamChatTheme.of(context)
-                                  .colorTheme
+                                  .colorTheme!
                                   .accentBlue,
                               fontWeight: FontWeight.bold),
                         ),
@@ -222,7 +222,7 @@ class GiphyAttachment extends AttachmentWidget {
               children: [
                 StreamSvgIcon.eye(
                   color: StreamChatTheme.of(context)
-                      .colorTheme
+                      .colorTheme!
                       .black
                       .withOpacity(0.5),
                   size: 16.0,
@@ -233,11 +233,11 @@ class GiphyAttachment extends AttachmentWidget {
                 Text(
                   'Only visible to you',
                   style: StreamChatTheme.of(context)
-                      .textTheme
+                      .textTheme!
                       .footnote
                       .copyWith(
                           color: StreamChatTheme.of(context)
-                              .colorTheme
+                              .colorTheme!
                               .black
                               .withOpacity(0.5)),
                 ),
@@ -259,8 +259,8 @@ class GiphyAttachment extends AttachmentWidget {
             channel: channel,
             child: FullScreenMedia(
               mediaAttachments: [attachment],
-              userName: message.user.name,
-              sentAt: message.createdAt,
+              userName: message!.user!.name,
+              sentAt: message!.createdAt,
               message: message,
               onShowMessage: onShowMessage,
             ),
@@ -268,7 +268,7 @@ class GiphyAttachment extends AttachmentWidget {
         },
       ),
     );
-    if (res != null) onReturnAction(res);
+    if (res != null) onReturnAction!(res);
   }
 
   Widget _buildSentAttachment(BuildContext context, String imageUrl) {
@@ -282,14 +282,14 @@ class GiphyAttachment extends AttachmentWidget {
               channel: channel,
               child: FullScreenMedia(
                 mediaAttachments: [attachment],
-                userName: message.user.name,
-                sentAt: message.createdAt,
+                userName: message!.user!.name,
+                sentAt: message!.createdAt,
                 message: message,
                 onShowMessage: onShowMessage,
               ),
             );
           }));
-          if (res != null) onReturnAction(res);
+          if (res != null) onReturnAction!(res);
         },
         child: Stack(
           children: [
@@ -299,9 +299,9 @@ class GiphyAttachment extends AttachmentWidget {
               placeholder: (_, __) {
                 return Shimmer.fromColors(
                   baseColor:
-                      StreamChatTheme.of(context).colorTheme.greyGainsboro,
+                      StreamChatTheme.of(context).colorTheme!.greyGainsboro,
                   highlightColor:
-                      StreamChatTheme.of(context).colorTheme.whiteSmoke,
+                      StreamChatTheme.of(context).colorTheme!.whiteSmoke,
                   child: Image.asset(
                     'images/placeholder.png',
                     fit: BoxFit.cover,
@@ -320,7 +320,7 @@ class GiphyAttachment extends AttachmentWidget {
               left: 8,
               child: Material(
                 color: StreamChatTheme.of(context)
-                    .colorTheme
+                    .colorTheme!
                     .black
                     .withOpacity(.5),
                 shape: RoundedRectangleBorder(
@@ -334,13 +334,13 @@ class GiphyAttachment extends AttachmentWidget {
                   child: Row(
                     children: [
                       StreamSvgIcon.lightning(
-                        color: StreamChatTheme.of(context).colorTheme.white,
+                        color: StreamChatTheme.of(context).colorTheme!.white,
                         size: 16,
                       ),
                       Text(
                         'GIPHY',
                         style: TextStyle(
-                          color: StreamChatTheme.of(context).colorTheme.white,
+                          color: StreamChatTheme.of(context).colorTheme!.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),

@@ -1,7 +1,7 @@
 class ReactionIcon {
-  final String type;
-  final String assetName;
-  final String emoji;
+  final String? type;
+  final String? assetName;
+  final String? emoji;
 
   ReactionIcon({
     this.type,

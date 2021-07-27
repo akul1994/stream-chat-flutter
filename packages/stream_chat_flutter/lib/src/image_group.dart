@@ -5,19 +5,19 @@ import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ImageGroup extends StatelessWidget {
   const ImageGroup({
-    Key key,
-    @required this.images,
-    @required this.message,
-    @required this.messageTheme,
-    @required this.size,
+    Key? key,
+    required this.images,
+    required this.message,
+    required this.messageTheme,
+    required this.size,
     this.onShowMessage,
   }) : super(key: key);
 
   final List<Attachment> images;
   final Message message;
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
   final Size size;
-  final ShowMessageCallback onShowMessage;
+  final ShowMessageCallback? onShowMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class ImageGroup extends StatelessWidget {
 
   void _onTap(
     BuildContext context, [
-    int index,
+    int? index,
   ]) {
     final channel = StreamChannel.of(context).channel;
 
@@ -119,7 +119,7 @@ class ImageGroup extends StatelessWidget {
           child: FullScreenMedia(
             mediaAttachments: images,
             startIndex: index,
-            userName: message.user.name,
+            userName: message.user!.name,
             sentAt: message.createdAt,
             message: message,
             onShowMessage: onShowMessage,

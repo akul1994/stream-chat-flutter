@@ -11,16 +11,16 @@ class MentionTile extends StatelessWidget {
   final Member member;
 
   /// Widget to display as title
-  final Widget title;
+  final Widget? title;
 
   /// Widget to display below [title]
-  final Widget subtitle;
+  final Widget? subtitle;
 
   /// Widget at the start of the tile
-  final Widget leading;
+  final Widget? leading;
 
   /// Widget at the end of tile
-  final Widget trailing;
+  final Widget? trailing;
 
   MentionTile(
     this.member, {
@@ -62,25 +62,25 @@ class MentionTile extends StatelessWidget {
                 children: [
                   title ??
                       Text(
-                        '${member.user.name}',
+                        '${member.user!.name}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: StreamChatTheme.of(context).textTheme.bodyBold,
+                        style: StreamChatTheme.of(context).textTheme!.bodyBold,
                       ),
                   SizedBox(
                     height: 2.0,
                   ),
                   subtitle ??
                       Text(
-                        '@${member.user.username}',
+                        '@${member.user!.username}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: StreamChatTheme.of(context)
-                            .textTheme
+                            .textTheme!
                             .footnoteBold
                             .copyWith(
                               color:
-                                  StreamChatTheme.of(context).colorTheme.grey,
+                                  StreamChatTheme.of(context).colorTheme!.grey,
                             ),
                       ),
                 ],
@@ -91,7 +91,7 @@ class MentionTile extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 18.0, left: 8.0),
                 child: StreamSvgIcon.mentions(
-                  color: StreamChatTheme.of(context).colorTheme.accentBlue,
+                  color: StreamChatTheme.of(context).colorTheme!.accentBlue,
                 ),
               ),
         ],

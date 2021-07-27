@@ -34,8 +34,6 @@ export 'src/message_search_item.dart';
 export 'src/message_search_list_view.dart';
 export 'src/unread_indicator.dart';
 export 'src/option_list_tile.dart';
-export 'src/channel_file_display_screen.dart';
-export 'src/channel_media_display_screen.dart';
 export 'src/info_tile.dart';
 export 'src/stream_chat.dart';
 export 'src/connection_status_builder.dart';

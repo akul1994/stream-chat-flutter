@@ -12,25 +12,25 @@ import 'extension.dart';
 /// Callback to download an attachment asset
 typedef AttachmentDownloader = Future<String> Function(
   Attachment attachment, {
-  ProgressCallback progressCallback,
+  ProgressCallback? progressCallback,
 });
 
 /// Widget that shows the options in the gallery view
 class AttachmentActionsModal extends StatelessWidget {
   /// The message containing the attachments
-  final Message message;
+  final Message? message;
 
   /// Current page index
   final currentIndex;
 
   /// Callback to show the message
-  final VoidCallback onShowMessage;
+  final VoidCallback? onShowMessage;
 
   /// Callback to download images
-  final AttachmentDownloader imageDownloader;
+  final AttachmentDownloader? imageDownloader;
 
   /// Callback to provide download files
-  final AttachmentDownloader fileDownloader;
+  final AttachmentDownloader? fileDownloader;
 
   /// Returns a new [AttachmentActionsModal]
   const AttachmentActionsModal({
@@ -74,7 +74,7 @@ class AttachmentActionsModal extends StatelessWidget {
                     'Reply',
                     StreamSvgIcon.iconCurveLineLeftUp(
                       size: 24.0,
-                      color: theme.colorTheme.grey,
+                      color: theme.colorTheme!.grey,
                     ),
                     () {
                       Navigator.pop(context, ReturnActionType.reply);
@@ -85,25 +85,25 @@ class AttachmentActionsModal extends StatelessWidget {
                     'Show in Chat',
                     StreamSvgIcon.eye(
                       size: 24.0,
-                      color: theme.colorTheme.black,
+                      color: theme.colorTheme!.black,
                     ),
                     onShowMessage,
                   ),
                   _buildButton(
                     context,
-                    'Save ${message.attachments[currentIndex].type == 'video' ? 'Video' : 'Image'}',
+                    'Save ${message!.attachments[currentIndex].type == 'video' ? 'Video' : 'Image'}',
                     StreamSvgIcon.iconSave(
                       size: 24.0,
-                      color: theme.colorTheme.grey,
+                      color: theme.colorTheme!.grey,
                     ),
                     () {
-                      final attachment = message.attachments[currentIndex];
+                      final attachment = message!.attachments[currentIndex];
                       final isImage = attachment.type == 'image';
-                      final saveFile = fileDownloader ?? _downloadAttachment;
-                      final saveImage = imageDownloader ?? _downloadAttachment;
+                      final Future<String?> Function(Attachment, {void Function(int, int) progressCallback}) saveFile = fileDownloader ?? _downloadAttachment;
+                      final Future<String?> Function(Attachment, {void Function(int, int) progressCallback}) saveImage = imageDownloader ?? _downloadAttachment;
                       final downloader = isImage ? saveImage : saveFile;
 
-                      final progressNotifier = ValueNotifier<_DownloadProgress>(
+                      final progressNotifier = ValueNotifier<_DownloadProgress?>(
                         _DownloadProgress.initial(),
                       );
 
@@ -126,7 +126,7 @@ class AttachmentActionsModal extends StatelessWidget {
                       showDialog(
                         barrierDismissible: false,
                         context: context,
-                        barrierColor: theme.colorTheme.overlay,
+                        barrierColor: theme.colorTheme!.overlay,
                         builder: (context) => _buildDownloadProgressDialog(
                           context,
                           progressNotifier,
@@ -134,33 +134,33 @@ class AttachmentActionsModal extends StatelessWidget {
                       );
                     },
                   ),
-                  if (StreamChat.of(context).user.id == message.user.id)
+                  if (StreamChat.of(context).user!.id == message!.user!.id)
                     _buildButton(
                       context,
                       'Delete',
                       StreamSvgIcon.delete(
                         size: 24.0,
-                        color: theme.colorTheme.accentRed,
+                        color: theme.colorTheme!.accentRed,
                       ),
                       () {
                         final channel = StreamChannel.of(context).channel;
-                        if (message.attachments.length > 1 ||
-                            message.text.isNotEmpty) {
-                          final remainingAttachments = [...message.attachments]
+                        if (message!.attachments.length > 1 ||
+                            message!.text!.isNotEmpty) {
+                          final remainingAttachments = [...message!.attachments]
                             ..removeAt(currentIndex);
-                          channel.updateMessage(message.copyWith(
+                          channel.updateMessage(message!.copyWith(
                             attachments: remainingAttachments,
                           ));
                           Navigator.pop(context);
                           Navigator.pop(context);
                         } else {
-                          channel.deleteMessage(message).then((value) {
+                          channel.deleteMessage(message!).then((value) {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           });
                         }
                       },
-                      color: theme.colorTheme.accentRed,
+                      color: theme.colorTheme!.accentRed,
                     ),
                 ]
                     .map<Widget>((e) =>
@@ -168,7 +168,7 @@ class AttachmentActionsModal extends StatelessWidget {
                     .insertBetween(
                       Container(
                         height: 1,
-                        color: theme.colorTheme.greyWhisper,
+                        color: theme.colorTheme!.greyWhisper,
                       ),
                     ),
               ),
@@ -183,11 +183,11 @@ class AttachmentActionsModal extends StatelessWidget {
     context,
     String title,
     StreamSvgIcon icon,
-    VoidCallback onTap, {
-    Color color,
+    VoidCallback? onTap, {
+    Color? color,
   }) {
     return Material(
-      color: StreamChatTheme.of(context).colorTheme.white,
+      color: StreamChatTheme.of(context).colorTheme!.white,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -199,7 +199,7 @@ class AttachmentActionsModal extends StatelessWidget {
               Text(
                 title,
                 style: StreamChatTheme.of(context)
-                    .textTheme
+                    .textTheme!
                     .body
                     .copyWith(color: color),
               ),
@@ -212,14 +212,14 @@ class AttachmentActionsModal extends StatelessWidget {
 
   Widget _buildDownloadProgressDialog(
     BuildContext context,
-    ValueNotifier<_DownloadProgress> progressNotifier,
+    ValueNotifier<_DownloadProgress?> progressNotifier,
   ) {
     final theme = StreamChatTheme.of(context);
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: ValueListenableBuilder(
         valueListenable: progressNotifier,
-        builder: (_, _DownloadProgress progress, __) {
+        builder: (_, _DownloadProgress? progress, __) {
           // Pop the dialog in case the progress is null or it's completed.
           if (progress == null || progress?.toProgressIndicatorValue == 1.0) {
             Future.delayed(
@@ -235,7 +235,7 @@ class AttachmentActionsModal extends StatelessWidget {
                 width: 182,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: theme.colorTheme.white,
+                  color: theme.colorTheme!.white,
                 ),
                 child: Center(
                   child: progress == null
@@ -243,7 +243,7 @@ class AttachmentActionsModal extends StatelessWidget {
                           height: 100,
                           width: 100,
                           child: StreamSvgIcon.error(
-                            color: theme.colorTheme.greyGainsboro,
+                            color: theme.colorTheme!.greyGainsboro,
                           ),
                         )
                       : progress.toProgressIndicatorValue == 1.0
@@ -251,7 +251,7 @@ class AttachmentActionsModal extends StatelessWidget {
                               height: 160,
                               width: 160,
                               child: StreamSvgIcon.check(
-                                color: theme.colorTheme.greyGainsboro,
+                                color: theme.colorTheme!.greyGainsboro,
                               ),
                             )
                           : Container(
@@ -264,14 +264,14 @@ class AttachmentActionsModal extends StatelessWidget {
                                     value: progress.toProgressIndicatorValue,
                                     strokeWidth: 8.0,
                                     valueColor: AlwaysStoppedAnimation(
-                                      theme.colorTheme.accentBlue,
+                                      theme.colorTheme!.accentBlue,
                                     ),
                                   ),
                                   Center(
                                     child: Text(
                                       '${progress.toPercentage}%',
-                                      style: theme.textTheme.headline.copyWith(
-                                        color: theme.colorTheme.grey,
+                                      style: theme.textTheme!.headline.copyWith(
+                                        color: theme.colorTheme!.grey,
                                       ),
                                     ),
                                   ),
@@ -287,23 +287,23 @@ class AttachmentActionsModal extends StatelessWidget {
     );
   }
 
-  Future<String> _downloadAttachment(
+  Future<String?> _downloadAttachment(
     Attachment attachment, {
-    ProgressCallback progressCallback,
+    ProgressCallback? progressCallback,
   }) async {
-    String filePath;
+    String? filePath;
     final appDocDir = await getTemporaryDirectory();
     await Dio().download(
-      attachment.assetUrl ?? attachment.imageUrl ?? attachment.thumbUrl,
+      attachment.assetUrl ?? attachment.imageUrl ?? attachment.thumbUrl!,
       (Headers responseHeaders) {
-        final contentType = responseHeaders[Headers.contentTypeHeader];
+        final contentType = responseHeaders[Headers.contentTypeHeader]!;
         final mimeType = contentType.first?.split('/')?.last;
         filePath ??= '${appDocDir.path}/${attachment.id}.$mimeType';
         return filePath;
       },
       onReceiveProgress: progressCallback,
     );
-    final result = await ImageGallerySaver.saveFile(filePath);
+    final result = await ImageGallerySaver.saveFile(filePath!);
     return (result as Map)['filePath'];
   }
 }

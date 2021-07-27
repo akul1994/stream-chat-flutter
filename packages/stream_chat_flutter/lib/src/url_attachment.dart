@@ -8,12 +8,12 @@ class UrlAttachment extends StatelessWidget {
   final String hostDisplayName;
   final EdgeInsets textPadding;
 
-  final void Function(String) onLinkTap;
+  final void Function(String?)? onLinkTap;
 
   UrlAttachment({
-    @required this.urlAttachment,
-    @required this.hostDisplayName,
-    @required this.textPadding,
+    required this.urlAttachment,
+    required this.hostDisplayName,
+    required this.textPadding,
     this.onLinkTap,
   });
 
@@ -22,11 +22,11 @@ class UrlAttachment extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (onLinkTap != null) {
-          onLinkTap(urlAttachment.ogScrapeUrl);
+          onLinkTap!(urlAttachment.ogScrapeUrl);
         } else {
           launchURL(
             context,
-            urlAttachment.ogScrapeUrl,
+            urlAttachment.ogScrapeUrl!,
           );
         }
       },
@@ -41,7 +41,7 @@ class UrlAttachment extends StatelessWidget {
                 children: [
                   CachedNetworkImage(
                     width: double.infinity,
-                    imageUrl: urlAttachment.imageUrl,
+                    imageUrl: urlAttachment.imageUrl!,
                     fit: BoxFit.cover,
                   ),
                   // Positioned(
@@ -82,21 +82,21 @@ class UrlAttachment extends StatelessWidget {
               children: [
                 if (urlAttachment.title != null)
                   Text(
-                    urlAttachment.title.trim(),
+                    urlAttachment.title!.trim(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .body
                         .copyWith(fontWeight: FontWeight.w700),
                   ),
                 if (urlAttachment.text != null)
                   Text(
-                    urlAttachment.text,
+                    urlAttachment.text!,
                     maxLines: 6,
                     overflow: TextOverflow.ellipsis,
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .body
                         .copyWith(fontWeight: FontWeight.w400),
                   ),

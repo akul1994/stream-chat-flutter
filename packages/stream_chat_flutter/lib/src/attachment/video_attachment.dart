@@ -8,16 +8,16 @@ import 'attachment_upload_state_builder.dart';
 import 'attachment_widget.dart';
 
 class VideoAttachment extends AttachmentWidget {
-  final MessageTheme messageTheme;
-  final ShowMessageCallback onShowMessage;
-  final ValueChanged<ReturnActionType> onReturnAction;
-  final VoidCallback onAttachmentTap;
+  final MessageTheme? messageTheme;
+  final ShowMessageCallback? onShowMessage;
+  final ValueChanged<ReturnActionType>? onReturnAction;
+  final VoidCallback? onAttachmentTap;
 
   const VideoAttachment({
-    Key key,
-    @required Message message,
-    @required Attachment attachment,
-    Size size,
+    Key? key,
+    required Message message,
+    required Attachment attachment,
+    Size? size,
     this.messageTheme,
     this.onShowMessage,
     this.onReturnAction,
@@ -34,7 +34,7 @@ class VideoAttachment extends AttachmentWidget {
         return _buildVideoAttachment(
           context,
           VideoThumbnailImage(
-            video: attachment.file.path,
+            video: attachment.file!.path,
             height: size?.height,
             width: size?.width,
             fit: BoxFit.cover,
@@ -62,7 +62,7 @@ class VideoAttachment extends AttachmentWidget {
 
   Widget _buildVideoAttachment(BuildContext context, Widget videoWidget) {
     return ConstrainedBox(
-      constraints: BoxConstraints.loose(size),
+      constraints: BoxConstraints.loose(size!),
       child: Column(
         children: <Widget>[
           Expanded(
@@ -77,15 +77,15 @@ class VideoAttachment extends AttachmentWidget {
                           channel: channel,
                           child: FullScreenMedia(
                             mediaAttachments: [attachment],
-                            userName: message.user.name,
-                            sentAt: message.createdAt,
+                            userName: message!.user!.name,
+                            sentAt: message!.createdAt,
                             message: message,
                             onShowMessage: onShowMessage,
                           ),
                         ),
                       ),
                     );
-                    if (res != null) onReturnAction(res);
+                    if (res != null) onReturnAction!(res);
                   },
               child: Stack(
                 children: [
@@ -112,7 +112,7 @@ class VideoAttachment extends AttachmentWidget {
           ),
           if (attachment.title != null)
             Material(
-              color: messageTheme.messageBackgroundColor,
+              color: messageTheme!.messageBackgroundColor,
               child: AttachmentTitle(
                 messageTheme: messageTheme,
                 attachment: attachment,

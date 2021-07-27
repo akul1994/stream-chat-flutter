@@ -17,15 +17,15 @@ import 'extension.dart';
 
 class ReactionPicker extends StatefulWidget {
   const ReactionPicker({
-    Key key,
-    @required this.message,
-    @required this.messageTheme,
+    Key? key,
+    required this.message,
+    required this.messageTheme,
     this.reactionIcons,
   }) : super(key: key);
 
   final Message message;
-  final MessageTheme messageTheme;
-  final List<ReactionIcon> reactionIcons;
+  final MessageTheme? messageTheme;
+  final List<ReactionIcon>? reactionIcons;
 
   @override
   _ReactionPickerState createState() => _ReactionPickerState();
@@ -35,7 +35,7 @@ class _ReactionPickerState extends State<ReactionPicker>
     with TickerProviderStateMixin {
   List<EzAnimation> animations = [];
 
-  Map<String, int> reactionScores;
+  Map<String, int>? reactionScores;
 
   @override
   void initState() {
@@ -46,11 +46,11 @@ class _ReactionPickerState extends State<ReactionPicker>
   @override
   Widget build(BuildContext context) {
     final reactionIcons =
-        widget.reactionIcons ?? StreamChatTheme.of(context).reactionIcons;
+        widget.reactionIcons ?? StreamChatTheme.of(context).reactionIcons!;
 
     return Material(
       borderRadius: BorderRadius.circular(24),
-      color: StreamChatTheme.of(context).colorTheme.white,
+      color: StreamChatTheme.of(context).colorTheme!.white,
      // clipBehavior: Clip.hardEdge,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,19 +92,19 @@ class _ReactionPickerState extends State<ReactionPicker>
                           //         .withOpacity(.5),
                         )
                       : Text(
-                          reactionIcon.emoji,
+                          reactionIcon.emoji!,
                           style: TextStyle(fontSize: 16),
                         ),
                   onPressed: () {
                     if (ownReactionIndex != -1) {
                       removeReaction(
                         context,
-                        widget.message.ownReactions[ownReactionIndex],
+                        widget.message.ownReactions![ownReactionIndex],
                       );
                     } else {
                       sendReaction(
                         context,
-                        reactionIcon.type,
+                        reactionIcon.type!,
                       );
                     }
                   },
@@ -143,7 +143,7 @@ class _ReactionPickerState extends State<ReactionPicker>
             scale: val,
             child: Material(
               borderRadius: BorderRadius.circular(24),
-              color: StreamChatTheme.of(context).colorTheme.white,
+              color: StreamChatTheme.of(context).colorTheme!.white,
               clipBehavior: Clip.hardEdge,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -205,7 +205,7 @@ class _ReactionPickerState extends State<ReactionPicker>
                                                 //         .withOpacity(.5),
                                               )
                                             : Text(
-                                                reactionIcon.emoji,
+                                                reactionIcon.emoji!,
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                         Visibility(
@@ -255,12 +255,12 @@ class _ReactionPickerState extends State<ReactionPicker>
                               if (ownReactionIndex != -1) {
                                 removeReaction(
                                   context,
-                                  widget.message.ownReactions[ownReactionIndex],
+                                  widget.message.ownReactions![ownReactionIndex],
                                 );
                               } else {
                                 sendReaction(
                                   context,
-                                  reactionIcon.type,
+                                  reactionIcon.type!,
                                 );
                               }
                             },
@@ -308,9 +308,9 @@ class _ReactionPickerState extends State<ReactionPicker>
     pop();
   }
 
-  int getReactionScore(String type) {
-    if (reactionScores != null && reactionScores.isNotEmpty) {
-      return reactionScores[type] ?? 0;
+  int getReactionScore(String? type) {
+    if (reactionScores != null && reactionScores!.isNotEmpty) {
+      return reactionScores![type!] ?? 0;
     }
     return 0;
   }

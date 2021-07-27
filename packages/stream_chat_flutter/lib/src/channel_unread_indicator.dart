@@ -4,8 +4,8 @@ import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 
 class ChannelUnreadIndicator extends StatelessWidget {
   const ChannelUnreadIndicator({
-    Key key,
-    @required this.channel,
+    Key? key,
+    required this.channel,
   }) : super(key: key);
 
   final Channel channel;
@@ -13,8 +13,8 @@ class ChannelUnreadIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
-      stream: channel.state.unreadCountStream,
-      initialData: channel.state.unreadCount,
+      stream: channel.state!.unreadCountStream,
+      initialData: channel.state!.unreadCount,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == 0) {
           return SizedBox();
@@ -23,7 +23,7 @@ class ChannelUnreadIndicator extends StatelessWidget {
         return Material(
           borderRadius: BorderRadius.circular(8),
           color: StreamChatTheme.of(context)
-              .channelPreviewTheme
+              .channelPreviewTheme!
               .unreadCounterColor,
           child: Padding(
             padding: const EdgeInsets.only(
@@ -34,7 +34,7 @@ class ChannelUnreadIndicator extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                '${snapshot.data > 99 ? '99+' : snapshot.data}',
+                '${snapshot.data! > 99 ? '99+' : snapshot.data}',
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.white,

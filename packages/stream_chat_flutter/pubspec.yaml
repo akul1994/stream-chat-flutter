@@ -6,7 +6,7 @@ repository: https://github.com/GetStream/stream-chat-flutter
 issue_tracker: https://github.com/GetStream/stream-chat-flutter/issues
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -45,6 +45,7 @@ dependencies:
   video_thumbnail: ^0.3.3
   fluttertoast: ^8.0.7
   receive_sharing_intent: ^1.4.5
+  collection: ^1.15.0-nullsafety.4
 
 
 

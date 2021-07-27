@@ -10,17 +10,17 @@ import 'attachment_title.dart';
 import 'attachment_widget.dart';
 
 class ImageAttachment extends AttachmentWidget {
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
   final bool showTitle;
-  final ShowMessageCallback onShowMessage;
-  final ValueChanged<ReturnActionType> onReturnAction;
-  final VoidCallback onAttachmentTap;
+  final ShowMessageCallback? onShowMessage;
+  final ValueChanged<ReturnActionType>? onReturnAction;
+  final VoidCallback? onAttachmentTap;
 
   const ImageAttachment({
-    Key key,
-    @required Message message,
-    @required Attachment attachment,
-    Size size,
+    Key? key,
+    required Message? message,
+    required Attachment attachment,
+    Size? size,
     this.messageTheme,
     this.showTitle = false,
     this.onShowMessage,
@@ -38,7 +38,7 @@ class ImageAttachment extends AttachmentWidget {
         return _buildImageAttachment(
           context,
           Image.memory(
-            attachment.file.bytes,
+            attachment.file!.bytes!,
             height: size?.height,
             width: size?.width,
             fit: BoxFit.cover,
@@ -86,9 +86,9 @@ class ImageAttachment extends AttachmentWidget {
             width: size?.width,
             placeholder: (_, __) {
               return Shimmer.fromColors(
-                baseColor: StreamChatTheme.of(context).colorTheme.greyGainsboro,
+                baseColor: StreamChatTheme.of(context).colorTheme!.greyGainsboro,
                 highlightColor:
-                StreamChatTheme.of(context).colorTheme.whiteSmoke,
+                StreamChatTheme.of(context).colorTheme!.whiteSmoke,
                 child: Image.asset(
                   'images/placeholder.png',
                   fit: BoxFit.cover,
@@ -109,7 +109,7 @@ class ImageAttachment extends AttachmentWidget {
 
   Widget _buildImageAttachment(BuildContext context, Widget imageWidget) {
     return ConstrainedBox(
-      constraints: BoxConstraints.loose(size),
+      constraints: BoxConstraints.loose(size!),
       child: Column(
         children: <Widget>[
           Expanded(
@@ -127,8 +127,8 @@ class ImageAttachment extends AttachmentWidget {
                                 channel: channel,
                                 child: FullScreenMedia(
                                   mediaAttachments: [attachment],
-                                  userName: message.user.name,
-                                  sentAt: message.createdAt,
+                                  userName: message!.user!.name,
+                                  sentAt: message!.createdAt,
                                   message: message,
                                   onShowMessage: onShowMessage,
                                 ),
@@ -136,7 +136,7 @@ class ImageAttachment extends AttachmentWidget {
                             },
                           ),
                         );
-                        if (result != null) onReturnAction(result);
+                        if (result != null) onReturnAction!(result);
                       },
                   child: imageWidget,
                 ),
@@ -152,7 +152,7 @@ class ImageAttachment extends AttachmentWidget {
           ),
           if (showTitle && attachment.title != null)
             Material(
-              color: messageTheme.messageBackgroundColor,
+              color: messageTheme!.messageBackgroundColor,
               child: AttachmentTitle(
                 messageTheme: messageTheme,
                 attachment: attachment,

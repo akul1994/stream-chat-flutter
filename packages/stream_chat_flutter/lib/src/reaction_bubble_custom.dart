@@ -1,7 +1,8 @@
 import 'dart:math';
 
-import 'package:emojis/emoji.dart';
-import 'package:emojis/emojis.dart';
+
+import 'package:awesome_emojis/emojis.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:stream_chat_flutter/src/reaction_bubble.dart';
@@ -12,11 +13,11 @@ import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ReactionBubbleCustom extends StatelessWidget {
    ReactionBubbleCustom({
-    Key key,
-    @required this.reactions,
-    @required this.borderColor,
-    @required this.backgroundColor,
-    @required this.maskColor,
+    Key? key,
+    required this.reactions,
+    required this.borderColor,
+    required this.backgroundColor,
+    required this.maskColor,
     this.reverse = false,
     this.flipTail = false,
     this.highlightOwnReactions = true,
@@ -26,18 +27,18 @@ class ReactionBubbleCustom extends StatelessWidget {
   }) : super(key: key);
 
   final List<Reaction> reactions;
-  final Color borderColor;
-  final Color backgroundColor;
-  final Color maskColor;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final Color? maskColor;
   final bool reverse;
-  final List<ReactionIcon> reactionIcons;
+  final List<ReactionIcon>? reactionIcons;
 
   final bool flipTail;
   final bool highlightOwnReactions;
   final double tailCirclesSpacing;
-  final Map<String, int> reactionScores;
+  final Map<String, int>? reactionScores;
 
-  final Function( Reaction reaction) onTap;
+  final Function( Reaction reaction)? onTap;
 
   int totalReactionCount = 0;
 
@@ -64,7 +65,7 @@ class ReactionBubbleCustom extends StatelessWidget {
       transform: Matrix4.rotationY(reverse ? pi : 0),
       alignment: Alignment.center,
       child: GestureDetector(
-        onTap : (){onTap(reactions[0]);},
+        onTap : (){onTap!(reactions[0]);},
         child: Container(
            // borderRadius: BorderRadius.circular(24),
             // color: MainAppColorHelper.greyNeutral7(),
@@ -81,7 +82,7 @@ class ReactionBubbleCustom extends StatelessWidget {
                     if (true)
                       ...reactions.map((reaction) {
                         return _buildReaction(
-                          reactionIcons,
+                          reactionIcons!,
                           reaction,
                           context,
                         );
@@ -103,8 +104,8 @@ class ReactionBubbleCustom extends StatelessWidget {
   }
 
   int getReactionScore(String type) {
-    if (reactionScores != null && reactionScores.isNotEmpty) {
-      return reactionScores[type] ?? 0;
+    if (reactionScores != null && reactionScores!.isNotEmpty) {
+      return reactionScores![type] ?? 0;
     }
     return 0;
   }
@@ -121,16 +122,15 @@ class ReactionBubbleCustom extends StatelessWidget {
   Widget _buildReaction(List<ReactionIcon> reactionIcons,
       Reaction reaction,
       BuildContext context,) {
-    final reactionIcon = reactionIcons.firstWhere(
+    final reactionIcon = reactionIcons.firstWhereOrNull(
           (r) => r.type == reaction.type,
-      orElse: () => null,
     );
 
     var count = getReactionScore(reaction.type);
 
     return InkWell(
       onTap: (){
-        onTap(reaction);
+        onTap!(reaction);
       },
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -167,7 +167,7 @@ class ReactionBubbleCustom extends StatelessWidget {
                 //         .withOpacity(.5),
               )
                   : Text(
-                reactionIcon.emoji,
+                reactionIcon.emoji!,
                 style: TextStyle(fontSize: 14),
               ),
 

@@ -4,9 +4,9 @@ import 'package:stream_chat_flutter/src/user_avatar.dart';
 
 class UserReactionDisplay extends StatelessWidget {
   const UserReactionDisplay({
-    Key key,
-    @required this.reactionToEmoji,
-    @required this.message,
+    Key? key,
+    required this.reactionToEmoji,
+    required this.message,
     this.size = 30,
   }) : super(key: key);
 
@@ -23,10 +23,10 @@ class UserReactionDisplay extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: reactionToEmoji.keys.map((reactionType) {
-          var firstUserReaction = message.latestReactions.firstWhere(
+          var firstUserReaction = message.latestReactions!.firstWhere(
               (element) => element.type == reactionType, orElse: () {
             return null;
-          });
+          } as Reaction Function()?);
 
           if (firstUserReaction == null) {
             return IconButton(

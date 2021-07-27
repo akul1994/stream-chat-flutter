@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -8,14 +9,14 @@ class ChannelInfo extends StatelessWidget {
   final Channel channel;
 
   /// The style of the text displayed
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   /// If true the typing indicator will be rendered if a user is typing
   final bool showTypingIndicator;
 
   const ChannelInfo({
-    Key key,
-    @required this.channel,
+    Key? key,
+    required this.channel,
     this.textStyle,
     this.showTypingIndicator = true,
   }) : super(key: key);
@@ -24,8 +25,8 @@ class ChannelInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     final client = StreamChat.of(context).client;
     return StreamBuilder<List<Member>>(
-      stream: channel.state.membersStream,
-      initialData: channel.state.members,
+      stream: channel.state!.membersStream,
+      initialData: channel.state!.members,
       builder: (context, snapshot) {
         return ConnectionStatusBuilder(
           statusBuilder: (context, status) {
@@ -45,38 +46,37 @@ class ChannelInfo extends StatelessWidget {
     );
   }
 
-  Widget _buildConnectedTitleState(BuildContext context, List<Member> members) {
+  Widget _buildConnectedTitleState(BuildContext context, List<Member>? members) {
     var alternativeWidget;
 
-    if (channel.memberCount != null && channel.memberCount > 2) {
+    if (channel.memberCount != null && channel.memberCount! > 2) {
       var text = '${channel.memberCount} Members';
-      final watcherCount = channel.state.watcherCount ?? 0;
+      final watcherCount = channel.state!.watcherCount ?? 0;
       if (watcherCount > 0) text += ' $watcherCount Online';
       alternativeWidget = Text(
         text,
         style: StreamChatTheme.of(context)
-            .channelTheme
-            .channelHeaderTheme
+            .channelTheme!
+            .channelHeaderTheme!
             .subtitle,
       );
     } else {
-      final otherMember = members.firstWhere(
-        (element) => element.userId != StreamChat.of(context).user.id,
-        orElse: () => null,
+      final otherMember = members!.firstWhereOrNull(
+        (element) => element.userId != StreamChat.of(context).user!.id,
       );
 
       if (otherMember != null) {
-        if (otherMember.user.online) {
+        if (otherMember.user!.online) {
           alternativeWidget = Text(
             'Online',
             style: StreamChatTheme.of(context)
-                .channelTheme
-                .channelHeaderTheme
+                .channelTheme!
+                .channelHeaderTheme!
                 .subtitle,
           );
         } else {
           alternativeWidget = Text(
-            'Last seen ${Jiffy(otherMember.user.lastActive).fromNow()}',
+            'Last seen ${Jiffy(otherMember.user!.lastActive).fromNow()}',
             style: textStyle,
           );
         }
@@ -132,14 +132,13 @@ class ChannelInfo extends StatelessWidget {
               vertical: VisualDensity.minimumDensity,
             ),
           ),
-          onPressed: () async {
-            await client.disconnect();
-            return client.connect();
-          },
+          onPressed: () => client
+            ..closeConnection()
+            ..openConnection(),
           child: Text(
             'Try Again',
-            style: textStyle.copyWith(
-              color: StreamChatTheme.of(context).colorTheme.accentBlue,
+            style: textStyle!.copyWith(
+              color: StreamChatTheme.of(context).colorTheme!.accentBlue,
             ),
           ),
         ),

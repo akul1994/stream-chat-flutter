@@ -1,12 +1,13 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 
-import 'package:threedots_flutter_mvp/styles/colors/AppColorHelper.dart';
+
 
 
 class MainAppColorHelper {
 
-  static Color black() => AppColorHelper.black();
+  /*static Color black() => AppColorHelper.black();
 
   static Color greyNeutral6() => AppColorHelper.greyNeutral6();
 
@@ -19,7 +20,22 @@ class MainAppColorHelper {
 
   static Color greyNeutral7() => AppColorHelper.greyNeutral7();
 
-  static Color blueGrayBG() => AppColorHelper.blueGrayBg();
+  static Color blueGrayBG() => AppColorHelper.blueGrayBg();*/
+
+  static Color black() => Colors.black;
+
+  static Color greyNeutral6() => Colors.black;
+
+  static Color orange() => Colors.black;
+
+  static Color greyNeutral3() => Colors.black;
+
+
+  static Color greyNeutral5() => Colors.black;
+
+  static Color greyNeutral7() => Colors.black;
+
+  static Color blueGrayBG() => Colors.black;
 
 
 }

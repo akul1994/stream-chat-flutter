@@ -11,28 +11,28 @@ class ImageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   /// Callback to call when pressing the back button.
   /// By default it calls [Navigator.pop]
-  final VoidCallback onBackPressed;
+  final VoidCallback? onBackPressed;
 
   /// Callback to call when pressing the show message button.
-  final VoidCallback onShowMessage;
+  final VoidCallback? onShowMessage;
 
   /// Callback to call when the header is tapped.
-  final VoidCallback onTitleTap;
+  final VoidCallback? onTitleTap;
 
   /// Callback to call when the image is tapped.
-  final VoidCallback onImageTap;
+  final VoidCallback? onImageTap;
 
-  final Message message;
+  final Message? message;
 
   final String userName;
   final String sentAt;
 
-  final List<Attachment> urls;
+  final List<Attachment>? urls;
   final currentIndex;
 
   /// Creates a channel header
   ImageHeader({
-    Key key,
+    Key? key,
     this.message,
     this.urls,
     this.currentIndex,
@@ -54,19 +54,19 @@ class ImageHeader extends StatelessWidget implements PreferredSizeWidget {
       leading: showBackButton
           ? IconButton(
               icon: StreamSvgIcon.close(
-                color: StreamChatTheme.of(context).colorTheme.black,
+                color: StreamChatTheme.of(context).colorTheme!.black,
                 size: 24.0,
               ),
               onPressed: onBackPressed,
             )
           : SizedBox(),
       backgroundColor:
-          StreamChatTheme.of(context).channelTheme.channelHeaderTheme.color,
+          StreamChatTheme.of(context).channelTheme!.channelHeaderTheme!.color,
       actions: <Widget>[
-        if (message.type != 'ephemeral')
+        if (message!.type != 'ephemeral')
           IconButton(
             icon: StreamSvgIcon.iconMenuPoint(
-              color: StreamChatTheme.of(context).colorTheme.black,
+              color: StreamChatTheme.of(context).colorTheme!.black,
             ),
             onPressed: () {
               _showMessageActionModalBottomSheet(context);
@@ -74,7 +74,7 @@ class ImageHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
       ],
       centerTitle: true,
-      title: message.type != 'ephemeral'
+      title: message!.type != 'ephemeral'
           ? InkWell(
               onTap: onTitleTap,
               child: Container(
@@ -87,12 +87,12 @@ class ImageHeader extends StatelessWidget implements PreferredSizeWidget {
                   children: <Widget>[
                     Text(
                       userName,
-                      style: StreamChatTheme.of(context).textTheme.headlineBold,
+                      style: StreamChatTheme.of(context).textTheme!.headlineBold,
                     ),
                     Text(
                       sentAt,
                       style: StreamChatTheme.of(context)
-                          .channelPreviewTheme
+                          .channelPreviewTheme!
                           .subtitle,
                     ),
                   ],
@@ -111,7 +111,7 @@ class ImageHeader extends StatelessWidget implements PreferredSizeWidget {
 
     var result = await showDialog(
       context: context,
-      barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+      barrierColor: StreamChatTheme.of(context).colorTheme!.overlay,
       builder: (context) {
         return StreamChannel(
           channel: channel,

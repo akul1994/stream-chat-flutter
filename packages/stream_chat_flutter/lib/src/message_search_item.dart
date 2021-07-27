@@ -12,8 +12,8 @@ import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 class MessageSearchItem extends StatelessWidget {
   /// Instantiate a new MessageSearchItem
   const MessageSearchItem({
-    Key key,
-    @required this.getMessageResponse,
+    Key? key,
+    required this.getMessageResponse,
     this.onTap,
     this.showOnlineStatus = true,
   }) : super(key: key);
@@ -22,7 +22,7 @@ class MessageSearchItem extends StatelessWidget {
   final GetMessageResponse getMessageResponse;
 
   /// Function called when tapping this widget
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   /// If true the [MessageSearchItem] will show the current online Status
   final bool showOnlineStatus;
@@ -30,9 +30,9 @@ class MessageSearchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = getMessageResponse.message;
-    final channel = getMessageResponse.channel;
+    final channel = getMessageResponse.channel!;
     final channelName = channel.extraData['name'];
-    final user = message.user;
+    final user = message.user!;
     return ListTile(
       onTap: onTap,
       leading: UserAvatar(
@@ -46,22 +46,22 @@ class MessageSearchItem extends StatelessWidget {
       title: Row(
         children: [
           Text(
-            user.id == StreamChat.of(context).user.id ? 'You' : user.name,
-            style: StreamChatTheme.of(context).channelPreviewTheme.title,
+            user.id == StreamChat.of(context).user!.id ? 'You' : user.name,
+            style: StreamChatTheme.of(context).channelPreviewTheme!.title,
           ),
           if (channelName != null) ...[
             Text(
               ' in ',
               style: StreamChatTheme.of(context)
-                  .channelPreviewTheme
-                  .title
+                  .channelPreviewTheme!
+                  .title!
                   .copyWith(
                     fontWeight: FontWeight.normal,
                   ),
             ),
             Text(
-              channelName,
-              style: StreamChatTheme.of(context).channelPreviewTheme.title,
+              channelName as String,
+              style: StreamChatTheme.of(context).channelPreviewTheme!.title,
             ),
           ],
         ],
@@ -91,7 +91,7 @@ class MessageSearchItem extends StatelessWidget {
 
     return Text(
       stringDate,
-      style: StreamChatTheme.of(context).channelPreviewTheme.lastMessageAt,
+      style: StreamChatTheme.of(context).channelPreviewTheme!.lastMessageAt,
     );
   }
 
@@ -125,15 +125,15 @@ class MessageSearchItem extends StatelessWidget {
 
     return Text.rich(
       _getDisplayText(
-        text,
+        text!,
         message.mentionedUsers,
         message.attachments,
-        StreamChatTheme.of(context).channelPreviewTheme.subtitle.copyWith(
+        StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
               fontStyle: (message.isSystem || message.isDeleted)
                   ? FontStyle.italic
                   : FontStyle.normal,
             ),
-        StreamChatTheme.of(context).channelPreviewTheme.subtitle.copyWith(
+        StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
               fontStyle: (message.isSystem || message.isDeleted)
                   ? FontStyle.italic
                   : FontStyle.normal,

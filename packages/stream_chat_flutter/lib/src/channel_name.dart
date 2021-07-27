@@ -10,12 +10,12 @@ import '../stream_chat_flutter.dart';
 class ChannelName extends StatelessWidget {
   /// Instantiate a new ChannelName
   const ChannelName({
-    Key key,
+    Key? key,
     this.textStyle,
   }) : super(key: key);
 
   /// The style of the text displayed
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +26,31 @@ class ChannelName extends StatelessWidget {
       stream: channel.extraDataStream,
       initialData: channel.extraData,
       builder: (context, snapshot) {
-        return _buildName(snapshot.data, channel.state.members, client);
+        return _buildName(snapshot.data, channel.state!.members, client);
       },
     );
   }
 
   Widget _buildName(
-    Map<String, dynamic> extraData,
+    Map<String, dynamic>? extraData,
     List<Member> members,
     StreamChatState client,
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        String title;
-        if (extraData['name'] == null) {
+        String? title;
+        if (extraData!['name'] == null) {
           final otherMembers =
-              members.where((member) => member.userId != client.user.id);
+              members.where((member) => member.userId != client.user!.id);
           if (otherMembers.length == 1) {
-            title = otherMembers.first.user.name;
+            title = otherMembers.first.user!.name;
           } else if (otherMembers.isNotEmpty) {
             final maxWidth = constraints.maxWidth;
-            final maxChars = maxWidth / textStyle.fontSize;
+            final maxChars = maxWidth / textStyle!.fontSize!;
             var currentChars = 0;
             final currentMembers = <Member>[];
             otherMembers.forEach((element) {
-              final newLength = currentChars + element.user.name.length;
+              final newLength = currentChars + element.user!.name.length;
               if (newLength < maxChars) {
                 currentChars = newLength;
                 currentMembers.add(element);
@@ -60,7 +60,7 @@ class ChannelName extends StatelessWidget {
             final exceedingMembers =
                 otherMembers.length - currentMembers.length;
             title =
-                '${currentMembers.map((e) => e.user.name).join(', ')} ${exceedingMembers > 0 ? '+ $exceedingMembers' : ''}';
+                '${currentMembers.map((e) => e.user!.name).join(', ')} ${exceedingMembers > 0 ? '+ $exceedingMembers' : ''}';
           } else {
             title = 'No title';
           }
@@ -69,7 +69,7 @@ class ChannelName extends StatelessWidget {
         }
 
         return Text(
-          title,
+          title!,
           style: textStyle,
           overflow: TextOverflow.ellipsis,
         );

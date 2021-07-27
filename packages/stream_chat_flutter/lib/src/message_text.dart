@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:stream_chat_flutter/src/utils/StreamUtils.dart';
@@ -10,17 +11,17 @@ enum MessageLengthState { normal, clipped, full }
 
 class MessageText extends StatefulWidget {
   const MessageText({
-    Key key,
-    @required this.message,
-    @required this.messageTheme,
+    Key? key,
+    required this.message,
+    required this.messageTheme,
     this.onMentionTap,
     this.onLinkTap,
   }) : super(key: key);
 
   final Message message;
-  final void Function(User) onMentionTap;
-  final void Function(String) onLinkTap;
-  final MessageTheme messageTheme;
+  final void Function(User?)? onMentionTap;
+  final void Function(String)? onLinkTap;
+  final MessageTheme? messageTheme;
 
   @override
   _MessageTextState createState() => _MessageTextState();
@@ -29,22 +30,22 @@ class MessageText extends StatefulWidget {
 class _MessageTextState extends State<MessageText> {
   var messageLengthState = MessageLengthState.normal;
 
-  String messageText;
+  String? messageText;
 
-  String firstHalfText;
+  String? firstHalfText;
 
-  String messageToShow;
+  String? messageToShow;
 
   @override
   void initState() {
     messageText =
-        _replaceMentions(widget.message.text).replaceAll('\n', '\\\n');
+        _replaceMentions(widget.message.text)!.replaceAll('\n', '\\\n');
 
     //messageText = _replaceHashtags(widget.message.text);
-    messageText = _replacePlus(messageText);
+    messageText = _replacePlus(messageText!);
 
-    if (messageText.length > 1000) {
-      firstHalfText = messageText.substring(0, 1000) + '...';
+    if (messageText!.length > 1000) {
+      firstHalfText = messageText!.substring(0, 1000) + '...';
       messageToShow = firstHalfText;
       messageLengthState = MessageLengthState.clipped;
     } else {
@@ -62,26 +63,25 @@ class _MessageTextState extends State<MessageText> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           MarkdownBody(
-            data: messageToShow,
+            data: messageToShow!,
             onTapLink: (
               String link,
-              String href,
+              String? href,
               String title,
             ) {
               if (link.startsWith('@')) {
-                final mentionedUser = widget.message.mentionedUsers.firstWhere(
+                final mentionedUser = widget.message.mentionedUsers.firstWhereOrNull(
                   (u) => '@${u.name}' == link,
-                  orElse: () => null,
                 );
 
                 if (widget.onMentionTap != null) {
-                  widget.onMentionTap(mentionedUser);
+                  widget.onMentionTap!(mentionedUser);
                 } else {
-                  print('tap on ${mentionedUser.name}');
+                  print('tap on ${mentionedUser!.name}');
                 }
               } else {
                 if (widget.onLinkTap != null) {
-                  widget.onLinkTap(link);
+                  widget.onLinkTap!(link);
                 } else {
                   launchURL(context, link);
                 }
@@ -90,18 +90,18 @@ class _MessageTextState extends State<MessageText> {
             styleSheet: MarkdownStyleSheet.fromTheme(
               Theme.of(context).copyWith(
                 textTheme: Theme.of(context).textTheme.apply(
-                      bodyColor: widget.messageTheme.messageText.color,
-                      decoration: widget.messageTheme.messageText.decoration,
+                      bodyColor: widget.messageTheme!.messageText!.color,
+                      decoration: widget.messageTheme!.messageText!.decoration,
                       decorationColor:
-                          widget.messageTheme.messageText.decorationColor,
+                          widget.messageTheme!.messageText!.decorationColor,
                       decorationStyle:
-                          widget.messageTheme.messageText.decorationStyle,
-                      fontFamily: widget.messageTheme.messageText.fontFamily,
+                          widget.messageTheme!.messageText!.decorationStyle,
+                      fontFamily: widget.messageTheme!.messageText!.fontFamily,
                     ),
               ),
             ).copyWith(
-              a: widget.messageTheme.messageLinks,
-              p: widget.messageTheme.messageText,
+              a: widget.messageTheme!.messageLinks,
+              p: widget.messageTheme!.messageText,
             ),
           ),
           if (messageLengthState != MessageLengthState.normal)
@@ -113,7 +113,7 @@ class _MessageTextState extends State<MessageText> {
                   },
                   child: Text(
                     getShowMoreText(),
-                    style: widget.messageTheme.messageText
+                    style: widget.messageTheme!.messageText!
                         .copyWith(color: Colors.blue),
                   )),
             )
@@ -122,7 +122,7 @@ class _MessageTextState extends State<MessageText> {
     );
   }
 
-  String onShowMoreClick() {
+  String? onShowMoreClick() {
     if (messageLengthState == MessageLengthState.clipped) {
       setState(() {
         messageLengthState = MessageLengthState.full;
@@ -150,13 +150,13 @@ class _MessageTextState extends State<MessageText> {
     }
   }
 
-  String _replaceMentions(String text) {
+  String? _replaceMentions(String? text) {
     widget.message.mentionedUsers
         ?.map((u) => StreamUtils.getUserName(u))
         ?.toSet()
         ?.forEach((userName) {
-      text = text.replaceAll(
-          '@$userName', '[@$userName](@${userName.replaceAll(' ', '')})');
+      text = text!.replaceAll(
+          '@$userName', '[@$userName](@${userName!.replaceAll(' ', '')})');
     });
     return text;
   }
@@ -173,7 +173,7 @@ class _MessageTextState extends State<MessageText> {
     RegExp exp = new RegExp(r"\B#\w\w+");
     exp.allMatches(text).forEach((match) {
       var replText =
-          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
               .toUpperCase();
       text = text.replaceAll('${match.group(0)}', replText);
     });
@@ -184,7 +184,7 @@ class _MessageTextState extends State<MessageText> {
     RegExp exp = new RegExp(r"\$(\w+)");
     exp.allMatches(text).forEach((match) {
       var replText =
-          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
               .toUpperCase();
       text = text.replaceAll('${match.group(0)}', replText);
     });
@@ -195,7 +195,7 @@ class _MessageTextState extends State<MessageText> {
     RegExp exp = new RegExp(r"\+(\w+)");
     exp.allMatches(text).forEach((match) {
       var replText =
-          '[${match.group(0)}](${match.group(0).replaceAll(' ', '')})'
+          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
               .toUpperCase();
       text = text.replaceAll('${match.group(0)}', replText);
     });

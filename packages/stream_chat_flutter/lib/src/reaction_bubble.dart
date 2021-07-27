@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:emojis/emoji.dart';
-import 'package:emojis/emojis.dart';
+import 'package:awesome_emojis/emojis.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:stream_chat_flutter/src/reaction_icon.dart';
@@ -11,11 +11,11 @@ import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ReactionBubble extends StatelessWidget {
   const ReactionBubble({
-    Key key,
-    @required this.reactions,
-    @required this.borderColor,
-    @required this.backgroundColor,
-    @required this.maskColor,
+    Key? key,
+    required this.reactions,
+    required this.borderColor,
+    required this.backgroundColor,
+    required this.maskColor,
     this.reverse = false,
     this.flipTail = false,
     this.highlightOwnReactions = true,
@@ -25,16 +25,16 @@ class ReactionBubble extends StatelessWidget {
   }) : super(key: key);
 
   final List<Reaction> reactions;
-  final Color borderColor;
-  final Color backgroundColor;
+  final Color? borderColor;
+  final Color? backgroundColor;
   final Color maskColor;
   final bool reverse;
-  final List<ReactionIcon> reactionIcons;
+  final List<ReactionIcon>? reactionIcons;
 
   final bool flipTail;
   final bool highlightOwnReactions;
   final double tailCirclesSpacing;
-  final Map<String, int> reactionScores;
+  final Map<String, int>? reactionScores;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class ReactionBubble extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: borderColor,
+                    color: borderColor!,
                   ),
                   color: backgroundColor,
                   borderRadius: BorderRadius.all(Radius.circular(14)),
@@ -79,7 +79,7 @@ class ReactionBubble extends StatelessWidget {
                               .take((constraints.maxWidth) ~/ 24)
                               .map((reaction) {
                             return _buildReaction(
-                              reactionIcons,
+                              reactionIcons!,
                               reaction,
                               context,
                             );
@@ -87,7 +87,7 @@ class ReactionBubble extends StatelessWidget {
                         if (constraints.maxWidth == double.infinity)
                           ...reactions.map((reaction) {
                             return _buildReaction(
-                              reactionIcons,
+                              reactionIcons!,
                               reaction,
                               context,
                             );
@@ -111,8 +111,8 @@ class ReactionBubble extends StatelessWidget {
   }
 
   int getReactionScore(String type) {
-    if (reactionScores != null && reactionScores.isNotEmpty) {
-      return reactionScores[type] ?? 0;
+    if (reactionScores != null && reactionScores!.isNotEmpty) {
+      return reactionScores![type] ?? 0;
     }
     return 0;
   }
@@ -122,9 +122,8 @@ class ReactionBubble extends StatelessWidget {
     Reaction reaction,
     BuildContext context,
   ) {
-    final reactionIcon = reactionIcons.firstWhere(
+    final reactionIcon = reactionIcons.firstWhereOrNull(
       (r) => r.type == reaction.type,
-      orElse: () => null,
     );
 
     int count = getReactionScore(reaction.type);
@@ -150,7 +149,7 @@ class ReactionBubble extends StatelessWidget {
                       //         .withOpacity(.5),
                     )
                   : Text(
-                      reactionIcon.emoji,
+                      reactionIcon.emoji!,
                       style: TextStyle(fontSize: 16),
                     ),
               Visibility(
@@ -209,9 +208,9 @@ class ReactionBubble extends StatelessWidget {
 }
 
 class ReactionBubblePainter extends CustomPainter {
-  final Color color;
-  final Color borderColor;
-  final Color maskColor;
+  final Color? color;
+  final Color? borderColor;
+  final Color? maskColor;
   final double tailCirclesSpace;
 
   ReactionBubblePainter(
@@ -238,7 +237,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawOvalMask(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = maskColor
+      ..color = maskColor!
       ..style = PaintingStyle.fill;
 
     final path = Path();
@@ -253,7 +252,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawOvalBorder(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = borderColor
+      ..color = borderColor!
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -269,7 +268,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawOval(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = color
+      ..color = color!
       ..strokeWidth = 1;
 
     final path = Path();
@@ -282,7 +281,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawBorder(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = borderColor
+      ..color = borderColor!
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
@@ -303,7 +302,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawArc(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = color
+      ..color = color!
       ..strokeWidth = 1;
 
     final dy = -2.2;
@@ -323,7 +322,7 @@ class ReactionBubblePainter extends CustomPainter {
 
   void _drawMask(Size size, Canvas canvas) {
     final paint = Paint()
-      ..color = maskColor
+      ..color = maskColor!
       ..strokeWidth = 1
       ..style = PaintingStyle.fill;
 

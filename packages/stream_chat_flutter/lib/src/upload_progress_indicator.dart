@@ -8,12 +8,12 @@ class UploadProgressIndicator extends StatelessWidget {
   final Color progressIndicatorColor;
   final EdgeInsetsGeometry padding;
   final bool showBackground;
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   const UploadProgressIndicator({
-    Key key,
-    @required this.uploaded,
-    @required this.total,
+    Key? key,
+    required this.uploaded,
+    required this.total,
     this.progressIndicatorColor = const Color(0xffb2b2b2),
     this.padding = const EdgeInsets.only(top: 5, bottom: 5, right: 11, left: 5),
     this.showBackground = true,
@@ -41,8 +41,8 @@ class UploadProgressIndicator extends StatelessWidget {
           Text(
             '${_percentage.toInt()}%',
             style: textStyle ??
-                theme.textTheme.footnote.copyWith(
-                  color: theme.colorTheme.white,
+                theme.textTheme!.footnote.copyWith(
+                  color: theme.colorTheme!.white,
                 ),
           ),
         ],
@@ -52,7 +52,7 @@ class UploadProgressIndicator extends StatelessWidget {
       child = Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: theme.colorTheme.overlayDark.withOpacity(0.6),
+          color: theme.colorTheme!.overlayDark.withOpacity(0.6),
         ),
         child: child,
       );

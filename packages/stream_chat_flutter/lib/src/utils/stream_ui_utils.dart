@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 
 class StreamUiUtils {
-  static BoxDecoration getMsgBubbleDecor(bool reverse, bool isCall) {
+  static BoxDecoration? getMsgBubbleDecor(bool reverse, bool isCall) {
     if (!isCall) {
       return null;
     }
@@ -30,7 +30,7 @@ class StreamUiUtils {
     borderRadius: BorderRadius.circular(24),
   );
 
-  static Decoration cardShadow(Color bgColor) {
+  static Decoration cardShadow(Color? bgColor) {
     return BoxDecoration(
       color: bgColor,
       borderRadius: BorderRadius.circular(8),

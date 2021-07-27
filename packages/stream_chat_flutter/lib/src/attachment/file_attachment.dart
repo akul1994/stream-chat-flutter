@@ -10,14 +10,14 @@ import '../upload_progress_indicator.dart';
 import 'attachment_widget.dart';
 
 class FileAttachment extends AttachmentWidget {
-  final Widget title;
-  final Widget trailing;
+  final Widget? title;
+  final Widget? trailing;
 
   const FileAttachment({
-    Key key,
-    @required Message message,
-    @required Attachment attachment,
-    Size size,
+    Key? key,
+    required Message? message,
+    required Attachment attachment,
+    Size? size,
     this.title,
     this.trailing,
   }) : super(key: key, message: message, attachment: attachment, size: size);
@@ -33,10 +33,10 @@ class FileAttachment extends AttachmentWidget {
         width: size?.width ?? 100,
         height: 56.0,
         decoration: BoxDecoration(
-          color: StreamChatTheme.of(context).colorTheme.white,
+          color: StreamChatTheme.of(context).colorTheme!.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: StreamChatTheme.of(context).colorTheme.greyWhisper,
+            color: StreamChatTheme.of(context).colorTheme!.greyWhisper,
           ),
         ),
         child: Row(
@@ -56,7 +56,7 @@ class FileAttachment extends AttachmentWidget {
                 children: [
                   Text(
                     attachment?.title ?? 'File',
-                    style: StreamChatTheme.of(context).textTheme.bodyBold,
+                    style: StreamChatTheme.of(context).textTheme!.bodyBold,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -88,19 +88,19 @@ class FileAttachment extends AttachmentWidget {
         shape: _getDefaultShape(context),
         child: source.when(
           local: () => Image.memory(
-            attachment.file.bytes,
+            attachment.file!.bytes!,
             fit: BoxFit.cover,
             errorBuilder: (_, obj, trace) {
-              return getFileTypeImage(attachment.extraData['other']);
+              return getFileTypeImage(attachment.extraData['other'] as String?);
             },
           ),
           network: () => CachedNetworkImage(
             imageUrl: attachment.imageUrl ??
                 attachment.assetUrl ??
-                attachment.thumbUrl,
+                attachment.thumbUrl!,
             fit: BoxFit.cover,
             errorWidget: (_, obj, trace) {
-              return getFileTypeImage(attachment.extraData['other']);
+              return getFileTypeImage(attachment.extraData['other'] as String?);
             },
             progressIndicatorBuilder: (context, _, progress) {
               return Center(
@@ -123,7 +123,7 @@ class FileAttachment extends AttachmentWidget {
         shape: _getDefaultShape(context),
         child: source.when(
           local: () => VideoThumbnailImage(
-            video: attachment.file.path,
+            video: attachment.file!.path,
             placeholderBuilder: (_) {
               return Center(
                 child: Container(
@@ -149,14 +149,14 @@ class FileAttachment extends AttachmentWidget {
         ),
       );
     }
-    return getFileTypeImage(attachment.extraData['mime_type']);
+    return getFileTypeImage(attachment.extraData['mime_type'] as String?);
   }
 
   Widget _buildButton({
-    Widget icon,
+    Widget? icon,
     double iconSize = 24.0,
-    VoidCallback onPressed,
-    Color fillColor,
+    VoidCallback? onPressed,
+    Color? fillColor,
   }) {
     return Container(
       height: iconSize,
@@ -184,59 +184,59 @@ class FileAttachment extends AttachmentWidget {
           preparing: () => Padding(
             padding: const EdgeInsets.all(8.0),
             child: _buildButton(
-              icon: StreamSvgIcon.close(color: theme.colorTheme.white),
-              fillColor: theme.colorTheme.overlayDark,
+              icon: StreamSvgIcon.close(color: theme.colorTheme!.white),
+              fillColor: theme.colorTheme!.overlayDark,
               onPressed: () => channel.cancelAttachmentUpload(attachmentId),
             ),
           ),
           inProgress: (_, __) => Padding(
             padding: const EdgeInsets.all(8.0),
             child: _buildButton(
-              icon: StreamSvgIcon.close(color: theme.colorTheme.white),
-              fillColor: theme.colorTheme.overlayDark,
+              icon: StreamSvgIcon.close(color: theme.colorTheme!.white),
+              fillColor: theme.colorTheme!.overlayDark,
               onPressed: () => channel.cancelAttachmentUpload(attachmentId),
             ),
           ),
           success: () => Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundColor: theme.colorTheme.accentBlue,
+              backgroundColor: theme.colorTheme!.accentBlue,
               maxRadius: 12.0,
-              child: StreamSvgIcon.check(color: theme.colorTheme.white),
+              child: StreamSvgIcon.check(color: theme.colorTheme!.white),
             ),
           ),
           failed: (_) => Padding(
             padding: const EdgeInsets.all(8.0),
             child: _buildButton(
-              icon: StreamSvgIcon.retry(color: theme.colorTheme.white),
-              fillColor: theme.colorTheme.overlayDark,
+              icon: StreamSvgIcon.retry(color: theme.colorTheme!.white),
+              fillColor: theme.colorTheme!.overlayDark,
               onPressed: () => channel.retryAttachmentUpload(
-                message?.id,
+                message!.id,
                 attachmentId,
               ),
             ),
           ),
         ) ??
         IconButton(
-          icon: StreamSvgIcon.cloudDownload(color: theme.colorTheme.black),
+          icon: StreamSvgIcon.cloudDownload(color: theme.colorTheme!.black),
           padding: const EdgeInsets.all(8),
           visualDensity: VisualDensity.compact,
           splashRadius: 16,
           onPressed: () {
-            launchURL(context, attachment.assetUrl);
+            launchURL(context, attachment.assetUrl!);
           },
         );
 
     if (message != null &&
-        (message.status == null ||
-            message.status == MessageSendingStatus.sent)) {
+        (message!.status == null ||
+            message!.status == MessageSendingStatus.sent)) {
       trailingWidget = IconButton(
-        icon: StreamSvgIcon.cloudDownload(color: theme.colorTheme.black),
+        icon: StreamSvgIcon.cloudDownload(color: theme.colorTheme!.black),
         padding: const EdgeInsets.all(8),
         visualDensity: VisualDensity.compact,
         splashRadius: 16,
         onPressed: () {
-          launchURL(context, attachment.assetUrl);
+          launchURL(context, attachment.assetUrl!);
         },
       );
     }
@@ -250,8 +250,8 @@ class FileAttachment extends AttachmentWidget {
   Widget _buildSubtitle(BuildContext context) {
     final theme = StreamChatTheme.of(context);
     final size = attachment.file?.size ?? attachment.extraData['file_size'];
-    final textStyle = theme.textTheme.footnote.copyWith(
-      color: theme.colorTheme.grey,
+    final textStyle = theme.textTheme!.footnote.copyWith(
+      color: theme.colorTheme!.grey,
     );
     return attachment.uploadState?.when(
           preparing: () {
@@ -264,7 +264,7 @@ class FileAttachment extends AttachmentWidget {
               showBackground: false,
               padding: EdgeInsets.zero,
               textStyle: textStyle,
-              progressIndicatorColor: theme.colorTheme.accentBlue,
+              progressIndicatorColor: theme.colorTheme!.accentBlue,
             );
           },
           inProgress: (sent, total) {
@@ -274,7 +274,7 @@ class FileAttachment extends AttachmentWidget {
               showBackground: false,
               padding: EdgeInsets.zero,
               textStyle: textStyle,
-              progressIndicatorColor: theme.colorTheme.accentBlue,
+              progressIndicatorColor: theme.colorTheme!.accentBlue,
             );
           },
           success: () => Text('${fileSize(size, 2)}', style: textStyle),

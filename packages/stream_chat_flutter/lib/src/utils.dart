@@ -20,16 +20,16 @@ Future<void> launchURL(BuildContext context, String url) async {
   }
 }
 
-Future<bool> showConfirmationDialog(
+Future<bool?> showConfirmationDialog(
   BuildContext context, {
-  String title,
-  Widget icon,
-  String question,
-  String okText,
-  String cancelText,
+  String? title,
+  Widget? icon,
+  String? question,
+  String? okText,
+  String? cancelText,
 }) {
   return showModalBottomSheet(
-      backgroundColor: StreamChatTheme.of(context).colorTheme.white,
+      backgroundColor: StreamChatTheme.of(context).colorTheme!.white,
       context: context,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -37,7 +37,7 @@ Future<bool> showConfirmationDialog(
         topRight: Radius.circular(16.0),
       )),
       builder: (context) {
-        final effect = StreamChatTheme.of(context).colorTheme.borderTop;
+        final effect = StreamChatTheme.of(context).colorTheme!.borderTop;
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -45,17 +45,17 @@ Future<bool> showConfirmationDialog(
             if (icon != null) icon,
             SizedBox(height: 26.0),
             Text(
-              title,
-              style: StreamChatTheme.of(context).textTheme.headlineBold,
+              title!,
+              style: StreamChatTheme.of(context).textTheme!.headlineBold,
             ),
             SizedBox(height: 7.0),
             Text(
-              question,
+              question!,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 36.0),
             Container(
-              color: effect.color.withOpacity(effect.alpha ?? 1),
+              color: effect.color!.withOpacity(effect.alpha ?? 1),
               height: 1,
             ),
             Row(
@@ -63,13 +63,13 @@ Future<bool> showConfirmationDialog(
               children: [
                 FlatButton(
                   child: Text(
-                    cancelText,
+                    cancelText!,
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .bodyBold
                         .copyWith(
                             color: StreamChatTheme.of(context)
-                                .colorTheme
+                                .colorTheme!
                                 .black
                                 .withOpacity(0.5)),
                   ),
@@ -79,13 +79,13 @@ Future<bool> showConfirmationDialog(
                 ),
                 FlatButton(
                   child: Text(
-                    okText,
+                    okText!,
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .bodyBold
                         .copyWith(
                             color: StreamChatTheme.of(context)
-                                .colorTheme
+                                .colorTheme!
                                 .accentRed),
                   ),
                   onPressed: () {
@@ -99,17 +99,17 @@ Future<bool> showConfirmationDialog(
       });
 }
 
-Future<bool> showInfoDialog(
+Future<bool?> showInfoDialog(
   BuildContext context, {
-  String title,
-  Widget icon,
-  String question,
-  String okText,
-  StreamChatThemeData theme,
+  String? title,
+  Widget? icon,
+  String? question,
+  String? okText,
+  required StreamChatThemeData theme,
 }) {
   return showModalBottomSheet(
     backgroundColor:
-        theme.colorTheme.white ?? StreamChatTheme.of(context).colorTheme.white,
+        theme.colorTheme!.white ?? StreamChatTheme.of(context).colorTheme!.white,
     context: context,
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -128,20 +128,20 @@ Future<bool> showInfoDialog(
             height: 26.0,
           ),
           Text(
-            title,
-            style: theme.textTheme.headlineBold ??
-                StreamChatTheme.of(context).textTheme.headlineBold,
+            title!,
+            style: theme.textTheme!.headlineBold ??
+                StreamChatTheme.of(context).textTheme!.headlineBold,
           ),
           SizedBox(
             height: 7.0,
           ),
-          Text(question),
+          Text(question!),
           SizedBox(
             height: 36.0,
           ),
           Container(
-            color: theme.colorTheme.black.withOpacity(.08) ??
-                StreamChatTheme.of(context).colorTheme.black.withOpacity(.08),
+            color: theme.colorTheme!.black.withOpacity(.08) ??
+                StreamChatTheme.of(context).colorTheme!.black.withOpacity(.08),
             height: 1.0,
           ),
           Row(
@@ -149,11 +149,11 @@ Future<bool> showInfoDialog(
             children: [
               FlatButton(
                 child: Text(
-                  okText,
+                  okText!,
                   style: TextStyle(
-                      color: theme.colorTheme.black.withOpacity(0.5) ??
+                      color: theme.colorTheme!.black.withOpacity(0.5) ??
                           StreamChatTheme.of(context)
-                              .colorTheme
+                              .colorTheme!
                               .black
                               .withOpacity(0.5),
                       fontWeight: FontWeight.w400),
@@ -174,14 +174,14 @@ Future<bool> showInfoDialog(
 String getRandomPicUrl(User user) =>
     'https://getstream.io/random_png/?id=${user.id}&name=${user.name}';
 
-String getFirstName(User user) {
+String getFirstName(User? user) {
   var name = user?.name ?? 'User';
   var names = name.split(' ');
   return names[0];
 }
 
 /// Get websiteName from [hostName]
-String getWebsiteName(String hostName) {
+String? getWebsiteName(String hostName) {
   switch (hostName) {
     case 'reddit':
       return 'Reddit';
@@ -290,7 +290,7 @@ String fileSize(dynamic size, [int round = 2]) {
 }
 
 ///
-StreamSvgIcon getFileTypeImage(String type) {
+StreamSvgIcon getFileTypeImage(String? type) {
   switch (type) {
     case '7z':
       return StreamSvgIcon.filetype7z();

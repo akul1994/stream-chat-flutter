@@ -21,10 +21,10 @@ extension on Duration {
 
 class MediaListView extends StatefulWidget {
   final List<String> selectedIds;
-  final void Function(AssetEntity media) onSelect;
+  final void Function(AssetEntity media)? onSelect;
 
   const MediaListView({
-    Key key,
+    Key? key,
     this.selectedIds = const [],
     this.onSelect,
   }) : super(key: key);
@@ -81,7 +81,7 @@ class _MediaListViewState extends State<MediaListView> {
                             : 0.0,
                         child: Container(
                           color: StreamChatTheme.of(context)
-                              .colorTheme
+                              .colorTheme!
                               .black
                               .withOpacity(0.5),
                           alignment: Alignment.topRight,
@@ -92,11 +92,11 @@ class _MediaListViewState extends State<MediaListView> {
                           child: CircleAvatar(
                             radius: 12,
                             backgroundColor:
-                                StreamChatTheme.of(context).colorTheme.white,
+                                StreamChatTheme.of(context).colorTheme!.white,
                             child: StreamSvgIcon.check(
                               size: 24,
                               color:
-                                  StreamChatTheme.of(context).colorTheme.black,
+                                  StreamChatTheme.of(context).colorTheme!.black,
                             ),
                           ),
                         ),
@@ -118,7 +118,7 @@ class _MediaListViewState extends State<MediaListView> {
                       child: Text(
                         media.videoDuration.format(),
                         style: TextStyle(
-                          color: StreamChatTheme.of(context).colorTheme.white,
+                          color: StreamChatTheme.of(context).colorTheme!.white,
                         ),
                       ),
                     ),
@@ -127,7 +127,7 @@ class _MediaListViewState extends State<MediaListView> {
               ),
               onTap: () {
                 if (widget.onSelect != null) {
-                  widget.onSelect(media);
+                  widget.onSelect!(media);
                 }
               },
             ),
@@ -169,7 +169,7 @@ class _MediaListViewState extends State<MediaListView> {
 
 class MediaThumbnailProvider extends ImageProvider<MediaThumbnailProvider> {
   const MediaThumbnailProvider({
-    @required this.media,
+    required this.media,
   }) : assert(media != null);
 
   final AssetEntity media;
@@ -177,7 +177,7 @@ class MediaThumbnailProvider extends ImageProvider<MediaThumbnailProvider> {
   @override
   ImageStreamCompleter load(key, decode) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadAsync(key, decode),
+      codec: _loadAsync(key, decode).then((value) => value!),
       scale: 1.0,
       informationCollector: () sync* {
         yield ErrorDescription('Id: ${media?.id}');
@@ -185,13 +185,13 @@ class MediaThumbnailProvider extends ImageProvider<MediaThumbnailProvider> {
     );
   }
 
-  Future<ui.Codec> _loadAsync(
+  Future<ui.Codec?> _loadAsync(
       MediaThumbnailProvider key, DecoderCallback decode) async {
     assert(key == this);
     final bytes = await media.thumbData;
     if (bytes?.isNotEmpty != true) return null;
 
-    return await decode(bytes);
+    return await decode(bytes!);
   }
 
   @override

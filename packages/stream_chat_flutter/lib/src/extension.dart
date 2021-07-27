@@ -1,5 +1,5 @@
+import 'package:awesome_emojis/emoji.dart';
 import 'package:characters/characters.dart';
-import 'package:emojis/emoji.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -47,7 +47,7 @@ extension PlatformFileX on PlatformFile {
 }
 
 extension InputDecorationX on InputDecoration {
-  InputDecoration merge(InputDecoration other) {
+  InputDecoration merge(InputDecoration? other) {
     if (other == null) return this;
     return copyWith(
       icon: other?.icon,
@@ -103,8 +103,8 @@ extension BuildContextX on BuildContext {
 
 extension UserExtension on User {
   /// Shortcut for user name
-  String get username => (extraData?.containsKey('user_name') == true &&
+  String? get username => (extraData?.containsKey('user_name') == true &&
           extraData['user_name'] != '')
-      ? extraData['user_name']
+      ? extraData['user_name'] as String?
       : name;
 }

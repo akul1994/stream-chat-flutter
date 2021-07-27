@@ -61,15 +61,15 @@ class ThreadHeader extends StatelessWidget implements PreferredSizeWidget {
 
   /// Callback to call when pressing the back button.
   /// By default it calls [Navigator.pop]
-  final VoidCallback onBackPressed;
+  final VoidCallback? onBackPressed;
 
   /// The message parent of this thread
   final Message parent;
 
   /// Instantiate a new ThreadHeader
   ThreadHeader({
-    Key key,
-    @required this.parent,
+    Key? key,
+    required this.parent,
     this.showBackButton = true,
     this.onBackPressed,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
@@ -89,7 +89,7 @@ class ThreadHeader extends StatelessWidget implements PreferredSizeWidget {
             )
           : SizedBox(),
       backgroundColor:
-          StreamChatTheme.of(context).channelTheme.channelHeaderTheme.color,
+          StreamChatTheme.of(context).channelTheme!.channelHeaderTheme!.color,
       centerTitle: true,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,8 +98,8 @@ class ThreadHeader extends StatelessWidget implements PreferredSizeWidget {
           Text(
             'Thread Reply',
             style: StreamChatTheme.of(context)
-                .channelTheme
-                .channelHeaderTheme
+                .channelTheme!
+                .channelHeaderTheme!
                 .title,
           ),
           SizedBox(height: 2),
@@ -111,15 +111,15 @@ class ThreadHeader extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 'with ',
                 style: StreamChatTheme.of(context)
-                    .channelTheme
-                    .channelHeaderTheme
+                    .channelTheme!
+                    .channelHeaderTheme!
                     .subtitle,
               ),
               Flexible(
                 child: ChannelName(
                   textStyle: StreamChatTheme.of(context)
-                      .channelTheme
-                      .channelHeaderTheme
+                      .channelTheme!
+                      .channelHeaderTheme!
                       .subtitle,
                 ),
               ),

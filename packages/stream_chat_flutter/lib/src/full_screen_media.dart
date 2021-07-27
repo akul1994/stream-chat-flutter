@@ -14,23 +14,23 @@ import '../stream_chat_flutter.dart';
 
 enum ReturnActionType { none, reply }
 
-typedef ShowMessageCallback = void Function(Message message, Channel channel);
+typedef ShowMessageCallback = void Function(Message? message, Channel channel);
 
 /// A full screen image widget
 class FullScreenMedia extends StatefulWidget {
   /// The url of the image
   final List<Attachment> mediaAttachments;
-  final Message message;
+  final Message? message;
 
-  final int startIndex;
+  final int? startIndex;
   final String userName;
-  final DateTime sentAt;
-  final ShowMessageCallback onShowMessage;
+  final DateTime? sentAt;
+  final ShowMessageCallback? onShowMessage;
 
   /// Instantiate a new FullScreenImage
   const FullScreenMedia({
-    Key key,
-    @required this.mediaAttachments,
+    Key? key,
+    required this.mediaAttachments,
     this.message,
     this.startIndex = 0,
     this.userName = '',
@@ -46,10 +46,10 @@ class _FullScreenMediaState extends State<FullScreenMedia>
     with SingleTickerProviderStateMixin {
   bool _optionsShown = true;
 
-  AnimationController _controller;
-  PageController _pageController;
+  late AnimationController _controller;
+  PageController? _pageController;
 
-  int _currentPage;
+  int? _currentPage;
 
   final videoPackages = <String, VideoPackage>{};
 
@@ -60,7 +60,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
-    _pageController = PageController(initialPage: widget.startIndex);
+    _pageController = PageController(initialPage: widget.startIndex!);
     _currentPage = widget.startIndex;
     for (final attachment in widget.mediaAttachments) {
       if (attachment.type != 'video') continue;
@@ -103,8 +103,8 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                       return PhotoView(
                         imageProvider:
                             imageUrl == null && attachment.localUri != null
-                                ? Image.memory(attachment.file.bytes).image
-                                : CachedNetworkImageProvider(imageUrl),
+                                ? Image.memory(attachment.file!.bytes!).image
+                                : CachedNetworkImageProvider(imageUrl!),
                         maxScale: PhotoViewComputedScale.covered,
                         minScale: PhotoViewComputedScale.contained,
                         heroAttributes: PhotoViewHeroAttributes(
@@ -113,8 +113,8 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                         backgroundDecoration: BoxDecoration(
                           color: ColorTween(
                                   begin: StreamChatTheme.of(context)
-                                      .channelTheme
-                                      .channelHeaderTheme
+                                      .channelTheme!
+                                      .channelHeaderTheme!
                                       .color,
                                   end: Colors.black)
                               .lerp(_controller.value),
@@ -131,7 +131,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                         },
                       );
                     } else if (attachment.type == 'video') {
-                      final controller = videoPackages[attachment.id];
+                      final controller = videoPackages[attachment.id]!;
                       if (!controller.initialized) {
                         return Center(
                           child: CircularProgressIndicator(),
@@ -153,7 +153,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                             vertical: 50.0,
                           ),
                           child: Chewie(
-                            controller: controller.chewieController,
+                            controller: controller.chewieController!,
                           ),
                         ),
                       );
@@ -171,9 +171,9 @@ class _FullScreenMediaState extends State<FullScreenMedia>
               children: [
                 ImageHeader(
                   userName: widget.userName,
-                  sentAt: widget.message.createdAt == null
+                  sentAt: widget.message!.createdAt == null
                       ? ''
-                      : 'Sent ${getDay(widget.message.createdAt)} at ${Jiffy(widget.sentAt.toLocal()).format('HH:mm')}',
+                      : 'Sent ${getDay(widget.message!.createdAt)} at ${Jiffy(widget.sentAt!.toLocal()).format('HH:mm')}',
                   onBackPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -181,11 +181,11 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                   urls: widget.mediaAttachments,
                   currentIndex: _currentPage,
                   onShowMessage: () {
-                    widget.onShowMessage(
+                    widget.onShowMessage!(
                         widget.message, StreamChannel.of(context).channel);
                   },
                 ),
-                if (widget.message.type != 'ephemeral')
+                if (widget.message!.type != 'ephemeral')
                   ImageFooter(
                     currentPage: _currentPage,
                     totalPages: widget.mediaAttachments.length,
@@ -194,7 +194,7 @@ class _FullScreenMediaState extends State<FullScreenMedia>
                     mediaSelectedCallBack: (val) {
                       setState(() {
                         _currentPage = val;
-                        _pageController.animateToPage(val,
+                        _pageController!.animateToPage(val,
                             duration: Duration(milliseconds: 300),
                             curve: Curves.easeInOut);
                         Navigator.pop(context);
@@ -238,13 +238,13 @@ class VideoPackage {
   final bool _showControls;
   final bool _autoInitialize;
   final VideoPlayerController _videoPlayerController;
-  ChewieController _chewieController;
+  ChewieController? _chewieController;
 
   VideoPlayerController get videoPlayer => _videoPlayerController;
 
-  ChewieController get chewieController => _chewieController;
+  ChewieController? get chewieController => _chewieController;
 
-  bool get initialized => _videoPlayerController.value.initialized;
+  bool get initialized => _videoPlayerController.value.isInitialized;
 
   VideoPackage(
     Attachment attachment, {
@@ -254,8 +254,8 @@ class VideoPackage {
         _showControls = showControls,
         _autoInitialize = autoInitialize,
         _videoPlayerController = attachment.localUri != null
-            ? VideoPlayerController.file(File.fromUri(attachment.localUri))
-            : VideoPlayerController.network(attachment.assetUrl);
+            ? VideoPlayerController.file(File.fromUri(attachment.localUri!))
+            : VideoPlayerController.network(attachment.assetUrl!);
 
   Future<void> initialize() {
     return _videoPlayerController.initialize().then((_) {
@@ -278,6 +278,6 @@ class VideoPackage {
 
   Future<void> dispose() {
     _chewieController?.dispose();
-    return _videoPlayerController?.dispose();
+    return _videoPlayerController.dispose();
   }
 }

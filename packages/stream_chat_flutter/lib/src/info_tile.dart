@@ -3,13 +3,13 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 
 class InfoTile extends StatelessWidget {
-  final String message;
-  final Widget child;
-  final bool showMessage;
-  final Alignment tileAnchor;
-  final Alignment childAnchor;
-  final TextStyle textStyle;
-  final Color backgroundColor;
+  final String? message;
+  final Widget? child;
+  final bool? showMessage;
+  final Alignment? tileAnchor;
+  final Alignment? childAnchor;
+  final TextStyle? textStyle;
+  final Color? backgroundColor;
 
   InfoTile(
       {this.message,
@@ -23,18 +23,18 @@ class InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PortalEntry(
-      visible: showMessage,
+      visible: showMessage!,
       portalAnchor: tileAnchor ?? Alignment.topCenter,
       childAnchor: childAnchor ?? Alignment.bottomCenter,
       portal: Container(
         height: 25.0,
         color: backgroundColor ??
-            StreamChatTheme.of(context).colorTheme.grey.withOpacity(0.9),
+            StreamChatTheme.of(context).colorTheme!.grey.withOpacity(0.9),
         child: Center(
           child: Text(
-            message,
+            message!,
             style: textStyle ??
-                StreamChatTheme.of(context).textTheme.body.copyWith(
+                StreamChatTheme.of(context).textTheme!.body.copyWith(
                       color: Colors.white,
                     ),
             maxLines: 1,
@@ -42,7 +42,7 @@ class InfoTile extends StatelessWidget {
           ),
         ),
       ),
-      child: child,
+      child: child!,
     );
   }
 }

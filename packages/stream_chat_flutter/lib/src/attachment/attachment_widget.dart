@@ -13,8 +13,8 @@ extension AttachmentSourceX on AttachmentSource {
   /// Its prototype depends on the AttachmentSource defined.
   // ignore: missing_return
   T when<T>({
-    @required T Function() local,
-    @required T Function() network,
+    required T Function() local,
+    required T Function() network,
   }) {
     assert(() {
       if (local == null || network == null) {
@@ -32,30 +32,33 @@ extension AttachmentSourceX on AttachmentSource {
 }
 
 abstract class AttachmentWidget extends StatelessWidget {
-  final Size size;
-  final Message message;
+  final Size? size;
+  final Message? message;
   final Attachment attachment;
-  final AttachmentSource _source;
+  final AttachmentSource? _source;
 
-  AttachmentSource get source => _source ?? attachment.file != null
-      ? AttachmentSource.local
-      : AttachmentSource.network;
+  /// Getter for source of attachment
+  AttachmentSource get source =>
+      _source ??
+          (attachment.file != null
+              ? AttachmentSource.local
+              : AttachmentSource.network);
 
   const AttachmentWidget({
-    Key key,
-    @required this.message,
-    @required this.attachment,
+    Key? key,
+    required this.message,
+    required this.attachment,
     this.size,
-    AttachmentSource source,
+    AttachmentSource? source,
   })  : _source = source,
         super(key: key);
 }
 
 class AttachmentError extends StatelessWidget {
-  final Size size;
+  final Size? size;
 
   const AttachmentError({
-    Key key,
+    Key? key,
     this.size,
   }) : super(key: key);
 
@@ -65,11 +68,11 @@ class AttachmentError extends StatelessWidget {
       child: Container(
         width: size?.width,
         height: size?.height,
-        color: StreamChatTheme.of(context).colorTheme.accentRed.withOpacity(.1),
+        color: StreamChatTheme.of(context).colorTheme!.accentRed.withOpacity(.1),
         child: Center(
           child: Icon(
             Icons.error_outline,
-            color: StreamChatTheme.of(context).colorTheme.black,
+            color: StreamChatTheme.of(context).colorTheme!.black,
           ),
         ),
       ),

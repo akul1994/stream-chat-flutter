@@ -10,8 +10,8 @@ class DateDivider extends StatelessWidget {
   final bool uppercase;
 
   const DateDivider({
-    Key key,
-    @required this.dateTime,
+    Key? key,
+    required this.dateTime,
     this.uppercase = false,
   }) : super(key: key);
 
@@ -53,7 +53,7 @@ class DateDivider extends StatelessWidget {
         ),
         child: Text(
           dayInfo,
-          style: StreamChatTheme.of(context).textTheme.footnote.copyWith(
+          style: StreamChatTheme.of(context).textTheme!.footnote.copyWith(
                 color: Colors.black, fontWeight: FontWeight.w400, fontSize: 14
               ),
         ),

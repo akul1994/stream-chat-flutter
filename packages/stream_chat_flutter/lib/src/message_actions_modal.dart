@@ -19,11 +19,11 @@ import 'stream_chat.dart';
 import 'stream_chat_theme.dart';
 
 class MessageActionsModal extends StatefulWidget {
-  final Widget Function(BuildContext, Message) editMessageInputBuilder;
-  final void Function(Message) onThreadReplyTap;
-  final void Function(Message) onReplyTap;
+  final Widget Function(BuildContext, Message)? editMessageInputBuilder;
+  final void Function(Message)? onThreadReplyTap;
+  final void Function(Message)? onReplyTap;
   final Message message;
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
   final bool showReactions;
   final bool showDeleteMessage;
   final bool showCopyMessage;
@@ -33,19 +33,19 @@ class MessageActionsModal extends StatefulWidget {
   final bool showThreadReplyMessage;
   final bool showFlagButton;
   final bool reverse;
-  final ShapeBorder messageShape;
-  final ShapeBorder attachmentShape;
+  final ShapeBorder? messageShape;
+  final ShapeBorder? attachmentShape;
   final DisplayWidget showUserAvatar;
-  final BorderRadius attachmentBorderRadiusGeometry;
+  final BorderRadius? attachmentBorderRadiusGeometry;
 
   final bool showMarkAsTrade;
 
-  final List<MessageAction> customActions;
+  final List<MessageAction>? customActions;
 
   const MessageActionsModal({
-    Key key,
-    @required this.message,
-    @required this.messageTheme,
+    Key? key,
+    required this.message,
+    required this.messageTheme,
     this.showReactions = true,
     this.showDeleteMessage = true,
     this.showEditMessage = true,
@@ -101,10 +101,10 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     final user = StreamChat.of(context).user;
 
     final roughMaxSize = 2 * size.width / 3;
-    var messageTextLength = widget.message.text.length;
+    var messageTextLength = widget.message.text!.length;
     if (widget.message.quotedMessage != null) {
-      var quotedMessageLength = widget.message.quotedMessage.text.length + 40;
-      if (widget.message.quotedMessage.attachments?.isNotEmpty == true) {
+      var quotedMessageLength = widget.message.quotedMessage!.text!.length + 40;
+      if (widget.message.quotedMessage!.attachments?.isNotEmpty == true) {
         quotedMessageLength += 40;
       }
       if (quotedMessageLength > messageTextLength) {
@@ -112,7 +112,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       }
     }
     final roughSentenceSize =
-        messageTextLength * widget.messageTheme.messageText.fontSize * 1.2;
+        messageTextLength * widget.messageTheme!.messageText!.fontSize! * 1.2;
     final divFactor = widget.message.attachments?.isNotEmpty == true
         ? 1
         : (roughSentenceSize == 0 ? 1 : (roughSentenceSize / roughMaxSize));
@@ -132,7 +132,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                 sigmaY: 10,
               ),
               child: Container(
-                color: StreamChatTheme.of(context).colorTheme.overlay,
+                color: StreamChatTheme.of(context).colorTheme!.overlay,
               ),
             ),
           ),
@@ -179,8 +179,8 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                 key: Key('MessageWidget'),
                                 reverse: widget.reverse,
                                 message: widget.message.copyWith(
-                                  text: widget.message.text.length > 200
-                                      ? '${widget.message.text.substring(0, 200)}...'
+                                  text: widget.message.text!.length > 200
+                                      ? '${widget.message.text!.substring(0, 200)}...'
                                       : widget.message.text,
                                 ),
                                 messageTheme: widget.messageTheme,
@@ -197,10 +197,10 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                 padding: const EdgeInsets.all(0),
                                 textPadding: EdgeInsets.only(
                                   top: 8.0,
-                                  left: widget.message.text.isOnlyEmoji
+                                  left: widget.message.text!.isOnlyEmoji
                                       ? 0
                                       : 8.0,
-                                  right: widget.message.text.isOnlyEmoji
+                                  right: widget.message.text!.isOnlyEmoji
                                       ? 0
                                       : 8.0,
                                 ),
@@ -224,7 +224,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                 width: MediaQuery.of(context).size.width * 0.75,
                                 child: Material(
                                   color: StreamChatTheme.of(context)
-                                      .colorTheme
+                                      .colorTheme!
                                       .whiteSnow,
                                   clipBehavior: Clip.hardEdge,
                                   shape: RoundedRectangleBorder(
@@ -257,8 +257,8 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                       if (widget.showDeleteMessage)
                                         _buildDeleteButton(
                                             context, deleteAllowed),
-                                      if(widget.customActions!=null && widget.customActions.isNotEmpty)
-                                      ...widget.customActions.map((action) {
+                                      if(widget.customActions!=null && widget.customActions!.isNotEmpty)
+                                      ...widget.customActions!.map((action) {
                                         return _buildCustomAction(
                                           context,
                                           action,
@@ -270,7 +270,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                                       Container(
                                         height: 1,
                                         color: StreamChatTheme.of(context)
-                                            .colorTheme
+                                            .colorTheme!
                                             .greyWhisper,
                                       ),
                                     ),
@@ -294,23 +294,24 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   void _showFlagDialog() async {
     final client = StreamChat.of(context).client;
 
-    var answer = await showConfirmationDialog(context,
+    var answer = await (showConfirmationDialog(context,
         title: 'Flag Message',
         icon: StreamSvgIcon.flag(
-          color: StreamChatTheme.of(context).colorTheme.accentRed,
+          color: StreamChatTheme.of(context).colorTheme!.accentRed,
           size: 24.0,
         ),
         question:
             'Do you want to send a copy of this message to a\nmoderator for further investigation?',
         okText: 'FLAG',
-        cancelText: 'CANCEL');
+        cancelText: 'CANCEL') as FutureOr<bool>);
 
     if (answer) {
       try {
         await client.flagMessage(widget.message.id);
         _showDismissAlert();
       } catch (err) {
-        if (json.decode(err?.body ?? {})['code'] == 4) {
+        if (err is StreamChatNetworkError &&
+            err.errorCode == ChatErrorCode.inputError) {
           _showDismissAlert();
         } else {
           _showErrorAlert();
@@ -334,7 +335,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       context,
       title: 'Delete message',
       icon: StreamSvgIcon.flag(
-        color: StreamChatTheme.of(context).colorTheme.accentRed,
+        color: StreamChatTheme.of(context).colorTheme!.accentRed,
         size: 24.0,
       ),
       question: 'Are you sure you want to permanently delete this\nmessage?',
@@ -358,7 +359,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
   void _showDismissAlert() {
     showModalBottomSheet(
-      backgroundColor: StreamChatTheme.of(context).colorTheme.white,
+      backgroundColor: StreamChatTheme.of(context).colorTheme!.white,
       context: context,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -373,7 +374,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
               height: 26.0,
             ),
             StreamSvgIcon.flag(
-              color: StreamChatTheme.of(context).colorTheme.accentRed,
+              color: StreamChatTheme.of(context).colorTheme!.accentRed,
               size: 24.0,
             ),
             SizedBox(
@@ -381,7 +382,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             Text(
               'Message flagged',
-              style: StreamChatTheme.of(context).textTheme.headlineBold,
+              style: StreamChatTheme.of(context).textTheme!.headlineBold,
             ),
             SizedBox(
               height: 7.0,
@@ -392,7 +393,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             Container(
               color:
-                  StreamChatTheme.of(context).colorTheme.black.withOpacity(.08),
+                  StreamChatTheme.of(context).colorTheme!.black.withOpacity(.08),
               height: 1.0,
             ),
             Row(
@@ -402,11 +403,11 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                   child: Text(
                     'OK',
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .bodyBold
                         .copyWith(
                             color: StreamChatTheme.of(context)
-                                .colorTheme
+                                .colorTheme!
                                 .accentBlue),
                   ),
                   onPressed: () {
@@ -423,7 +424,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
   void _showErrorAlert() {
     showModalBottomSheet(
-      backgroundColor: StreamChatTheme.of(context).colorTheme.white,
+      backgroundColor: StreamChatTheme.of(context).colorTheme!.white,
       context: context,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
@@ -438,7 +439,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
               height: 26.0,
             ),
             StreamSvgIcon.error(
-              color: StreamChatTheme.of(context).colorTheme.accentRed,
+              color: StreamChatTheme.of(context).colorTheme!.accentRed,
               size: 24.0,
             ),
             SizedBox(
@@ -446,7 +447,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             Text(
               'Something went wrong',
-              style: StreamChatTheme.of(context).textTheme.headlineBold,
+              style: StreamChatTheme.of(context).textTheme!.headlineBold,
             ),
             SizedBox(
               height: 7.0,
@@ -457,7 +458,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             Container(
               color:
-                  StreamChatTheme.of(context).colorTheme.black.withOpacity(.08),
+                  StreamChatTheme.of(context).colorTheme!.black.withOpacity(.08),
               height: 1.0,
             ),
             Row(
@@ -467,11 +468,11 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                   child: Text(
                     'OK',
                     style: StreamChatTheme.of(context)
-                        .textTheme
+                        .textTheme!
                         .bodyBold
                         .copyWith(
                             color: StreamChatTheme.of(context)
-                                .colorTheme
+                                .colorTheme!
                                 .accentBlue),
                   ),
                   onPressed: () {
@@ -491,7 +492,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       onTap: () {
         Navigator.pop(context);
         if (widget.onReplyTap != null) {
-          widget.onReplyTap(widget.message);
+          widget.onReplyTap!(widget.message);
         }
       },
       child: Padding(
@@ -499,12 +500,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.reply(
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: StreamChatTheme.of(context).primaryIconTheme!.color,
             ),
             const SizedBox(width: 16),
             Text(
               'Reply',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -525,7 +526,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             const SizedBox(width: 16),
             Text(
               'Flag Message',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -554,7 +555,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             Text(
               isDeleteFailed ? 'Retry Deleting Message' : 'Delete Message',
               style: StreamChatTheme.of(context)
-                  .textTheme
+                  .textTheme!
                   .body
                   .copyWith(color: allowed ? Colors.red : Colors.grey),
             ),
@@ -573,7 +574,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     );
   }
 
-  Widget _buildPinButton(BuildContext context) {
+  /*Widget _buildPinButton(BuildContext context) {
     return InkWell(
       onTap: () => () {
         StreamChat.of(context).client.pinMessage(
@@ -600,7 +601,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildCopyButton(BuildContext context) {
     return InkWell(
@@ -614,12 +615,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
           children: [
             StreamSvgIcon.copy(
               size: 24,
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: StreamChatTheme.of(context).primaryIconTheme!.color,
             ),
             const SizedBox(width: 16),
             Text(
               'Copy Message',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -638,12 +639,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.edit(
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: StreamChatTheme.of(context).primaryIconTheme!.color,
             ),
             const SizedBox(width: 16),
             Text(
               'Edit Message',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -662,12 +663,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.edit(
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: StreamChatTheme.of(context).primaryIconTheme!.color,
             ),
             const SizedBox(width: 16),
             Text(
               'Mark as Trade',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -693,12 +694,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.circleUp(
-              color: StreamChatTheme.of(context).colorTheme.accentBlue,
+              color: StreamChatTheme.of(context).colorTheme!.accentBlue,
             ),
             const SizedBox(width: 16),
             Text(
               isUpdateFailed ? 'Resend Edited Message' : 'Resend',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -714,7 +715,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       clipBehavior: Clip.hardEdge,
       isScrollControlled: true,
       backgroundColor:
-          StreamChatTheme.of(context).messageInputTheme.inputBackground,
+          StreamChatTheme.of(context).messageInputTheme!.inputBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16),
@@ -738,7 +739,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                       padding: const EdgeInsets.all(8.0),
                       child: StreamSvgIcon.edit(
                         color: StreamChatTheme.of(context)
-                            .colorTheme
+                            .colorTheme!
                             .greyGainsboro,
                       ),
                     ),
@@ -759,7 +760,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
                 child: widget.editMessageInputBuilder != null
-                    ? widget.editMessageInputBuilder(context, widget.message)
+                    ? widget.editMessageInputBuilder!(context, widget.message)
                     : MessageInput(
                         editMessage: widget.message,
                         preMessageSending: (m) {
@@ -781,7 +782,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
       onTap: () {
         Navigator.pop(context);
         if (widget.onThreadReplyTap != null) {
-          widget.onThreadReplyTap(widget.message);
+          widget.onThreadReplyTap!(widget.message);
         }
       },
       child: Padding(
@@ -789,12 +790,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         child: Row(
           children: [
             StreamSvgIcon.thread(
-              color: StreamChatTheme.of(context).primaryIconTheme.color,
+              color: StreamChatTheme.of(context).primaryIconTheme!.color,
             ),
             const SizedBox(width: 16),
             Text(
               'Thread Reply',
-              style: StreamChatTheme.of(context).textTheme.body,
+              style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
         ),
@@ -824,7 +825,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     );
   }
 
-  Timer _timer;
+  Timer? _timer;
   int _start = 6;
 
   bool checkDeleteAllowed() {

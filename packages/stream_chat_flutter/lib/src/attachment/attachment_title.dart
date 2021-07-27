@@ -6,12 +6,12 @@ import '../utils.dart';
 
 class AttachmentTitle extends StatelessWidget {
   const AttachmentTitle({
-    Key key,
-    @required this.attachment,
-    @required this.messageTheme,
+    Key? key,
+    required this.attachment,
+    required this.messageTheme,
   }) : super(key: key);
 
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
   final Attachment attachment;
 
   @override
@@ -19,7 +19,7 @@ class AttachmentTitle extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (attachment.titleLink != null) {
-          launchURL(context, attachment.titleLink);
+          launchURL(context, attachment.titleLink!);
         }
       },
       child: Padding(
@@ -29,16 +29,16 @@ class AttachmentTitle extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Text(
-              attachment.title,
+              attachment.title!,
               overflow: TextOverflow.ellipsis,
-              style: messageTheme.messageText.copyWith(
-                color: StreamChatTheme.of(context).colorTheme.accentBlue,
+              style: messageTheme!.messageText!.copyWith(
+                color: StreamChatTheme.of(context).colorTheme!.accentBlue,
                 fontWeight: FontWeight.bold,
               ),
             ),
             if (attachment.titleLink != null || attachment.ogScrapeUrl != null)
               Text(
-                Uri.parse(attachment.titleLink ?? attachment.ogScrapeUrl)
+                Uri.parse(attachment.titleLink ?? attachment.ogScrapeUrl!)
                     .authority
                     .split('.')
                     .reversed
@@ -46,7 +46,7 @@ class AttachmentTitle extends StatelessWidget {
                     .toList()
                     .reversed
                     .join('.'),
-                style: messageTheme.messageText,
+                style: messageTheme!.messageText,
               ),
           ],
         ),

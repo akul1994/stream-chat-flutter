@@ -33,7 +33,7 @@ import 'dart:ui' as ui;
 class StreamChat extends StatefulWidget {
   final StreamChatClient client;
   final Widget child;
-  final StreamChatThemeData streamChatThemeData;
+  final StreamChatThemeData? streamChatThemeData;
 
   /// The amount of time that will pass before disconnecting the client in the background
   final Duration backgroundKeepAlive;
@@ -41,12 +41,12 @@ class StreamChat extends StatefulWidget {
   /// Handler called whenever the [client] receives a new [Event] while the app
   /// is in background. Can be used to display various notifications depending
   /// upon the [Event.type]
-  final EventHandler onBackgroundEventReceived;
+  final EventHandler? onBackgroundEventReceived;
 
   StreamChat({
-    Key key,
-    @required this.client,
-    @required this.child,
+    Key? key,
+    required this.client,
+    required this.child,
     this.streamChatThemeData,
     this.onBackgroundEventReceived,
     this.backgroundKeepAlive = const Duration(minutes: 1),
@@ -59,7 +59,7 @@ class StreamChat extends StatefulWidget {
 
   /// Use this method to get the current [StreamChatState] instance
   static StreamChatState of(BuildContext context) {
-    StreamChatState streamChatState;
+    StreamChatState? streamChatState;
 
     streamChatState = context.findAncestorStateOfType<StreamChatState>();
 
@@ -89,8 +89,8 @@ class StreamChatState extends State<StreamChat> {
             return Theme(
               data: materialTheme.copyWith(
                 primaryIconTheme: streamTheme.primaryIconTheme,
-                accentColor: streamTheme.colorTheme.accentBlue,
-                scaffoldBackgroundColor: streamTheme.colorTheme.white,
+                accentColor: streamTheme.colorTheme!.accentBlue,
+                scaffoldBackgroundColor: streamTheme.colorTheme!.white,
               ),
               child: StreamChatCore(
                 client: client,
@@ -107,17 +107,17 @@ class StreamChatState extends State<StreamChat> {
 
   StreamChatThemeData _getTheme(
     BuildContext context,
-    StreamChatThemeData themeData,
+    StreamChatThemeData? themeData,
   ) {
     final defaultTheme = StreamChatThemeData.getDefaultTheme(Theme.of(context));
-    return defaultTheme.merge(themeData) ?? themeData;
+    return defaultTheme.merge(themeData) ?? themeData!;
   }
 
   /// The current user
-  User get user => widget.client.state.user;
+  User? get user => widget.client.state.user;
 
   /// The current user as a stream
-  Stream<User> get userStream => widget.client.state.userStream;
+  Stream<User?> get userStream => widget.client.state.userStream;
 
   @override
   void initState() {

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class StreamSvgIcon extends StatelessWidget {
-  final String assetName;
-  final double width;
-  final double height;
-  final Color color;
+  final String? assetName;
+  final double? width;
+  final double? height;
+  final Color? color;
 
   const StreamSvgIcon({
     this.assetName,
@@ -39,8 +39,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.settings({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'settings.svg',
@@ -51,8 +51,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.down({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_down.svg',
@@ -63,8 +63,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.attach({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_attach.svg',
@@ -75,8 +75,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.smile({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_smile.svg',
@@ -87,8 +87,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.mentions({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'mentions.svg',
@@ -99,8 +99,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.record({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_record.svg',
@@ -111,8 +111,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.camera({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_camera.svg',
@@ -123,8 +123,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.files({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'files.svg',
@@ -135,8 +135,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.pictures({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'pictures.svg',
@@ -147,8 +147,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.left({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_left.svg',
@@ -159,8 +159,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.user({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_user.svg',
@@ -171,8 +171,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.userAdd({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_User_add.svg',
@@ -183,8 +183,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.check({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_check.svg',
@@ -195,8 +195,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.checkAll({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_check_all.svg',
@@ -207,8 +207,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.checkSend({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_check_send.svg',
@@ -219,8 +219,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.penWrite({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_pen-write.svg',
@@ -231,8 +231,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.contacts({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_contacts.svg',
@@ -243,8 +243,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.close({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_close.svg',
@@ -255,8 +255,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.search({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_search.svg',
@@ -267,8 +267,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.right({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_right.svg',
@@ -279,8 +279,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.mute({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_mute.svg',
@@ -291,8 +291,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.userRemove({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_User_deselect.svg',
@@ -303,8 +303,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.lightning({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_lightning-command runner.svg',
@@ -315,8 +315,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.emptyCircleLeft({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_empty_circle_left.svg',
@@ -327,8 +327,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.message({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_message.svg',
@@ -339,8 +339,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.thread({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_Thread_Reply.svg',
@@ -351,8 +351,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.reply({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_curve_line_left_up_big.svg',
@@ -363,8 +363,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.edit({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_edit.svg',
@@ -375,8 +375,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.download({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_download.svg',
@@ -387,8 +387,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.cloudDownload({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_cloud_download.svg',
@@ -399,8 +399,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.copy({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_copy.svg',
@@ -411,8 +411,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.delete({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_delete.svg',
@@ -423,8 +423,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.eye({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_eye-off.svg',
@@ -435,8 +435,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.arrowRight({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_arrow_right.svg',
@@ -447,8 +447,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.closeSmall({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_close_sml.svg',
@@ -459,8 +459,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconCurveLineLeftUp({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_curve_line_left_up.svg',
@@ -471,8 +471,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconMoon({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'icon_moon.svg',
@@ -483,8 +483,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconShare({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'icon_SHARE.svg',
@@ -495,8 +495,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconGrid({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_grid.svg',
@@ -507,8 +507,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconSendMessage({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_send_message.svg',
@@ -519,8 +519,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconMenuPoint({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_menu_point_v.svg',
@@ -531,8 +531,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconSave({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_save.svg',
@@ -543,8 +543,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.shareArrow({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'share_arrow.svg',
@@ -555,8 +555,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetype7z({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_7z.svg',
@@ -567,8 +567,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeCsv({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_CSV.svg',
@@ -579,8 +579,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeDoc({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_DOC.svg',
@@ -591,8 +591,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeDocx({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_DOCX.svg',
@@ -603,8 +603,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeGeneric({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_Generic.svg',
@@ -615,8 +615,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeHtml({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_html.svg',
@@ -627,8 +627,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeMd({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_MD.svg',
@@ -639,8 +639,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeOdt({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_ODT.svg',
@@ -651,8 +651,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypePdf({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_PDF.svg',
@@ -663,8 +663,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypePpt({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_PPT.svg',
@@ -675,8 +675,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypePptx({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_PPTX.svg',
@@ -687,8 +687,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeRar({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_RAR.svg',
@@ -699,8 +699,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeRtf({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_RTF.svg',
@@ -711,8 +711,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeTar({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_TAR.svg',
@@ -723,8 +723,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeTxt({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_TXT.svg',
@@ -735,8 +735,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeXls({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_XLS.svg',
@@ -747,8 +747,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeXlsx({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_XLSX.svg',
@@ -759,8 +759,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.filetypeZip({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'filetype_ZIP.svg',
@@ -771,8 +771,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconGroup({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_group.svg',
@@ -783,8 +783,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconNotification({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_notification.svg',
@@ -795,8 +795,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconUserDelete({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_user_delete.svg',
@@ -807,8 +807,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.error({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_error.svg',
@@ -819,8 +819,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.circleUp({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_circle_up.svg',
@@ -831,8 +831,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconUserSettings({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'Icon_user_settings.svg',
@@ -843,8 +843,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.giphyIcon({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'giphy_icon.svg',
@@ -855,8 +855,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.imgur({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'imgur.svg',
@@ -867,8 +867,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.volumeUp({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'volume-up.svg',
@@ -879,8 +879,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.flag({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'flag.svg',
@@ -891,8 +891,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.iconFlag({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'icon_flag.svg',
@@ -903,8 +903,8 @@ class StreamSvgIcon extends StatelessWidget {
   }
 
   factory StreamSvgIcon.retry({
-    double size,
-    Color color,
+    double? size,
+    Color? color,
   }) {
     return StreamSvgIcon(
       assetName: 'icon_retry.svg',

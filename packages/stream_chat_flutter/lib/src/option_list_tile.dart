@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 
 class OptionListTile extends StatelessWidget {
-  final String title;
-  final Widget leading;
-  final Widget trailing;
-  final VoidCallback onTap;
-  final Color titleColor;
-  final Color tileColor;
-  final Color separatorColor;
-  final TextStyle titleTextStyle;
+  final String? title;
+  final Widget? leading;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final Color? titleColor;
+  final Color? tileColor;
+  final Color? separatorColor;
+  final TextStyle? titleTextStyle;
 
   OptionListTile({
     this.title,
@@ -28,11 +28,11 @@ class OptionListTile extends StatelessWidget {
       children: [
         Container(
           color: separatorColor ??
-              StreamChatTheme.of(context).colorTheme.greyGainsboro,
+              StreamChatTheme.of(context).colorTheme!.greyGainsboro,
           height: 1.0,
         ),
         Material(
-          color: tileColor ?? StreamChatTheme.of(context).colorTheme.white,
+          color: tileColor ?? StreamChatTheme.of(context).colorTheme!.white,
           child: Container(
             height: 63.0,
             child: InkWell(
@@ -47,12 +47,12 @@ class OptionListTile extends StatelessWidget {
                   Expanded(
                     flex: 4,
                     child: Text(
-                      title,
+                      title!,
                       style: titleTextStyle ??
                           (titleColor == null
-                              ? StreamChatTheme.of(context).textTheme.bodyBold
+                              ? StreamChatTheme.of(context).textTheme!.bodyBold
                               : StreamChatTheme.of(context)
-                                  .textTheme
+                                  .textTheme!
                                   .bodyBold
                                   .copyWith(
                                     color: titleColor,

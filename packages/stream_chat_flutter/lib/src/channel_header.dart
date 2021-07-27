@@ -58,13 +58,13 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
 
   /// Callback to call when pressing the back button.
   /// By default it calls [Navigator.pop]
-  final VoidCallback onBackPressed;
+  final VoidCallback? onBackPressed;
 
   /// Callback to call when the header is tapped.
-  final VoidCallback onTitleTap;
+  final VoidCallback? onTitleTap;
 
   /// Callback to call when the image is tapped.
-  final VoidCallback onImageTap;
+  final VoidCallback? onImageTap;
 
   /// If true the typing indicator will be rendered if a user is typing
   final bool showTypingIndicator;
@@ -73,7 +73,7 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
 
   /// Creates a channel header
   ChannelHeader({
-    Key key,
+    Key? key,
     this.showBackButton = true,
     this.onBackPressed,
     this.onTitleTap,
@@ -118,8 +118,8 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
                   )
                 : SizedBox(),
             backgroundColor: StreamChatTheme.of(context)
-                .channelTheme
-                .channelHeaderTheme
+                .channelTheme!
+                .channelHeaderTheme!
                 .color,
             actions: <Widget>[
               Padding(
@@ -143,8 +143,8 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
                   children: <Widget>[
                     ChannelName(
                       textStyle: StreamChatTheme.of(context)
-                          .channelTheme
-                          .channelHeaderTheme
+                          .channelTheme!
+                          .channelHeaderTheme!
                           .title,
                     ),
                     SizedBox(height: 2),
@@ -152,7 +152,7 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
                       showTypingIndicator: showTypingIndicator,
                       channel: channel,
                       textStyle: StreamChatTheme.of(context)
-                          .channelPreviewTheme
+                          .channelPreviewTheme!
                           .subtitle,
                     ),
                   ],

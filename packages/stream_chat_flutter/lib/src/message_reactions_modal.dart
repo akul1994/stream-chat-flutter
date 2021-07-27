@@ -13,23 +13,23 @@ import 'stream_chat_theme.dart';
 import 'extension.dart';
 
 class MessageReactionsModal extends StatelessWidget {
-  final Widget Function(BuildContext, Message) editMessageInputBuilder;
-  final void Function(Message) onThreadTap;
+  final Widget Function(BuildContext, Message)? editMessageInputBuilder;
+  final void Function(Message)? onThreadTap;
   final Message message;
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
   final bool reverse;
   final bool showReactions;
   final DisplayWidget showUserAvatar;
-  final ShapeBorder messageShape;
-  final ShapeBorder attachmentShape;
-  final void Function(User) onUserAvatarTap;
-  final BorderRadius attachmentBorderRadiusGeometry;
+  final ShapeBorder? messageShape;
+  final ShapeBorder? attachmentShape;
+  final void Function(User)? onUserAvatarTap;
+  final BorderRadius? attachmentBorderRadiusGeometry;
 
 
   const MessageReactionsModal({
-    Key key,
-    @required this.message,
-    @required this.messageTheme,
+    Key? key,
+    required this.message,
+    required this.messageTheme,
     this.showReactions = true,
     this.onThreadTap,
     this.editMessageInputBuilder,
@@ -46,10 +46,10 @@ class MessageReactionsModal extends StatelessWidget {
     final user = StreamChat.of(context).user;
 
     final roughMaxSize = 2 * size.width / 3;
-    var messageTextLength = message.text.length;
+    var messageTextLength = message.text!.length;
     if (message.quotedMessage != null) {
-      var quotedMessageLength = message.quotedMessage.text.length + 40;
-      if (message.quotedMessage.attachments?.isNotEmpty == true) {
+      var quotedMessageLength = message.quotedMessage!.text!.length + 40;
+      if (message.quotedMessage!.attachments?.isNotEmpty == true) {
         quotedMessageLength += 40;
       }
       if (quotedMessageLength > messageTextLength) {
@@ -57,7 +57,7 @@ class MessageReactionsModal extends StatelessWidget {
       }
     }
     final roughSentenceSize =
-        messageTextLength * messageTheme.messageText.fontSize * 1.2;
+        messageTextLength * messageTheme!.messageText!.fontSize! * 1.2;
     final divFactor = message.attachments?.isNotEmpty == true
         ? 1
         : (roughSentenceSize == 0 ? 1 : (roughSentenceSize / roughMaxSize));
@@ -81,7 +81,7 @@ class MessageReactionsModal extends StatelessWidget {
                     sigmaY: 10,
                   ),
                   child: Container(
-                    color: StreamChatTheme.of(context).colorTheme.overlay,
+                    color: StreamChatTheme.of(context).colorTheme!.overlay,
                   ),
                 ),
               ),
@@ -120,8 +120,8 @@ class MessageReactionsModal extends StatelessWidget {
                               key: Key('MessageWidget'),
                               reverse: reverse,
                               message: message.copyWith(
-                                text: message.text.length > 200
-                                    ? '${message.text.substring(0, 200)}...'
+                                text: message.text!.length > 200
+                                    ? '${message.text!.substring(0, 200)}...'
                                     : message.text,
                               ),
                               messageTheme: messageTheme,
@@ -141,7 +141,7 @@ class MessageReactionsModal extends StatelessWidget {
                               showInChannelIndicator: false,
                               textPadding: EdgeInsets.symmetric(
                                 vertical: 8.0,
-                                horizontal: message.text.isOnlyEmoji ? 0 : 16.0,
+                                horizontal: message.text!.isOnlyEmoji ? 0 : 16.0,
                               ),
                               showReactionPickerIndicator: showReactions &&
                                   (message.status ==
@@ -169,7 +169,7 @@ class MessageReactionsModal extends StatelessWidget {
   Widget _buildReactionCard(BuildContext context) {
     final currentUser = StreamChat.of(context).user;
     return Card(
-      color: StreamChatTheme.of(context).colorTheme.white,
+      color: StreamChatTheme.of(context).colorTheme!.white,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -182,7 +182,7 @@ class MessageReactionsModal extends StatelessWidget {
           children: [
             Text(
               'Message Reactions',
-              style: StreamChatTheme.of(context).textTheme.headlineBold,
+              style: StreamChatTheme.of(context).textTheme!.headlineBold,
             ),
             const SizedBox(height: 16),
             Flexible(
@@ -191,10 +191,10 @@ class MessageReactionsModal extends StatelessWidget {
                   spacing: 16,
                   runSpacing: 16,
                   alignment: WrapAlignment.start,
-                  children: message.latestReactions
+                  children: message.latestReactions!
                       .map((e) => _buildReaction(
                             e,
-                            currentUser,
+                            currentUser!,
                             context,
                           ))
                       .toList(),
@@ -212,7 +212,7 @@ class MessageReactionsModal extends StatelessWidget {
     User currentUser,
     BuildContext context,
   ) {
-    final isCurrentUser = reaction.user.id == currentUser.id;
+    final isCurrentUser = reaction.user!.id == currentUser.id;
     return ConstrainedBox(
       constraints: BoxConstraints.loose(Size(
         64,
@@ -246,9 +246,9 @@ class MessageReactionsModal extends StatelessWidget {
                   child: ReactionBubble(
                     reactions: [reaction],
                     flipTail: !reverse,
-                    borderColor: messageTheme.reactionsBorderColor,
-                    backgroundColor: messageTheme.reactionsBackgroundColor,
-                    maskColor: StreamChatTheme.of(context).colorTheme.white,
+                    borderColor: messageTheme!.reactionsBorderColor,
+                    backgroundColor: messageTheme!.reactionsBackgroundColor,
+                    maskColor: StreamChatTheme.of(context).colorTheme!.white,
                     tailCirclesSpacing: 1,
                     highlightOwnReactions: true,
                   ),
@@ -261,8 +261,8 @@ class MessageReactionsModal extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            reaction.user.name.split(' ')[0],
-            style: StreamChatTheme.of(context).textTheme.footnoteBold,
+            reaction.user!.name.split(' ')[0],
+            style: StreamChatTheme.of(context).textTheme!.footnoteBold,
             textAlign: TextAlign.center,
           ),
         ],

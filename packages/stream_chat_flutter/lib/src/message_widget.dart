@@ -32,7 +32,7 @@ typedef AttachmentBuilder = Widget Function(
   Message,
   List<Attachment>,
 );
-typedef OnQuotedMessageTap = void Function(String);
+typedef OnQuotedMessageTap = void Function(String?);
 
 /// The display behaviour of a widget
 enum DisplayWidget {
@@ -57,46 +57,46 @@ enum DisplayWidget {
 /// Modify it to change the widget appearance.
 class MessageWidget extends StatefulWidget {
   /// Function called on mention tap
-  final void Function(User) onMentionTap;
+  final void Function(User?)? onMentionTap;
 
   /// The function called when tapping on replies
-  final void Function(Message) onThreadTap;
-  final void Function(Message) onReplyTap;
-  final Widget Function(BuildContext, Message) editMessageInputBuilder;
-  final Widget Function(BuildContext, Message) textBuilder;
+  final void Function(Message)? onThreadTap;
+  final void Function(Message)? onReplyTap;
+  final Widget Function(BuildContext, Message)? editMessageInputBuilder;
+  final Widget Function(BuildContext, Message)? textBuilder;
 
   /// Function called on long press
-  final void Function(BuildContext, Message) onMessageActions;
+  final void Function(BuildContext, Message)? onMessageActions;
 
   /// The message
   final Message message;
 
   /// The message theme
-  final MessageTheme messageTheme;
+  final MessageTheme? messageTheme;
 
   /// If true the widget will be mirrored
   final bool reverse;
 
   /// The shape of the message text
-  final ShapeBorder shape;
+  final ShapeBorder? shape;
 
   /// The shape of an attachment
-  final ShapeBorder attachmentShape;
+  final ShapeBorder? attachmentShape;
 
   /// The borderside of the message text
-  final BorderSide borderSide;
+  final BorderSide? borderSide;
 
   /// The borderside of an attachment
-  final BorderSide attachmentBorderSide;
+  final BorderSide? attachmentBorderSide;
 
   /// The border radius of the message text
-  final BorderRadiusGeometry borderRadiusGeometry;
+  final BorderRadiusGeometry? borderRadiusGeometry;
 
   /// The border radius of an attachment
-  final BorderRadiusGeometry attachmentBorderRadiusGeometry;
+  final BorderRadiusGeometry? attachmentBorderRadiusGeometry;
 
   /// The padding of the widget
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
 
   /// The internal padding of the message text
   final EdgeInsetsGeometry textPadding;
@@ -122,18 +122,18 @@ class MessageWidget extends StatefulWidget {
   final bool showInChannelIndicator;
 
   /// The function called when tapping on UserAvatar
-  final void Function(User) onUserAvatarTap;
+  final void Function(User)? onUserAvatarTap;
 
   /// The function called when tapping on a link
-  final void Function(String) onLinkTap;
+  final void Function(String?)? onLinkTap;
 
   /// Used in [MessageReactionsModal] and [MessageActionsModal]
   final bool showReactionPickerIndicator;
 
-  final List<Read> readList;
+  final List<Read>? readList;
 
-  final ShowMessageCallback onShowMessage;
-  final ValueChanged<ReturnActionType> onReturnAction;
+  final ShowMessageCallback? onShowMessage;
+  final ValueChanged<ReturnActionType>? onReturnAction;
 
   /// If true show the users username next to the timestamp of the message
   final bool showUsername;
@@ -153,22 +153,22 @@ class MessageWidget extends StatefulWidget {
   final bool translateUserAvatar;
 
   /// Function called when quotedMessage is tapped
-  final OnQuotedMessageTap onQuotedMessageTap;
+  final OnQuotedMessageTap? onQuotedMessageTap;
 
   /// Function called when message is tapped
-  final void Function(Message) onMessageTap;
+  final void Function(Message)? onMessageTap;
 
   /// List of custom actions shown on message long tap
   final List<MessageAction> customActions;
 
   // Customize onTap on attachment
-  final void Function(Message message, Attachment attachment) onAttachmentTap;
+  final void Function(Message message, Attachment attachment)? onAttachmentTap;
 
   ///
   MessageWidget({
-    Key key,
-    @required this.message,
-    @required this.messageTheme,
+    Key? key,
+    required this.message,
+    required this.messageTheme,
     this.reverse = false,
     this.translateUserAvatar = true,
     this.shape,
@@ -203,7 +203,7 @@ class MessageWidget extends StatefulWidget {
     this.editMessageInputBuilder,
     this.textBuilder,
     this.onReturnAction,
-    Map<String, AttachmentBuilder> customAttachmentBuilders,
+    Map<String, AttachmentBuilder>? customAttachmentBuilders,
     this.readList,
     this.padding,
     this.textPadding = const EdgeInsets.symmetric(
@@ -228,7 +228,7 @@ class MessageWidget extends StatefulWidget {
                 child: wrapAttachmentWidget(
                   context,
                   Material(
-                    color: messageTheme.messageBackgroundColor,
+                    color: messageTheme!.messageBackgroundColor,
                     child: ImageGroup(
                       size: Size(
                         MediaQuery.of(context).size.width * 0.8,
@@ -242,7 +242,7 @@ class MessageWidget extends StatefulWidget {
                   ),
                   border,
                   reverse,
-                  attachmentBorderRadiusGeometry ?? BorderRadius.zero,
+                  attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
                 ),
               );
             }
@@ -267,7 +267,7 @@ class MessageWidget extends StatefulWidget {
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
             );
           },
           'video': (context, message, attachments) {
@@ -300,7 +300,7 @@ class MessageWidget extends StatefulWidget {
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
             );
           },
           'giphy': (context, message, attachments) {
@@ -328,14 +328,14 @@ class MessageWidget extends StatefulWidget {
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
             );
           },
           'file': (context, message, attachments) {
             var border = RoundedRectangleBorder(
               side: attachmentBorderSide ??
                   BorderSide(
-                    color: StreamChatTheme.of(context).colorTheme.greyWhisper,
+                    color: StreamChatTheme.of(context).colorTheme!.greyWhisper,
                   ),
               borderRadius: attachmentBorderRadiusGeometry ?? BorderRadius.zero,
             );
@@ -355,7 +355,7 @@ class MessageWidget extends StatefulWidget {
                       ),
                       border,
                       reverse,
-                      attachmentBorderRadiusGeometry ?? BorderRadius.zero,
+                      attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
                     );
                   })
                   .insertBetween(SizedBox(
@@ -437,7 +437,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
   void handleIsCall() {
     if (message != null && message.extraData != null) {
-      isCall = message.extraData[DataKeys.IS_CALL] ?? false;
+      isCall = message.extraData[DataKeys.IS_CALL] as bool? ?? false;
     } else {
       isCall = false;
     }
@@ -462,17 +462,17 @@ class _MessageWidgetState extends State<MessageWidget>
           onDoubleTap: () {
             try {
               final reactionIcons = StreamChatTheme.of(context).reactionIcons;
-              Reaction reaction;
+              Reaction? reaction;
               try {
                 if (widget.message.ownReactions != null) {
                   reaction = widget.message?.ownReactions?.firstWhere(
-                      (element) => element.type == reactionIcons[0].type);
+                      (element) => element.type == reactionIcons![0].type);
                 }
               } catch (e, s) {}
               if (reaction == null) {
                 StreamChannel.of(context).channel.sendReaction(
                       widget.message,
-                      reactionIcons[0].type,
+                      reactionIcons![0].type!,
                       enforceUnique: false,
                     );
               } else if (widget.message.reactionCounts
@@ -639,7 +639,7 @@ class _MessageWidgetState extends State<MessageWidget>
                                               child: CustomPaint(
                                                 painter: ReactionBubblePainter(
                                                   StreamChatTheme.of(context)
-                                                      .colorTheme
+                                                      .colorTheme!
                                                       .white,
                                                   Colors.transparent,
                                                   Colors.transparent,
@@ -706,10 +706,10 @@ class _MessageWidgetState extends State<MessageWidget>
 
   Widget _buildQuotedMessage() {
     final isMyMessage =
-        widget.message.user.id == StreamChat.of(context).user.id;
+        widget.message.user!.id == StreamChat.of(context).user!.id;
     final onTap = widget.message?.quotedMessage?.isDeleted != true &&
             widget.onQuotedMessageTap != null
-        ? () => widget.onQuotedMessageTap(widget.message.quotedMessageId)
+        ? () => widget.onQuotedMessageTap!(widget.message.quotedMessageId)
         : null;
     return QuotedMessageWidget(
       onLinkTap: widget.onLinkTap,
@@ -734,16 +734,16 @@ class _MessageWidgetState extends State<MessageWidget>
           mainAxisSize: MainAxisSize.min,
           children: [
             StreamSvgIcon.eye(
-              color: StreamChatTheme.of(context).colorTheme.grey,
+              color: StreamChatTheme.of(context).colorTheme!.grey,
               size: 16.0,
             ),
             SizedBox(width: 8.0),
             Text(
               'Only visible to you',
               style: StreamChatTheme.of(context)
-                  .textTheme
+                  .textTheme!
                   .footnote
-                  .copyWith(color: StreamChatTheme.of(context).colorTheme.grey),
+                  .copyWith(color: StreamChatTheme.of(context).colorTheme!.grey),
             ),
           ],
         ),
@@ -757,7 +757,7 @@ class _MessageWidgetState extends State<MessageWidget>
     final replyCount = widget.message.replyCount;
 
     var msg = 'Thread Reply';
-    if (showThreadReplyIndicator && replyCount > 1) {
+    if (showThreadReplyIndicator && replyCount! > 1) {
       msg = '$replyCount Thread Replies';
     }
 
@@ -766,9 +766,9 @@ class _MessageWidgetState extends State<MessageWidget>
         var message = widget.message;
         if (showInChannel) {
           final channel = StreamChannel.of(context);
-          message = await channel.getMessage(widget.message.parentId);
+          message = await channel.getMessage(widget.message.parentId!);
         }
-        return widget.onThreadTap(message);
+        return widget.onThreadTap!(message);
       } catch (e, stk) {
         print(e);
         print(stk);
@@ -782,7 +782,7 @@ class _MessageWidgetState extends State<MessageWidget>
       if (showInChannel || showThreadReplyIndicator) ...[
         if (showThreadParticipants)
           SizedBox.fromSize(
-            size: Size((threadParticipants.length * 8.0) + 8, 16),
+            size: Size((threadParticipants!.length * 8.0) + 8, 16),
             child: _buildThreadParticipantsIndicator(threadParticipants),
           ),
         InkWell(
@@ -792,17 +792,17 @@ class _MessageWidgetState extends State<MessageWidget>
       ],
       if (showUsername)
         Text(
-          widget.message.user.name,
+          widget.message.user!.name,
           maxLines: 1,
           key: usernameKey,
-          style: widget.messageTheme.messageAuthor,
+          style: widget.messageTheme!.messageAuthor,
           overflow: TextOverflow.ellipsis,
         ),
       if (showSendingIndicator) _buildSendingIndicator(),
       if (showTimeStamp)
         Text(
           Jiffy(widget.message.createdAt.toLocal()).jm,
-          style: widget.messageTheme.createdAt,
+          style: widget.messageTheme!.createdAt,
         ),
       // if (showSendingIndicator) _buildSendingIndicator(),
     ]);
@@ -817,13 +817,13 @@ class _MessageWidgetState extends State<MessageWidget>
           Container(
             margin: EdgeInsets.only(
               bottom: context.textScaleFactor *
-                  (widget.messageTheme.replies.fontSize / 2),
+                  (widget.messageTheme!.replies!.fontSize! / 2),
             ),
             child: CustomPaint(
               size: Size(16, 32) * context.textScaleFactor,
               painter: _ThreadReplyPainter(
                 context: context,
-                color: widget.messageTheme.messageBorderColor,
+                color: widget.messageTheme!.messageBorderColor,
               ),
             ),
           ),
@@ -851,7 +851,7 @@ class _MessageWidgetState extends State<MessageWidget>
     var urlAttachment = widget.message.attachments
         .firstWhere((element) => element.ogScrapeUrl != null);
 
-    var host = Uri.parse(urlAttachment.ogScrapeUrl).host;
+    var host = Uri.parse(urlAttachment.ogScrapeUrl!).host;
     var splitList = host.split('.');
     var hostName = splitList.length == 3 ? splitList[1] : splitList[0];
     var hostDisplayName = urlAttachment.authorName?.capitalize() ??
@@ -861,7 +861,7 @@ class _MessageWidgetState extends State<MessageWidget>
     return UrlAttachment(
         urlAttachment: urlAttachment,
         hostDisplayName: hostDisplayName,
-        textPadding: widget.textPadding,
+        textPadding: widget.textPadding as EdgeInsets,
         onLinkTap: widget.onLinkTap);
   }
 
@@ -877,7 +877,7 @@ class _MessageWidgetState extends State<MessageWidget>
           child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: StreamChatTheme.of(context).colorTheme.white,
+              color: StreamChatTheme.of(context).colorTheme!.white,
             ),
             padding: const EdgeInsets.all(1),
             child: UserAvatar(
@@ -894,15 +894,15 @@ class _MessageWidgetState extends State<MessageWidget>
   Widget _buildReactionIndicator(
     BuildContext context,
   ) {
-    final ownId = StreamChat.of(context).user.id;
+    final ownId = StreamChat.of(context).user!.id;
     final reactionsMap = <String, Reaction>{};
     widget.message.latestReactions?.forEach((element) {
-      if (!reactionsMap.containsKey(element.type) || element.user.id == ownId) {
+      if (!reactionsMap.containsKey(element.type) || element.user!.id == ownId) {
         reactionsMap[element.type] = element;
       }
     });
     final reactionsList = reactionsMap.values.toList()
-      ..sort((a, b) => a.user.id == ownId ? 1 : -1);
+      ..sort((a, b) => a.user!.id == ownId ? 1 : -1);
 
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
@@ -918,9 +918,9 @@ class _MessageWidgetState extends State<MessageWidget>
                 key: ValueKey('${widget.message.id}.reactions'),
                 reverse: widget.reverse,
                 flipTail: widget.reverse,
-                backgroundColor: widget.messageTheme.reactionsBackgroundColor,
-                borderColor: widget.messageTheme.reactionsBorderColor,
-                maskColor: widget.messageTheme.reactionsMaskColor,
+                backgroundColor: widget.messageTheme!.reactionsBackgroundColor,
+                borderColor: widget.messageTheme!.reactionsBorderColor,
+                maskColor: widget.messageTheme!.reactionsMaskColor,
                 reactions: reactionsList,
                 reactionScores: widget.message.reactionScores,
               ),
@@ -934,13 +934,13 @@ class _MessageWidgetState extends State<MessageWidget>
 
     showDialog(
         context: context,
-        barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+        barrierColor: StreamChatTheme.of(context).colorTheme!.overlay,
         builder: (context) {
           return StreamChannel(
             channel: channel,
             child: MessageActionsModal(
               attachmentBorderRadiusGeometry:
-                  widget.attachmentBorderRadiusGeometry,
+                  widget.attachmentBorderRadiusGeometry as BorderRadius?,
               showUserAvatar: widget.showUserAvatar,
               messageTheme: widget.messageTheme,
               messageShape: widget.shape ?? _getDefaultShape(context),
@@ -980,15 +980,15 @@ class _MessageWidgetState extends State<MessageWidget>
     final channel = StreamChannel.of(context).channel;
     showDialog(
         context: context,
-        barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
+        barrierColor: StreamChatTheme.of(context).colorTheme!.overlay,
         builder: (context) {
           return StreamChannel(
             channel: channel,
             child: MessageReactionsModal(
               attachmentBorderRadiusGeometry:
-                  widget.attachmentBorderRadiusGeometry,
+                  widget.attachmentBorderRadiusGeometry as BorderRadius?,
               showUserAvatar:
-                  widget.message.user.id == channel.client.state.user.id
+                  widget.message.user!.id == channel.client.state.user!.id
                       ? DisplayWidget.gone
                       : DisplayWidget.show,
               onUserAvatarTap: widget.onUserAvatarTap,
@@ -1013,7 +1013,7 @@ class _MessageWidgetState extends State<MessageWidget>
       side: hasFiles
           ? widget.attachmentBorderSide ??
               BorderSide(
-                color: StreamChatTheme.of(context).colorTheme.greyWhisper,
+                color: StreamChatTheme.of(context).colorTheme!.greyWhisper,
               )
           : BorderSide.none,
       borderRadius: widget.attachmentBorderRadiusGeometry ?? BorderRadius.zero,
@@ -1024,14 +1024,14 @@ class _MessageWidgetState extends State<MessageWidget>
     return RoundedRectangleBorder(
       side: widget.borderSide ??
           BorderSide(
-            color: StreamChatTheme.of(context).colorTheme.greyWhisper,
+            color: StreamChatTheme.of(context).colorTheme!.greyWhisper,
           ),
       borderRadius: widget.borderRadiusGeometry ?? BorderRadius.zero,
     );
   }
 
   Widget _parseAttachments() {
-    final attachmentGroups = <String, List<Attachment>>{};
+    final attachmentGroups = <String?, List<Attachment>>{};
 
     widget.message.attachments
         .where((element) => element.ogScrapeUrl == null)
@@ -1040,15 +1040,15 @@ class _MessageWidgetState extends State<MessageWidget>
         attachmentGroups[e.type] = [];
       }
 
-      attachmentGroups[e.type].add(e);
+      attachmentGroups[e.type]!.add(e);
     });
 
     final attachmentList = <Widget>[];
 
     attachmentGroups.forEach((type, attachments) {
-      final attachmentBuilder = widget.attachmentBuilders[type];
+      final attachmentBuilder = widget.attachmentBuilders[type!];
 
-      if (attachmentBuilder == null) return SizedBox();
+      if (attachmentBuilder == null) return;
       final attachmentWidget = attachmentBuilder(
         context,
         widget.message,
@@ -1076,7 +1076,7 @@ class _MessageWidgetState extends State<MessageWidget>
     }
 
     if (widget.onMessageActions != null) {
-      widget.onMessageActions(context, widget.message);
+      widget.onMessageActions!(context, widget.message);
     } else {
       _showMessageActionModalBottomSheet(context);
     }
@@ -1084,7 +1084,7 @@ class _MessageWidgetState extends State<MessageWidget>
   }
 
   Widget _buildSendingIndicator() {
-    final style = widget.messageTheme.createdAt;
+    final style = widget.messageTheme!.createdAt;
     final message = widget.message;
 
     if (hasNonUrlAttachments &&
@@ -1096,8 +1096,8 @@ class _MessageWidgetState extends State<MessageWidget>
       }).length;
       if (uploadRemaining == 0) {
         return StreamSvgIcon.check(
-          size: style.fontSize,
-          color: IconTheme.of(context).color.withOpacity(0.5),
+          size: style!.fontSize,
+          color: IconTheme.of(context).color!.withOpacity(0.5),
         );
       }
       return Text(
@@ -1106,23 +1106,23 @@ class _MessageWidgetState extends State<MessageWidget>
       );
     }
 
-    var user = widget.message.user;
-    final ownId = StreamChat.of(context).user.id;
+    var user = widget.message.user!;
+    final ownId = StreamChat.of(context).user!.id;
     var isOwn = user.id == ownId;
     Widget child = SendingIndicator(
       isOwn: isOwn,
       message: message,
       isMessageRead: isMessageRead,
-      size: style.fontSize,
+      size: style!.fontSize,
     );
     if (isMessageRead) {
       child = Row(
         children: [
-          if (StreamChannel.of(context).channel.memberCount > 2)
+          if (StreamChannel.of(context).channel.memberCount! > 2)
             Text(
-              widget.readList.length.toString(),
+              widget.readList!.length.toString(),
               style: style.copyWith(
-                color: StreamChatTheme.of(context).colorTheme.accentBlue,
+                color: StreamChatTheme.of(context).colorTheme!.accentBlue,
               ),
             ),
           SizedBox(width: 2),
@@ -1140,28 +1140,28 @@ class _MessageWidgetState extends State<MessageWidget>
           offset: Offset(
             0,
             widget.translateUserAvatar
-                ? widget.messageTheme.avatarTheme.constraints.maxHeight / 2
+                ? widget.messageTheme!.avatarTheme!.constraints!.maxHeight / 2
                 : 0,
           ),
           child: UserAvatar(
             user: widget.message.user,
             onTap: widget.onUserAvatarTap,
-            constraints: widget.messageTheme.avatarTheme.constraints,
-            borderRadius: widget.messageTheme.avatarTheme.borderRadius,
+            constraints: widget.messageTheme!.avatarTheme!.constraints,
+            borderRadius: widget.messageTheme!.avatarTheme!.borderRadius,
             showOnlineStatus: false,
           ),
         ),
       );
 
   Widget _buildUserAvatar2() {
-    var user = widget.message.user;
-    final ownId = StreamChat.of(context).user.id;
+    var user = widget.message.user!;
+    final ownId = StreamChat.of(context).user!.id;
     if (user.id == ownId) {
       return SizedBox.shrink();
     }
-    var theme = widget.messageTheme;
+    var theme = widget.messageTheme!;
 
-    var imgUrl = '';
+    String? imgUrl = '';
 
     final streamChatTheme = StreamChatTheme.of(context);
 
@@ -1170,7 +1170,7 @@ class _MessageWidgetState extends State<MessageWidget>
         user.extraData['image'] != '';
 
     if (hasImage) {
-      imgUrl = user.extraData['image'];
+      imgUrl = user.extraData['image'] as String?;
     }
 
     return Transform(
@@ -1183,7 +1183,7 @@ class _MessageWidgetState extends State<MessageWidget>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            imgUrl.isNotEmpty
+            imgUrl!.isNotEmpty
                 ? CircleAvatar(radius: 8, backgroundImage: NetworkImage(imgUrl))
                 : CircleAvatar(
                     radius: 8,
@@ -1194,7 +1194,7 @@ class _MessageWidgetState extends State<MessageWidget>
             ),
             Text(
               getFirstName(user),
-              style: theme.messageText.copyWith(
+              style: theme.messageText!.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: MainAppColorHelper.orange()),
@@ -1206,7 +1206,7 @@ class _MessageWidgetState extends State<MessageWidget>
   }
 
   Widget _buildTextBubble() {
-    if (widget.message.text.trim().isEmpty) return Offstage();
+    if (widget.message.text!.trim().isEmpty) return Offstage();
     return Transform(
       transform: Matrix4.rotationY(widget.reverse ? pi : 0),
       alignment: Alignment.center,
@@ -1216,15 +1216,15 @@ class _MessageWidgetState extends State<MessageWidget>
           Padding(
             padding: isOnlyEmoji ? EdgeInsets.zero : widget.textPadding,
             child: widget.textBuilder != null
-                ? widget.textBuilder(context, widget.message)
+                ? widget.textBuilder!(context, widget.message)
                 : MessageText(
                     onLinkTap: widget.onLinkTap,
                     message: widget.message,
                     onMentionTap: widget.onMentionTap,
                     messageTheme: isOnlyEmoji
-                        ? widget.messageTheme.copyWith(
+                        ? widget.messageTheme!.copyWith(
                             messageText:
-                                widget.messageTheme.messageText.copyWith(
+                                widget.messageTheme!.messageText!.copyWith(
                             fontSize: 42,
                           ))
                         : widget.messageTheme,
@@ -1236,15 +1236,15 @@ class _MessageWidgetState extends State<MessageWidget>
     );
   }
 
-  bool get isOnlyEmoji => widget.message.text.isOnlyEmoji;
+  bool get isOnlyEmoji => widget.message.text!.isOnlyEmoji;
 
-  Color _getBackgroundColor() {
+  Color? _getBackgroundColor() {
     if (hasQuotedMessage) {
-      return widget.messageTheme.messageBackgroundColor;
+      return widget.messageTheme!.messageBackgroundColor;
     }
 
     if (hasUrlAttachments) {
-      return StreamChatTheme.of(context).colorTheme.blueAlice;
+      return StreamChatTheme.of(context).colorTheme!.blueAlice;
     }
 
     if (isOnlyEmoji) {
@@ -1255,7 +1255,7 @@ class _MessageWidgetState extends State<MessageWidget>
       return Colors.transparent;
     }
 
-    return widget.messageTheme.messageBackgroundColor;
+    return widget.messageTheme!.messageBackgroundColor;
   }
 
   void retryMessage(BuildContext context) {
@@ -1277,15 +1277,15 @@ class _MessageWidgetState extends State<MessageWidget>
 }
 
 class _ThreadReplyPainter extends CustomPainter {
-  final Color color;
-  final BuildContext context;
+  final Color? color;
+  final BuildContext? context;
 
-  const _ThreadReplyPainter({this.context, @required this.color});
+  const _ThreadReplyPainter({this.context, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color ?? StreamChatTheme.of(context).colorTheme.greyGainsboro
+      ..color = color ?? StreamChatTheme.of(context!).colorTheme!.greyGainsboro
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
       ..strokeCap = StrokeCap.round;
