@@ -234,7 +234,7 @@ class MessageInput extends StatefulWidget {
 
 class MessageInputState extends State<MessageInput> {
   final _attachments = <String, Attachment>{};
-  final List<User?> _mentionedUsers = [];
+  final List<User>? _mentionedUsers = List.empty(growable : true);
 
   final _imagePicker = ImagePicker();
   FocusNode? _focusNode;
@@ -1243,10 +1243,14 @@ class MessageInputState extends State<MessageInput> {
   }
 
   void _addAttachment(AssetEntity medium) async {
-    final mediaFile = await (medium.originFile.timeout(
-      Duration(seconds: 5),
+    final mediaFile = await medium.originFile.timeout(
+      const Duration(seconds: 5),
       onTimeout: () => medium.originFile,
-    ) as FutureOr<File>);
+    );
+
+    if (mediaFile == null) {
+      return;
+    }
 
     var file = AttachmentFile(
       path: mediaFile.path,
@@ -1442,7 +1446,7 @@ class MessageInputState extends State<MessageInput> {
                                       .white,
                                   child: InkWell(
                                     onTap: () {
-                                      _mentionedUsers.add(m.user);
+                                      _mentionedUsers!.add(m.user!);
 
                                       splits[splits.length - 1] = StreamUtils.getUserName(m.user!);
                                       final rejoin = splits.join('@');
@@ -2300,7 +2304,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u?.username}')).toList(),
+            _mentionedUsers?.where((u) => text.contains('@${u.username}')).toList(),
       );
     } else {
       message = (widget.initialMessage ?? Message()).copyWith(
@@ -2308,7 +2312,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u?.username}')).toList(),
+            _mentionedUsers?.where((u) => text.contains('@${u.username}')).toList(),
         showInChannel: widget.parentMessage != null ? _sendAsDm : null,
       );
     }
@@ -2329,7 +2333,7 @@ class MessageInputState extends State<MessageInput> {
       await streamChannel.reloadChannel();
     }
 
-    _mentionedUsers.clear();
+    _mentionedUsers?.clear();
 
     if (widget.editMessage == null ||
         widget.editMessage!.status == MessageSendingStatus.failed ||

@@ -294,7 +294,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   void _showFlagDialog() async {
     final client = StreamChat.of(context).client;
 
-    var answer = await (showConfirmationDialog(context,
+    final answer = await (showConfirmationDialog(context,
         title: 'Flag Message',
         icon: StreamSvgIcon.flag(
           color: StreamChatTheme.of(context).colorTheme!.accentRed,
@@ -303,9 +303,9 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
         question:
             'Do you want to send a copy of this message to a\nmoderator for further investigation?',
         okText: 'FLAG',
-        cancelText: 'CANCEL') as FutureOr<bool>);
+        cancelText: 'CANCEL'));
 
-    if (answer) {
+    if (answer==true) {
       try {
         await client.flagMessage(widget.message.id);
         _showDismissAlert();

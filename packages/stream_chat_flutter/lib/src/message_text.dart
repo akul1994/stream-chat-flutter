@@ -43,6 +43,7 @@ class _MessageTextState extends State<MessageText> {
 
     //messageText = _replaceHashtags(widget.message.text);
     messageText = _replacePlus(messageText!);
+    messageText = _replaceDollar(messageText!);
 
     if (messageText!.length > 1000) {
       firstHalfText = messageText!.substring(0, 1000) + '...';
