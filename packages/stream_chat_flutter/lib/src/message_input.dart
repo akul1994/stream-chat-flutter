@@ -2300,7 +2300,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u!.username}')).toList() as List<User>?,
+            _mentionedUsers.where((u) => text.contains('@${u?.username}')).toList(),
       );
     } else {
       message = (widget.initialMessage ?? Message()).copyWith(
@@ -2308,7 +2308,7 @@ class MessageInputState extends State<MessageInput> {
         text: text,
         attachments: attachments,
         mentionedUsers:
-            _mentionedUsers.where((u) => text.contains('@${u!.username}')).toList() as List<User>?,
+            _mentionedUsers.where((u) => text.contains('@${u?.username}')).toList(),
         showInChannel: widget.parentMessage != null ? _sendAsDm : null,
       );
     }
