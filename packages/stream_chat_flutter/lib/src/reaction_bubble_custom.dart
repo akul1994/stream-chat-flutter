@@ -128,6 +128,8 @@ class ReactionBubbleCustom extends StatelessWidget {
 
     var count = getReactionScore(reaction.type);
 
+    if(reactionIcon==null)
+      return SizedBox.shrink();
     return InkWell(
       onTap: (){
         onTap!(reaction);
