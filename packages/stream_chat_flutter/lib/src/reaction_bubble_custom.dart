@@ -1,6 +1,5 @@
 import 'dart:math';
 
-
 import 'package:awesome_emojis/emojis.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ReactionBubbleCustom extends StatelessWidget {
-   ReactionBubbleCustom({
+  ReactionBubbleCustom({
     Key? key,
     required this.reactions,
     required this.borderColor,
@@ -23,7 +22,8 @@ class ReactionBubbleCustom extends StatelessWidget {
     this.highlightOwnReactions = true,
     this.tailCirclesSpacing = 0,
     this.reactionScores,
-    this.reactionIcons, this.onTap,
+    this.reactionIcons,
+    this.onTap,
   }) : super(key: key);
 
   final List<Reaction> reactions;
@@ -38,16 +38,14 @@ class ReactionBubbleCustom extends StatelessWidget {
   final double tailCirclesSpacing;
   final Map<String, int>? reactionScores;
 
-  final Function( Reaction reaction)? onTap;
+  final Function(Reaction? reaction)? onTap;
 
   int totalReactionCount = 0;
 
   @override
   Widget build(BuildContext context) {
     final reactionIcons =
-        this.reactionIcons ?? StreamChatTheme
-            .of(context)
-            .reactionIcons;
+        this.reactionIcons ?? StreamChatTheme.of(context).reactionIcons;
 
     totalReactionCount = totalReactionScores();
     // Reaction r = reactions[0].copyWith(type: 'pray');
@@ -58,49 +56,66 @@ class ReactionBubbleCustom extends StatelessWidget {
     // reactions.add(r1);
     // reactions.add(r2);
 
-
     final totalReactions = reactions.length;
     final offset = totalReactions > 1 ? 32.0 : 2.0;
     return Transform(
       transform: Matrix4.rotationY(reverse ? pi : 0),
       alignment: Alignment.center,
       child: GestureDetector(
-        onTap : (){onTap!(reactions[0]);},
+        onTap: () {
+          onTap!(reactions[0]);
+        },
         child: Container(
-           // borderRadius: BorderRadius.circular(24),
+            // borderRadius: BorderRadius.circular(24),
             // color: MainAppColorHelper.greyNeutral7(),
-          child :
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical : 4.0,horizontal: 4),
-            child: Row(
-                  //direction: Axis.horizontal,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                //  textDirection: TextDirection.ltr,
-                  children: [
-                    if (true)
-                      ...reactions.map((reaction) {
-                        return _buildReaction(
-                          reactionIcons!,
-                          reaction,
-                          context,
-                        );
-                      }).toList(),
-                    // SizedBox(width: 2,),
-                    // Text(
-                    //   totalReactionCount.toString(),
-                    //   style: TextStyle(
-                    //       fontSize: 14,
-                    //       color: Colors.black),
-                    // ),
-                    // SizedBox(width: 2,),
-                  ],
+            child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4),
+          child: Row(
+            //direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            //  textDirection: TextDirection.ltr,
+            children: [
+              if (true)
+                ...reactions.map((reaction) {
+                  return _buildReaction(
+                    reactionIcons!,
+                    reaction,
+                    context,
+                  );
+                }).toList(),
+              InkWell(
+                onTap: () {
+                  onTap!(null);
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4.0,
+                  ),
+                  child: Material(
+                    elevation: 2,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 6.0, vertical: 2),
+                        child: Image.asset('packages/stream_chat_flutter/images/ic_add_emoji.png',width: 16,height: 16,)),
+                  ),
                 ),
-          )
+              ),
+              // SizedBox(width: 2,),
+              // Text(
+              //   totalReactionCount.toString(),
+              //   style: TextStyle(
+              //       fontSize: 14,
+              //       color: Colors.black),
+              // ),
+              // SizedBox(width: 2,),
+            ],
           ),
-        ),
-      );
+        )),
+      ),
+    );
   }
 
   int getReactionScore(String type) {
@@ -110,74 +125,69 @@ class ReactionBubbleCustom extends StatelessWidget {
     return 0;
   }
 
-  int totalReactionScores()
-  {
+  int totalReactionScores() {
     var total = 0;
     reactionScores?.forEach((key, value) {
-      total+=value;
+      total += value;
     });
     return total;
   }
 
-  Widget _buildReaction(List<ReactionIcon> reactionIcons,
-      Reaction reaction,
-      BuildContext context,) {
+  Widget _buildReaction(
+    List<ReactionIcon> reactionIcons,
+    Reaction reaction,
+    BuildContext context,
+  ) {
     final reactionIcon = reactionIcons.firstWhereOrNull(
-          (r) => r.type == reaction.type,
+      (r) => r.type == reaction.type,
     );
 
     var count = getReactionScore(reaction.type);
 
-    if(reactionIcon==null)
-      return SizedBox.shrink();
+    if (reactionIcon == null) return SizedBox.shrink();
     return InkWell(
-      onTap: (){
+      onTap: () {
         onTap!(reaction);
       },
       child: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: 4.0,
+          horizontal: 4.0,
         ),
         child: Material(
           elevation: 2,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 4.0, vertical: 2
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2),
             child: reactionIcon != null
                 ? Row(children: [
-                Text(
-                count.toString(),
-            style: TextStyle(
-                fontSize: 14,
-                color: Colors.black),
-            ),
-              SizedBox(width: 2),
-              reactionIcon.emoji == null
-                  ? StreamSvgIcon(
-                assetName: reactionIcon.assetName,
-                width: 18,
-                height: 18,
-                color: MainAppColorHelper.orange(),
-                // (!highlightOwnReactions ||
-                //         reaction.user.id == StreamChat.of(context).user.id)
-                //     ? StreamChatTheme.of(context).colorTheme.accentBlue
-                //     : StreamChatTheme.of(context)
-                //         .colorTheme
-                //         .black
-                //         .withOpacity(.5),
-              )
-                  : Text(
-                reactionIcon.emoji!,
-                style: TextStyle(fontSize: 14),
-              ),
-
-            ])
+                    Text(
+                      count.toString(),
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                    SizedBox(width: 2),
+                    reactionIcon.emoji == null
+                        ? StreamSvgIcon(
+                            assetName: reactionIcon.assetName,
+                            width: 18,
+                            height: 18,
+                            color: MainAppColorHelper.orange(),
+                            // (!highlightOwnReactions ||
+                            //         reaction.user.id == StreamChat.of(context).user.id)
+                            //     ? StreamChatTheme.of(context).colorTheme.accentBlue
+                            //     : StreamChatTheme.of(context)
+                            //         .colorTheme
+                            //         .black
+                            //         .withOpacity(.5),
+                          )
+                        : Text(
+                            reactionIcon.emoji!,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                  ])
                 : Text(
-              Emojis.fire,
-              style: TextStyle(fontSize: 14),
-            ),
+                    Emojis.fire,
+                    style: TextStyle(fontSize: 14),
+                  ),
           ),
         ),
       ),
@@ -200,4 +210,3 @@ class ReactionBubbleCustom extends StatelessWidget {
     );
   }
 }
-

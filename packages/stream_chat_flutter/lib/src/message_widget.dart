@@ -907,7 +907,6 @@ class _MessageWidgetState extends State<MessageWidget>
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
       child: (widget.showReactions &&
-              (widget.message.reactionCounts?.isNotEmpty == true) &&
               !widget.message.isDeleted)
           ? GestureDetector(
               onTap: () => _showMessageReactionsModalBottomSheet(context),
