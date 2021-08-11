@@ -41,5 +41,7 @@ export 'src/mention_tile.dart';
 export 'src/video_thumbnail_image.dart';
 export 'src/message_action.dart';
 export 'src/reaction_icon.dart';
+export 'src/image_group.dart';
+
 
 export 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
