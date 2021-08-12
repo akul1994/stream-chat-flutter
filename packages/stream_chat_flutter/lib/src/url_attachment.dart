@@ -96,6 +96,7 @@ class UrlAttachment extends StatelessWidget {
                 if (urlAttachment.text != null)
                   Text(
                     urlAttachment.text!,
+                    maxLines: 6,
                     style: chatThemeData.textTheme.body
                         .copyWith(fontWeight: FontWeight.w400),
                   ),
