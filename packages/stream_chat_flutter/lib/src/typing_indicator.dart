@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
 /// Widget to show the current list of typing users
 class TypingIndicator extends StatelessWidget {
@@ -49,29 +50,28 @@ class TypingIndicator extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         child: data.isNotEmpty == true
             ? Padding(
-          key: const Key('main'),
-          padding: padding,
-          child: Align(
-            key: const Key('typings'),
-            alignment: alignment,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Lottie.asset(
-                  'animations/typing_dots.json',
-                  package: 'stream_chat_flutter',
-                  height: 4,
+                key: const Key('main'),
+                padding: padding,
+                child: Align(
+                  key: const Key('typings'),
+                  alignment: alignment,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Lottie.asset(
+                        'animations/typing_dots.json',
+                        package: 'stream_chat_flutter',
+                        height: 4,
+                      ),
+                      Text(
+                        context.translations.userTypingText(data),
+                        maxLines: 1,
+                        style: style,
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  // ignore: lines_longer_than_80_chars
-                  '  ${data.elementAt(0).name}${data.length == 1 ? '' : ' and ${data.length - 1} more'} ${data.length == 1 ? 'is' : 'are'} typing',
-                  maxLines: 1,
-                  style: style,
-                ),
-              ],
-            ),
-          ),
-        )
+              )
             : altWidget,
       ),
     );

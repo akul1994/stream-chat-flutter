@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
 /// Callback called when tapping on a user
 typedef UserTapCallback = void Function(User, Widget?);
@@ -66,9 +67,9 @@ class UserListView extends StatefulWidget {
     this.listBuilder,
     this.userListController,
   })  : assert(
-  crossAxisCount == 1 || groupAlphabetically == false,
-  'Cannot group alphabetically when crossAxisCount > 1',
-  ),
+          crossAxisCount == 1 || groupAlphabetically == false,
+          'Cannot group alphabetically when crossAxisCount > 1',
+        ),
         super(key: key);
 
   /// The query filters to use.
@@ -99,7 +100,7 @@ class UserListView extends StatefulWidget {
   final UserTapCallback? onUserTap;
 
   /// Function called when long pressing on a channel
-  final Function(User?)? onUserLongPress;
+  final Function(User)? onUserLongPress;
 
   /// Widget used when opening a channel
   final Widget? userWidget;
@@ -133,7 +134,7 @@ class UserListView extends StatefulWidget {
 
   /// The builder that will be used to build the list
   final Widget Function(BuildContext context, List<ListItem> users)?
-  listBuilder;
+      listBuilder;
 
   /// The builder that will be used for loading
   final WidgetBuilder? loadingBuilder;
@@ -154,20 +155,21 @@ class _UserListViewState extends State<UserListView>
     with WidgetsBindingObserver {
   bool get _isListView => widget.crossAxisCount == 1;
 
-   final _defaultController = UserListController();
+  late final _defaultController = UserListController();
+
   UserListController get _userListController =>
       widget.userListController ?? _defaultController;
 
   @override
   Widget build(BuildContext context) {
-    final child = UserListCore(
+    final userListCore = UserListCore(
       errorBuilder: widget.errorBuilder ??
-              ((BuildContext context, Object err) => _buildError(err)),
+          (BuildContext context, Object err) => _buildError(err),
       emptyBuilder: widget.emptyBuilder ?? (context) => _buildEmpty(),
       loadingBuilder: widget.loadingBuilder ??
-              (context) => LayoutBuilder(
-            builder: (context, viewportConstraints) =>
-                SingleChildScrollView(
+          (context) => LayoutBuilder(
+                builder: (context, viewportConstraints) =>
+                    SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -178,9 +180,9 @@ class _UserListViewState extends State<UserListView>
                     ),
                   ),
                 ),
-          ),
+              ),
       listBuilder:
-      widget.listBuilder ?? (context, list) => _buildListView(list),
+          widget.listBuilder ?? (context, list) => _buildListView(list),
       pagination: widget.pagination,
       sort: widget.sort,
       filter: widget.filter,
@@ -188,6 +190,19 @@ class _UserListViewState extends State<UserListView>
       groupAlphabetically: widget.groupAlphabetically,
       userListController: _userListController,
     );
+
+    final backgroundColor = UserListViewTheme.of(context).backgroundColor;
+
+    Widget child;
+
+    if (backgroundColor != null) {
+      child = ColoredBox(
+        color: backgroundColor,
+        child: userListCore,
+      );
+    } else {
+      child = userListCore;
+    }
 
     if (!widget.pullToRefresh) {
       return child;
@@ -203,72 +218,72 @@ class _UserListViewState extends State<UserListView>
       widget.sort?.any((e) => e.field == 'name' && e.direction == 1) ?? false;
 
   Widget _buildError(Object error) => Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text.rich(
-          const TextSpan(
-            children: [
-              WidgetSpan(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: 2,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text.rich(
+              TextSpan(
+                children: [
+                  const WidgetSpan(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 2,
+                      ),
+                      child: Icon(Icons.error_outline),
+                    ),
                   ),
-                  child: Icon(Icons.error_outline),
-                ),
+                  TextSpan(text: context.translations.loadingUsersError),
+                ],
               ),
-              TextSpan(text: 'Error loading users'),
-            ],
-          ),
-          style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            TextButton(
+              onPressed: () => _userListController.loadData!(),
+              child: Text(context.translations.retryLabel),
+            ),
+          ],
         ),
-        TextButton(
-          onPressed: () => _userListController.loadData!(),
-          child: const Text('Retry'),
-        ),
-      ],
-    ),
-  );
+      );
 
   Widget _buildEmpty() => LayoutBuilder(
-    builder: (context, viewportConstraints) => SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: viewportConstraints.maxHeight,
+        builder: (context, viewportConstraints) => SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: viewportConstraints.maxHeight,
+            ),
+            child: Center(
+              child: Text(context.translations.noUsersLabel),
+            ),
+          ),
         ),
-        child: const Center(
-          child: Text('There are no users currently'),
-        ),
-      ),
-    ),
-  );
+      );
 
   Widget _buildListView(
-      List<ListItem> items,
-      ) {
+    List<ListItem> items,
+  ) {
     final child = _isListView
         ? ListView.separated(
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: items.isNotEmpty ? items.length + 1 : items.length,
-      separatorBuilder: (_, index) {
-        if (widget.separatorBuilder != null) {
-          return widget.separatorBuilder!(context, index);
-        }
-        return _separatorBuilder(context, index);
-      },
-      itemBuilder: (context, index) =>
-          _listItemBuilder(context, index, items),
-    )
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: items.isNotEmpty ? items.length + 1 : items.length,
+            separatorBuilder: (_, index) {
+              if (widget.separatorBuilder != null) {
+                return widget.separatorBuilder!(context, index);
+              }
+              return _separatorBuilder(context, index);
+            },
+            itemBuilder: (context, index) =>
+                _listItemBuilder(context, index, items),
+          )
         : GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: widget.crossAxisCount,
-      ),
-      itemCount: items.isNotEmpty ? items.length + 1 : items.length,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemBuilder: (context, index) =>
-          _gridItemBuilder(context, index, items),
-    );
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: widget.crossAxisCount,
+            ),
+            itemCount: items.isNotEmpty ? items.length + 1 : items.length,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemBuilder: (context, index) =>
+                _gridItemBuilder(context, index, items),
+          );
 
     return LazyLoadScrollView(
       onEndOfPage: () => _userListController.paginateData!(),
@@ -285,7 +300,7 @@ class _UserListViewState extends State<UserListView>
           final chatThemeData = StreamChatTheme.of(context);
           return Container(
             key: ValueKey<String>('HEADER-$header'),
-            color: chatThemeData.colorTheme!.accentBlue.withOpacity(0.05),
+            color: chatThemeData.colorTheme.textHighEmphasis.withOpacity(0.05),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Text(
@@ -293,7 +308,7 @@ class _UserListViewState extends State<UserListView>
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14.5,
-                  color: chatThemeData.colorTheme!.accentBlue,
+                  color: chatThemeData.colorTheme.textLowEmphasis,
                 ),
               ),
             ),
@@ -306,12 +321,12 @@ class _UserListViewState extends State<UserListView>
             child: widget.userItemBuilder != null
                 ? widget.userItemBuilder!(context, user, selected)
                 : UserItem(
-              user: user,
-              onTap: (user) => widget.onUserTap!(user, widget.userWidget),
-              onLongPress: widget.onUserLongPress,
-              onImageTap: widget.onImageTap,
-              selected: selected,
-            ),
+                    user: user,
+                    onTap: (user) => widget.onUserTap!(user, widget.userWidget),
+                    onLongPress: widget.onUserLongPress,
+                    onImageTap: widget.onImageTap,
+                    selected: selected,
+                  ),
           );
         },
       );
@@ -333,41 +348,41 @@ class _UserListViewState extends State<UserListView>
             child: widget.userItemBuilder != null
                 ? widget.userItemBuilder!(context, user, selected)
                 : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                UserAvatar(
-                  user: user,
-                  borderRadius: BorderRadius.circular(32),
-                  selected: selected,
-                  constraints: const BoxConstraints.tightFor(
-                    height: 64,
-                    width: 64,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      UserAvatar(
+                        user: user,
+                        borderRadius: BorderRadius.circular(32),
+                        selected: selected,
+                        constraints: const BoxConstraints.tightFor(
+                          height: 64,
+                          width: 64,
+                        ),
+                        onlineIndicatorConstraints:
+                            const BoxConstraints.tightFor(
+                          height: 12,
+                          width: 12,
+                        ),
+                        onTap: (user) =>
+                            widget.onUserTap!(user, widget.userWidget),
+                        onLongPress: widget.onUserLongPress,
+                      ),
+                      const SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          user.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  onlineIndicatorConstraints:
-                  const BoxConstraints.tightFor(
-                    height: 12,
-                    width: 12,
-                  ),
-                  onTap: (user) =>
-                      widget.onUserTap!(user, widget.userWidget),
-                  onLongPress: widget.onUserLongPress,
-                ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    user.name,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
           );
         },
       );
@@ -384,13 +399,13 @@ class _UserListViewState extends State<UserListView>
             if (snapshot.hasError) {
               return Container(
                 color: StreamChatTheme.of(context)
-                    .colorTheme!
-                    .accentRed
+                    .colorTheme
+                    .accentError
                     .withOpacity(.2),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Center(
-                    child: Text('Error loading users'),
+                    child: Text(context.translations.loadingUsersError),
                   ),
                 ),
               );
@@ -407,7 +422,7 @@ class _UserListViewState extends State<UserListView>
           });
 
   Widget _separatorBuilder(context, i) => Container(
-    height: 1,
-    color: StreamChatTheme.of(context).colorTheme!.accentBlue,
-  );
+        height: 1,
+        color: StreamChatTheme.of(context).colorTheme.borders,
+      );
 }

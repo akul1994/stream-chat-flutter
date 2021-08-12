@@ -1,15 +1,12 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:stream_chat_flutter/src/utils/StreamUtils.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
-import 'stream_chat_theme.dart';
-import 'utils.dart';
-
-enum MessageLengthState { normal, clipped, full }
-
-class MessageText extends StatefulWidget {
+/// Text widget to display in message
+class MessageText extends StatelessWidget {
+  /// Constructor for creating a [MessageText] widget
   const MessageText({
     Key? key,
     required this.message,
@@ -18,188 +15,80 @@ class MessageText extends StatefulWidget {
     this.onLinkTap,
   }) : super(key: key);
 
+  /// Message whose text is to be displayed
   final Message message;
-  final void Function(User?)? onMentionTap;
+
+  /// Callback for when mention is tapped
+  final void Function(User)? onMentionTap;
+
+  /// Callback for when link is tapped
   final void Function(String)? onLinkTap;
-  final MessageTheme? messageTheme;
 
-  @override
-  _MessageTextState createState() => _MessageTextState();
-}
-
-class _MessageTextState extends State<MessageText> {
-  var messageLengthState = MessageLengthState.normal;
-
-  String? messageText;
-
-  String? firstHalfText;
-
-  String? messageToShow;
-
-  @override
-  void initState() {
-    messageText =
-        _replaceMentions(widget.message.text)!.replaceAll('\n', '\\\n');
-
-    //messageText = _replaceHashtags(widget.message.text);
-    messageText = _replacePlus(messageText!);
-    messageText = _replaceDollar(messageText!);
-
-    if (messageText!.length > 1000) {
-      firstHalfText = messageText!.substring(0, 1000) + '...';
-      messageToShow = firstHalfText;
-      messageLengthState = MessageLengthState.clipped;
-    } else {
-      messageToShow = messageText;
-    }
-
-    super.initState();
-  }
+  /// [MessageTheme] whose text theme is to be applied
+  final MessageTheme messageTheme;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(minWidth: 72),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MarkdownBody(
-            data: messageToShow!,
-            onTapLink: (
-              String link,
-              String? href,
-              String title,
-            ) {
-              if (link.startsWith('@')) {
-                final mentionedUser = widget.message.mentionedUsers.firstWhereOrNull(
-                  (u) => '@${u.name}' == link,
-                );
+    final streamChat = StreamChat.of(context);
+    assert(streamChat.currentUser != null, '');
+    return BetterStreamBuilder<String>(
+      stream: streamChat.currentUserStream.map((it) => it!.language ?? 'en'),
+      initialData: streamChat.currentUser!.language ?? 'en',
+      builder: (context, language) {
+        final translatedText =
+            message.i18n?['${language}_text'] ?? message.text;
+        final messageText =
+            _replaceMentions(translatedText ?? '').replaceAll('\n', '\n\n');
+        final themeData = Theme.of(context);
+        return MarkdownBody(
+          data: messageText,
+          onTapLink: (
+            String link,
+            String? href,
+            String title,
+          ) {
+            if (link.startsWith('@')) {
+              final mentionedUser = message.mentionedUsers.firstWhereOrNull(
+                (u) => '@${u.name}' == link,
+              );
 
-                if (widget.onMentionTap != null) {
-                  widget.onMentionTap!(mentionedUser);
-                } else {
-                  print('tap on ${mentionedUser!.name}');
-                }
+              if (mentionedUser == null) return;
+
+              onMentionTap?.call(mentionedUser);
+            } else {
+              if (onLinkTap != null) {
+                onLinkTap!(link);
               } else {
-                if (widget.onLinkTap != null) {
-                  widget.onLinkTap!(link);
-                } else {
-                  launchURL(context, link);
-                }
+                launchURL(context, link);
               }
-            },
-            styleSheet: MarkdownStyleSheet.fromTheme(
-              Theme.of(context).copyWith(
-                textTheme: Theme.of(context).textTheme.apply(
-                      bodyColor: widget.messageTheme!.messageText!.color,
-                      decoration: widget.messageTheme!.messageText!.decoration,
-                      decorationColor:
-                          widget.messageTheme!.messageText!.decorationColor,
-                      decorationStyle:
-                          widget.messageTheme!.messageText!.decorationStyle,
-                      fontFamily: widget.messageTheme!.messageText!.fontFamily,
-                    ),
+            }
+          },
+          styleSheet: MarkdownStyleSheet.fromTheme(
+            themeData.copyWith(
+              textTheme: themeData.textTheme.apply(
+                bodyColor: messageTheme.messageText?.color,
+                decoration: messageTheme.messageText?.decoration,
+                decorationColor: messageTheme.messageText?.decorationColor,
+                decorationStyle: messageTheme.messageText?.decorationStyle,
+                fontFamily: messageTheme.messageText?.fontFamily,
               ),
-            ).copyWith(
-              a: widget.messageTheme!.messageLinks,
-              p: widget.messageTheme!.messageText,
             ),
+          ).copyWith(
+            a: messageTheme.messageLinks,
+            p: messageTheme.messageText,
           ),
-          if (messageLengthState != MessageLengthState.normal)
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 16, 0, 8),
-              child: InkWell(
-                  onTap: () {
-                    onShowMoreClick();
-                  },
-                  child: Text(
-                    getShowMoreText(),
-                    style: widget.messageTheme!.messageText!
-                        .copyWith(color: Colors.blue),
-                  )),
-            )
-        ],
-      ),
+        );
+      },
     );
   }
 
-  String? onShowMoreClick() {
-    if (messageLengthState == MessageLengthState.clipped) {
-      setState(() {
-        messageLengthState = MessageLengthState.full;
-        messageToShow = messageText;
-      });
-    } else {
-      setState(() {
-        messageLengthState = MessageLengthState.clipped;
-        messageToShow = firstHalfText;
-      });
+  String _replaceMentions(String text) {
+    var messageTextToRender = text;
+    for (final user in message.mentionedUsers.toSet()) {
+      final userName = user.name;
+      messageTextToRender = messageTextToRender.replaceAll(
+          '@$userName', '[@$userName](@${userName.replaceAll(' ', '')})');
     }
-  }
-
-  String getShowMoreText() {
-    switch (messageLengthState) {
-      case MessageLengthState.normal:
-        return '';
-        break;
-      case MessageLengthState.clipped:
-        return 'Show More';
-        break;
-      case MessageLengthState.full:
-        return 'Show Less';
-        break;
-    }
-  }
-
-  String? _replaceMentions(String? text) {
-    widget.message.mentionedUsers
-        ?.map((u) => StreamUtils.getUserName(u))
-        ?.toSet()
-        ?.forEach((userName) {
-      text = text!.replaceAll(
-          '@$userName', '[@$userName](@${userName!.replaceAll(' ', '')})');
-    });
-    return text;
-  }
-
-  /*String _replaceMentions(String text) {
-    widget.message.mentionedUsers?.map((u) => StreamUtils.getUserName(u))?.toSet()?.forEach((userName) {
-      text = text.replaceAll(
-          '@$userName', '***@${userName.replaceAll(' ', '')}***');
-    });
-    return text;
-  }*/
-
-  String _replaceHashtags(String text) {
-    RegExp exp = new RegExp(r"\B#\w\w+");
-    exp.allMatches(text).forEach((match) {
-      var replText =
-          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
-              .toUpperCase();
-      text = text.replaceAll('${match.group(0)}', replText);
-    });
-    return text;
-  }
-
-  String _replaceDollar(String text) {
-    RegExp exp = new RegExp(r"\$(\w+)");
-    exp.allMatches(text).forEach((match) {
-      var replText =
-          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
-              .toUpperCase();
-      text = text.replaceAll('${match.group(0)}', replText);
-    });
-    return text;
-  }
-
-  String _replacePlus(String text) {
-    RegExp exp = new RegExp(r"\+(\w+)");
-    exp.allMatches(text).forEach((match) {
-      var replText =
-          '[${match.group(0)}](${match.group(0)!.replaceAll(' ', '')})'
-              .toUpperCase();
-      text = text.replaceAll('${match.group(0)}', replText);
-    });
-    return text;
+    return messageTextToRender;
   }
 }

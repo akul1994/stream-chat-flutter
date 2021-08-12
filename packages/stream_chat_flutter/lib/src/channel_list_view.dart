@@ -1,15 +1,13 @@
-import 'package:collection/collection.dart' show IterableExtension;
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:stream_chat_flutter/src/channel_bottom_sheet.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
-import 'package:stream_chat_flutter/src/utils.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
-
-import '../stream_chat_flutter.dart';
-import 'channel_bottom_sheet.dart';
-import 'channel_preview.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
 /// Callback called when tapping on a channel
 typedef ChannelTapCallback = void Function(Channel, Widget?);
@@ -51,18 +49,27 @@ typedef ViewInfoCallback = void Function(Channel);
 /// ```
 ///
 ///
-/// Make sure to have a [StreamChat] ancestor in order to provide the information about the channels.
+/// Make sure to have a [StreamChat] ancestor in order to provide the
+/// information about the channels.
 /// The widget uses a [ListView.custom] to render the list of channels.
 ///
-/// The widget components render the ui based on the first ancestor of type [StreamChatTheme].
+/// The widget components render the ui based on the first ancestor of
+/// type [StreamChatTheme].
 /// Modify it to change the widget appearance.
 class ChannelListView extends StatefulWidget {
   /// Instantiate a new ChannelListView
-  ChannelListView({
+  const ChannelListView({
     Key? key,
     this.filter,
     this.sort,
-    this.pagination,
+    this.state = true,
+    this.watch = true,
+    this.presence = false,
+    this.memberLimit,
+    this.messageLimit,
+    this.pagination = const PaginationParams(
+      limit: 25,
+    ),
     this.onChannelTap,
     this.onChannelLongPress,
     this.channelWidget,
@@ -79,7 +86,11 @@ class ChannelListView extends StatefulWidget {
     this.errorBuilder,
     this.emptyBuilder,
     this.loadingBuilder,
-    this.listBuilder, this.state, this.watch, this.presence, this.memberLimit, this.messageLimit, this.onMoreDetailsPressed, this.onDeletePressed, this.swipeActions, this.channelListController,
+    this.listBuilder,
+    this.onMoreDetailsPressed,
+    this.onDeletePressed,
+    this.swipeActions,
+    this.channelListController,
   }) : super(key: key);
 
   /// If true a default swipe to action behaviour will be added to this widget
@@ -99,13 +110,13 @@ class ChannelListView extends StatefulWidget {
   final List<SortOption<ChannelModel>>? sort;
 
   /// If true returns the Channel state
-  final bool? state;
+  final bool state;
 
   /// If true listen to changes to this Channel in real time.
-  final bool? watch;
+  final bool watch;
 
   /// If true you’ll receive user presence updates via the websocket events
-  final bool? presence;
+  final bool presence;
 
   /// Number of members to fetch in each channel
   final int? memberLimit;
@@ -117,7 +128,7 @@ class ChannelListView extends StatefulWidget {
   /// limit: the number of channels to return (max is 30)
   /// offset: the offset (max is 1000)
   /// message_limit: how many messages should be included to each channel
-  final PaginationParams? pagination;
+  final PaginationParams pagination;
 
   /// Function called when tapping on a channel
   /// By default it calls [Navigator.push] building a [MaterialPageRoute]
@@ -191,19 +202,22 @@ class ChannelListView extends StatefulWidget {
 class _ChannelListViewState extends State<ChannelListView> {
   final _slideController = SlidableController();
 
-  final _channelListController = ChannelListController();
+  late final _defaultController = ChannelListController();
+
+  ChannelListController get _channelListController =>
+      widget.channelListController ?? _defaultController;
 
   @override
   Widget build(BuildContext context) {
     Widget child = ChannelListCore(
       filter: widget.filter,
       sort: widget.sort,
-      state: widget.state!,
-      watch: widget.watch!,
-      presence: widget.presence!,
+      state: widget.state,
+      watch: widget.watch,
+      presence: widget.presence,
       memberLimit: widget.memberLimit,
       messageLimit: widget.messageLimit,
-      pagination: widget.pagination!,
+      pagination: widget.pagination,
       channelListController: _channelListController,
       listBuilder: widget.listBuilder ?? _buildListView,
       emptyBuilder: widget.emptyBuilder ?? _buildEmptyWidget,
@@ -218,193 +232,180 @@ class _ChannelListViewState extends State<ChannelListView> {
       );
     }
 
-    return LazyLoadScrollView(
+    child = LazyLoadScrollView(
       onEndOfPage: () => _channelListController.paginateData!(),
       child: child,
     );
+
+    final backgroundColor = ChannelListViewTheme.of(context).backgroundColor;
+
+    if (backgroundColor != null) {
+      return ColoredBox(
+        color: backgroundColor,
+        child: child,
+      );
+    }
+
+    return child;
   }
 
   Widget _buildListView(BuildContext context, List<Channel> channels) {
-    Widget? child;
-
-    if (channels.isNotEmpty) {
-      if (widget.crossAxisCount > 1) {
-        child = GridView.builder(
-          padding: widget.padding,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: widget.crossAxisCount),
-          itemCount: channels.length,
-          physics: AlwaysScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return _gridItemBuilder(context, index, channels);
-          },
-        );
-      } else {
-        child = ListView.separated(
-          padding: widget.padding,
-          physics: AlwaysScrollableScrollPhysics(),
-          itemCount:
-              channels.isNotEmpty ? channels.length + 1 : channels.length,
-          separatorBuilder: (_, index) {
-            if (widget.separatorBuilder != null) {
-              return widget.separatorBuilder!(context, index);
-            }
-            return _separatorBuilder(context, index);
-          },
-          itemBuilder: (context, index) {
-            return _listItemBuilder(context, index, channels);
-          },
-        );
-      }
+    if (widget.crossAxisCount > 1) {
+      return GridView.builder(
+        padding: widget.padding,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: widget.crossAxisCount,
+        ),
+        itemCount: channels.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) =>
+            _gridItemBuilder(context, index, channels),
+      );
     }
-
-    return AnimatedSwitcher(
-      child: child,
-      duration: const Duration(milliseconds: 500),
+    return ListView.separated(
+      padding: widget.padding,
+      physics: const AlwaysScrollableScrollPhysics(),
+      // all channels + progress loader
+      itemCount: channels.length + 1,
+      separatorBuilder: (_, index) {
+        if (widget.separatorBuilder != null) {
+          return widget.separatorBuilder!(context, index);
+        }
+        return _separatorBuilder(context, index);
+      },
+      itemBuilder: (context, index) =>
+          _listItemBuilder(context, index, channels),
     );
   }
 
-  Widget _buildEmptyWidget(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, viewportConstraints) {
-        return SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Stack(
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: viewportConstraints.maxHeight,
+  Widget _buildEmptyWidget(BuildContext context) => LayoutBuilder(
+        builder: (context, viewportConstraints) {
+          final chatThemeData = StreamChatTheme.of(context);
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Stack(
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: viewportConstraints.maxHeight,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: StreamSvgIcon.message(
+                          size: 136,
+                          color: chatThemeData.colorTheme.disabled,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          context.translations.letsStartChattingLabel,
+                          style: chatThemeData.textTheme.headline,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 52,
+                        ),
+                        child: Text(
+                          context.translations.sendingFirstMessageLabel,
+                          textAlign: TextAlign.center,
+                          style: chatThemeData.textTheme.body.copyWith(
+                            color: chatThemeData.colorTheme.textLowEmphasis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: StreamSvgIcon.message(
-                        size: 136,
-                        color: StreamChatTheme.of(context)
-                            .colorTheme!
-                            .greyGainsboro,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Let’s start chatting!',
-                        style: StreamChatTheme.of(context).textTheme!.headline,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 52,
-                      ),
-                      child: Text(
-                        'How about sending your first message to a friend?',
-                        textAlign: TextAlign.center,
-                        style: StreamChatTheme.of(context)
-                            .textTheme!
-                            .body
-                            .copyWith(
-                              color:
-                                  StreamChatTheme.of(context).colorTheme!.grey,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (widget.onStartChatPressed != null)
-                Positioned(
-                  right: 0,
-                  left: 0,
-                  bottom: 32,
-                  child: Center(
-                    child: FlatButton(
-                      onPressed: widget.onStartChatPressed,
-                      child: Text(
-                        'Start a chat',
-                        style: StreamChatTheme.of(context)
-                            .textTheme!
-                            .bodyBold
-                            .copyWith(
-                              color: StreamChatTheme.of(context)
-                                  .colorTheme!
-                                  .accentBlue,
-                            ),
+                if (widget.onStartChatPressed != null)
+                  Positioned(
+                    right: 0,
+                    left: 0,
+                    bottom: 32,
+                    child: Center(
+                      child: TextButton(
+                        onPressed: widget.onStartChatPressed,
+                        child: Text(
+                          context.translations.startAChatLabel,
+                          style: chatThemeData.textTheme.bodyBold.copyWith(
+                            color: chatThemeData.colorTheme.accentPrimary,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLoadingWidget(BuildContext context) {
-    return ListView(
-      padding: widget.padding,
-      physics: AlwaysScrollableScrollPhysics(),
-      children: List.generate(
-        25,
-        (i) {
-          if (widget.crossAxisCount == 1) {
-            if (i % 2 != 0) {
-              if (widget.separatorBuilder != null) {
-                return widget.separatorBuilder!(context, i);
-              }
-              return _separatorBuilder(context, i);
-            }
-          }
-          return _buildLoadingItem(context);
+              ],
+            ),
+          );
         },
-      ),
-    );
-  }
+      );
+
+  Widget _buildLoadingWidget(BuildContext context) => ListView(
+        padding: widget.padding,
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: List.generate(
+          25,
+          (i) {
+            if (widget.crossAxisCount == 1) {
+              if (i % 2 != 0) {
+                if (widget.separatorBuilder != null) {
+                  return widget.separatorBuilder!(context, i);
+                }
+                return _separatorBuilder(context, i);
+              }
+            }
+            return _buildLoadingItem(context);
+          },
+        ),
+      );
 
   Shimmer _buildLoadingItem(BuildContext context) {
+    final chatThemeData = StreamChatTheme.of(context);
     if (widget.crossAxisCount > 1) {
       return Shimmer.fromColors(
-        baseColor: StreamChatTheme.of(context).colorTheme!.greyGainsboro,
-        highlightColor: StreamChatTheme.of(context).colorTheme!.whiteSmoke,
+        baseColor: chatThemeData.colorTheme.disabled,
+        highlightColor: chatThemeData.colorTheme.inputBg,
         child: Column(
           children: [
-            SizedBox(height: 4.0),
+            const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 for (int i = 0; i < widget.crossAxisCount; i++)
                   Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    constraints: BoxConstraints.tightFor(
+                    constraints: const BoxConstraints.tightFor(
                       height: 70,
                       width: 70,
                     ),
                   ),
               ],
             ),
-            SizedBox(
-              height: 16.0,
+            const SizedBox(
+              height: 16,
             ),
           ],
         ),
       );
     } else {
       return Shimmer.fromColors(
-        baseColor: StreamChatTheme.of(context).colorTheme!.greyGainsboro,
-        highlightColor: StreamChatTheme.of(context).colorTheme!.whiteSmoke,
+        baseColor: chatThemeData.colorTheme.disabled,
+        highlightColor: chatThemeData.colorTheme.inputBg,
         child: ListTile(
           leading: Container(
             decoration: BoxDecoration(
-              color: StreamChatTheme.of(context).colorTheme!.white,
+              color: chatThemeData.colorTheme.barsBg,
               shape: BoxShape.circle,
             ),
-            constraints: BoxConstraints.tightFor(
+            constraints: const BoxConstraints.tightFor(
               height: 40,
               width: 40,
             ),
@@ -417,10 +418,10 @@ class _ChannelListViewState extends State<ChannelListView> {
             alignment: Alignment.centerLeft,
             child: Container(
               decoration: BoxDecoration(
-                color: StreamChatTheme.of(context).colorTheme!.white,
+                color: chatThemeData.colorTheme.barsBg,
                 borderRadius: BorderRadius.circular(11),
               ),
-              constraints: BoxConstraints.tightFor(
+              constraints: const BoxConstraints.tightFor(
                 height: 16,
                 width: 82,
               ),
@@ -429,26 +430,27 @@ class _ChannelListViewState extends State<ChannelListView> {
           subtitle: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: StreamChatTheme.of(context).colorTheme!.white,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  constraints: BoxConstraints.tightFor(
-                    height: 16,
-                    width: 238,
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: chatThemeData.colorTheme.barsBg,
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    constraints: const BoxConstraints.expand(
+                      height: 16,
+                    ),
                   ),
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(left: 16),
                 decoration: BoxDecoration(
-                  color: StreamChatTheme.of(context).colorTheme!.white,
+                  color: chatThemeData.colorTheme.barsBg,
                   borderRadius: BorderRadius.circular(11),
                 ),
-                constraints: BoxConstraints.tightFor(
+                constraints: const BoxConstraints.tightFor(
                   height: 16,
                   width: 42,
                 ),
@@ -460,179 +462,191 @@ class _ChannelListViewState extends State<ChannelListView> {
     }
   }
 
-  Widget _buildErrorWidget(BuildContext context, Object error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text.rich(
-            TextSpan(
-              children: [
-                WidgetSpan(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      right: 2.0,
+  Widget _buildErrorWidget(BuildContext context, Object error) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text.rich(
+              TextSpan(
+                children: [
+                  const WidgetSpan(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 2,
+                      ),
+                      child: Icon(Icons.error_outline),
                     ),
-                    child: Icon(Icons.error_outline),
                   ),
-                ),
-                TextSpan(text: 'Error loading channels'),
-              ],
+                  TextSpan(text: context.translations.loadingChannelsError),
+                ],
+              ),
+              style: Theme.of(context).textTheme.headline6,
             ),
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          FlatButton(
-            onPressed: () => _channelListController.loadData!(),
-            child: Text('Retry'),
-          ),
-        ],
+            TextButton(
+              onPressed: () => _channelListController.loadData!(),
+              child: Text(context.translations.retryLabel),
+            ),
+          ],
+        ),
+      );
+
+  Widget _listItemBuilder(BuildContext context, int i, List<Channel> channels) {
+    final channelsBloc = ChannelsBloc.of(context);
+
+    if (i == channels.length) {
+      return _buildQueryProgressIndicator(context, channelsBloc);
+    }
+
+    final onTap = _getChannelTap(context);
+    final chatThemeData = StreamChatTheme.of(context);
+    final backgroundColor = chatThemeData.colorTheme.inputBg;
+    final channel = channels[i];
+
+    return StreamChannel(
+      key: ValueKey<String>('CHANNEL-${channel.cid}'),
+      channel: channel,
+      child: Slidable(
+        controller: _slideController,
+        enabled: widget.swipeToAction,
+        actionPane: const SlidableBehindActionPane(),
+        actionExtentRatio: 0.12,
+        secondaryActions: widget.swipeActions
+                ?.map((e) => IconSlideAction(
+                      color: e.color,
+                      iconWidget: e.iconWidget,
+                      onTap: () {
+                        e.onTap?.call(channel);
+                      },
+                    ))
+                .toList() ??
+            <Widget>[
+              IconSlideAction(
+                color: backgroundColor,
+                icon: Icons.more_horiz,
+                onTap: widget.onMoreDetailsPressed != null
+                    ? () {
+                        widget.onMoreDetailsPressed!(channel);
+                      }
+                    : () {
+                        showModalBottomSheet(
+                          clipBehavior: Clip.hardEdge,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32),
+                            ),
+                          ),
+                          context: context,
+                          builder: (context) => StreamChannel(
+                            channel: channel,
+                            child: ChannelBottomSheet(
+                              onViewInfoTap: () {
+                                widget.onViewInfoTap?.call(channel);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+              ),
+              if ([
+                'admin',
+                'owner',
+              ].contains(channel.state!.members
+                  .firstWhereOrNull(
+                      (m) => m.userId == channel.client.state.currentUser?.id)
+                  ?.role))
+                IconSlideAction(
+                  color: backgroundColor,
+                  iconWidget: StreamSvgIcon.delete(
+                    color: chatThemeData.colorTheme.accentError,
+                  ),
+                  onTap: widget.onDeletePressed != null
+                      ? () {
+                          widget.onDeletePressed?.call(channel);
+                        }
+                      : () async {
+                          final res = await showConfirmationDialog(
+                            context,
+                            title: context.translations.deleteConversationLabel,
+                            question:
+                                context.translations.deleteConversationQuestion,
+                            okText: context.translations.deleteLabel,
+                            cancelText: context.translations.cancelLabel,
+                            icon: StreamSvgIcon.delete(
+                              color: chatThemeData.colorTheme.accentError,
+                            ),
+                          );
+                          if (res == true) {
+                            await channel.delete();
+                          }
+                        },
+                ),
+            ],
+        child: widget.channelPreviewBuilder?.call(context, channel) ??
+            ChannelPreview(
+              onLongPress: widget.onChannelLongPress,
+              channel: channel,
+              onImageTap: () => widget.onImageTap?.call(channel),
+              onTap: (channel) => onTap(channel, widget.channelWidget),
+            ),
       ),
     );
   }
 
-  Widget _listItemBuilder(BuildContext context, int i, List<Channel> channels) {
-    final channelsProvider = ChannelsBloc.of(context);
-    if (i < channels.length) {
-      final channel = channels[i];
-      ChannelTapCallback? onTap;
-      if (widget.onChannelTap != null) {
-        onTap = widget.onChannelTap;
-      } else {
-        onTap = (client, _) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return StreamChannel(
-                  child: widget.channelWidget!,
-                  channel: client,
-                );
-              },
-            ),
-          );
-        };
-      }
-
-      final backgroundColor = StreamChatTheme.of(context).colorTheme!.whiteSmoke;
-      return StreamChannel(
-        key: ValueKey<String>('CHANNEL-${channel.id}'),
-        channel: channel,
-        child: Builder(
-          builder: (context) {
-            return Slidable(
-              controller: _slideController,
-              enabled: widget.swipeToAction,
-              actionPane: SlidableBehindActionPane(),
-              actionExtentRatio: 0.12,
-              closeOnScroll: true,
-              secondaryActions: <Widget>[
-                IconSlideAction(
-                  color: backgroundColor,
-                  icon: Icons.more_horiz,
-                  onTap: () {
-                    showModalBottomSheet(
-                      clipBehavior: Clip.hardEdge,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32),
-                          topRight: Radius.circular(32),
-                        ),
-                      ),
-                      context: context,
-                      builder: (context) {
-                        return StreamChannel(
-                          child: ChannelBottomSheet(
-                            onViewInfoTap: () {
-                              widget.onViewInfoTap!(channel);
-                            },
-                          ),
-                          channel: channel,
-                        );
-                      },
-                    );
-                  },
-                ),
-                if ([
-                  'admin',
-                  'owner',
-                ].contains(channel.state!.members
-                    .firstWhereOrNull((m) => m.userId == channel.client.state.user!.id)
-                    ?.role))
-                  IconSlideAction(
-                    color: backgroundColor,
-                    iconWidget: StreamSvgIcon.delete(
-                      color: StreamChatTheme.of(context).colorTheme!.accentRed,
-                    ),
-                    onTap: () async {
-                      final res = await showConfirmationDialog(
-                        context,
-                        title: 'Delete Conversation',
-                        okText: 'DELETE',
-                        question:
-                            'Are you sure you want to delete this conversation?',
-                        cancelText: 'CANCEL',
-                        icon: StreamSvgIcon.delete(
-                          color:
-                              StreamChatTheme.of(context).colorTheme!.accentRed,
-                        ),
-                      );
-                      if (res == true) {
-                        await channel.delete();
-                      }
-                    },
-                  ),
-              ],
-              child: Container(
-                color: StreamChatTheme.of(context).colorTheme!.whiteSnow,
-                child: widget.channelPreviewBuilder?.call(context, channel) ??
-                    ChannelPreview(
-                      onLongPress: widget.onChannelLongPress,
-                      channel: channel,
-                      onImageTap: widget.onImageTap?.call(channel),
-                      onTap: (channel) => onTap!(channel, widget.channelWidget),
-                    ),
-              ),
-            );
-          },
-        ),
-      );
+  ChannelTapCallback _getChannelTap(BuildContext context) {
+    ChannelTapCallback onTap;
+    if (widget.onChannelTap != null) {
+      onTap = widget.onChannelTap!;
     } else {
-      return _buildQueryProgressIndicator(context, channelsProvider);
+      onTap = (client, _) {
+        if (widget.channelWidget == null) {
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StreamChannel(
+              channel: client,
+              child: widget.channelWidget!,
+            ),
+          ),
+        );
+      };
     }
+    return onTap;
   }
 
   Widget _gridItemBuilder(BuildContext context, int i, List<Channel> channels) {
-    var channel = channels[i];
+    final channel = channels[i];
 
-    var selected = widget.selectedChannels.contains(channel);
+    final selected = widget.selectedChannels.contains(channel);
 
     return Container(
       key: ValueKey<String>('CHANNEL-${channel.id}'),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ChannelImage(
+          ChannelAvatar(
             channel: channel,
             borderRadius: BorderRadius.circular(32),
             selected: selected,
-            constraints: BoxConstraints.tightFor(
+            constraints: const BoxConstraints.tightFor(
               width: 64,
               height: 64,
             ),
-            onTap: () => widget.onChannelTap!(channel, null),
+            onTap: () => _getChannelTap(context),
           ),
-          SizedBox(height: 7),
+          const SizedBox(height: 7),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: StreamChannel(
-              child: ChannelName(
+              channel: channel,
+              child: const ChannelName(
                 textStyle: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              channel: channel,
             ),
           ),
         ],
@@ -643,38 +657,38 @@ class _ChannelListViewState extends State<ChannelListView> {
   Widget _buildQueryProgressIndicator(
     context,
     ChannelsBlocState channelsProvider,
-  ) {
-    return StreamBuilder<bool>(
+  ) =>
+      BetterStreamBuilder<bool>(
         stream: channelsProvider.queryChannelsLoading,
         initialData: false,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Container(
-              color: StreamChatTheme.of(context)
-                  .colorTheme!
-                  .accentRed
-                  .withOpacity(.2),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Center(
-                  child: Text('Error loading channels'),
+        errorBuilder: (context, err) {
+          final theme = StreamChatTheme.of(context);
+          return Container(
+            color: theme.colorTheme.textLowEmphasis.withOpacity(0.9),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                context.translations.loadingChannelsError,
+                style: theme.textTheme.body.copyWith(
+                  color: Colors.white,
                 ),
               ),
-            );
-          }
-          return snapshot.data!
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: const CircularProgressIndicator(),
-                  ),
-                )
-              : Offstage();
-        });
-  }
+            ),
+          );
+        },
+        builder: (context, showLoading) {
+          if (!showLoading) return const Offstage();
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        },
+      );
 
   Widget _separatorBuilder(context, i) {
-    var effect = StreamChatTheme.of(context).colorTheme!.borderBottom;
+    final effect = StreamChatTheme.of(context).colorTheme.borderBottom;
 
     return Container(
       height: 1,
@@ -688,7 +702,7 @@ class SwipeAction {
   /// Constructor for creating [SwipeAction]
   SwipeAction({
     this.color,
-    this.iconWidget,
+    required this.iconWidget,
     this.onTap,
   });
 
@@ -696,7 +710,7 @@ class SwipeAction {
   Color? color;
 
   /// Widget to display as icon
-  Widget? iconWidget;
+  Widget iconWidget;
 
   /// Callback when icon is tapped
   ChannelInfoCallback? onTap;

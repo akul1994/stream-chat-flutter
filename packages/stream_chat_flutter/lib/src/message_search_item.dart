@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
 /// It shows the current [Message] preview.
 ///
-/// Usually you don't use this widget as it's the default item used by [MessageSearchListView].
+/// Usually you don't use this widget as it's the default item used by
+/// [MessageSearchListView].
 ///
-/// The widget renders the ui based on the first ancestor of type [StreamChatTheme].
+/// The widget renders the ui based on the first ancestor of type
+/// [StreamChatTheme].
 /// Modify it to change the widget appearance.
 class MessageSearchItem extends StatelessWidget {
   /// Instantiate a new MessageSearchItem
@@ -30,15 +33,16 @@ class MessageSearchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = getMessageResponse.message;
-    final channel = getMessageResponse.channel!;
-    final channelName = channel.extraData['name'];
+    final channel = getMessageResponse.channel;
+    final channelName = channel?.extraData['name'];
     final user = message.user!;
+    final chatThemeData = StreamChatTheme.of(context);
     return ListTile(
       onTap: onTap,
       leading: UserAvatar(
         user: user,
         showOnlineStatus: showOnlineStatus,
-        constraints: BoxConstraints.tightFor(
+        constraints: const BoxConstraints.tightFor(
           height: 40,
           width: 40,
         ),
@@ -46,22 +50,21 @@ class MessageSearchItem extends StatelessWidget {
       title: Row(
         children: [
           Text(
-            user.id == StreamChat.of(context).user!.id ? 'You' : user.name,
-            style: StreamChatTheme.of(context).channelPreviewTheme!.title,
+            user.id == StreamChat.of(context).currentUser?.id
+                ? context.translations.youText
+                : user.name,
+            style: chatThemeData.channelPreviewTheme.title,
           ),
           if (channelName != null) ...[
             Text(
-              ' in ',
-              style: StreamChatTheme.of(context)
-                  .channelPreviewTheme!
-                  .title!
-                  .copyWith(
-                    fontWeight: FontWeight.normal,
-                  ),
+              ' ${context.translations.inText} ',
+              style: chatThemeData.channelPreviewTheme.title?.copyWith(
+                fontWeight: FontWeight.normal,
+              ),
             ),
             Text(
               channelName as String,
-              style: StreamChatTheme.of(context).channelPreviewTheme!.title,
+              style: chatThemeData.channelPreviewTheme.title,
             ),
           ],
         ],
@@ -69,7 +72,7 @@ class MessageSearchItem extends StatelessWidget {
       subtitle: Row(
         children: [
           Expanded(child: _buildSubtitle(context, message)),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           _buildDate(context, message),
         ],
       ),
@@ -91,19 +94,15 @@ class MessageSearchItem extends StatelessWidget {
 
     return Text(
       stringDate,
-      style: StreamChatTheme.of(context).channelPreviewTheme!.lastMessageAt,
+      style: StreamChatTheme.of(context).channelPreviewTheme.lastMessageAt,
     );
   }
 
   Widget _buildSubtitle(BuildContext context, Message message) {
-    if (message == null) {
-      return SizedBox();
-    }
-
     var text = message.text;
     if (message.isDeleted) {
-      text = 'This message was deleted.';
-    } else if (message.attachments != null) {
+      text = context.translations.messageDeletedText;
+    } else if (message.attachments.isNotEmpty) {
       final parts = <String>[
         ...message.attachments.map((e) {
           if (e.type == 'image') {
@@ -116,29 +115,30 @@ class MessageSearchItem extends StatelessWidget {
           return e == message.attachments.last
               ? (e.title ?? 'File')
               : '${e.title ?? 'File'} , ';
-        }).where((e) => e != null),
+        }),
         message.text ?? '',
       ];
 
       text = parts.join(' ');
     }
 
+    final chatThemeData = StreamChatTheme.of(context);
     return Text.rich(
       _getDisplayText(
         text!,
         message.mentionedUsers,
         message.attachments,
-        StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
-              fontStyle: (message.isSystem || message.isDeleted)
-                  ? FontStyle.italic
-                  : FontStyle.normal,
-            ),
-        StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
-              fontStyle: (message.isSystem || message.isDeleted)
-                  ? FontStyle.italic
-                  : FontStyle.normal,
-              fontWeight: FontWeight.bold,
-            ),
+        chatThemeData.channelPreviewTheme.subtitle?.copyWith(
+          fontStyle: (message.isSystem || message.isDeleted)
+              ? FontStyle.italic
+              : FontStyle.normal,
+        ),
+        chatThemeData.channelPreviewTheme.subtitle?.copyWith(
+          fontStyle: (message.isSystem || message.isDeleted)
+              ? FontStyle.italic
+              : FontStyle.normal,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -149,30 +149,28 @@ class MessageSearchItem extends StatelessWidget {
       String text,
       List<User> mentions,
       List<Attachment> attachments,
-      TextStyle normalTextStyle,
-      TextStyle mentionsTextStyle) {
-    var textList = text.split(' ');
-    var resList = <TextSpan>[];
-    for (var e in textList) {
-      if (mentions != null &&
-          mentions.isNotEmpty &&
+      TextStyle? normalTextStyle,
+      TextStyle? mentionsTextStyle) {
+    final textList = text.split(' ');
+    final resList = <TextSpan>[];
+    for (final e in textList) {
+      if (mentions.isNotEmpty &&
           mentions.any((element) => '@${element.name}' == e)) {
         resList.add(TextSpan(
           text: '$e ',
           style: mentionsTextStyle,
         ));
-      } else if (attachments != null &&
-          attachments.isNotEmpty &&
+      } else if (attachments.isNotEmpty &&
           attachments
               .where((e) => e.title != null)
               .any((element) => element.title == e)) {
         resList.add(TextSpan(
           text: '$e ',
-          style: normalTextStyle.copyWith(fontStyle: FontStyle.italic),
+          style: normalTextStyle?.copyWith(fontStyle: FontStyle.italic),
         ));
       } else {
         resList.add(TextSpan(
-          text: e == textList.last ? '$e' : '$e ',
+          text: e == textList.last ? e : '$e ',
           style: normalTextStyle,
         ));
       }

@@ -7,7 +7,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
-import 'dart:ui' as ui;
 
 /// Widget used to provide information about the chat to the widget tree
 ///
@@ -31,11 +30,28 @@ import 'dart:ui' as ui;
 ///
 /// Use [StreamChat.of] to get the current [StreamChatState] instance.
 class StreamChat extends StatefulWidget {
+  /// Constructor for creating a [StreamChat] widget
+  const StreamChat({
+    Key? key,
+    required this.client,
+    required this.child,
+    this.streamChatThemeData,
+    this.onBackgroundEventReceived,
+    this.backgroundKeepAlive = const Duration(minutes: 1),
+    this.connectivityStream,
+  }) : super(key: key);
+
+  /// Client to do chat ops with
   final StreamChatClient client;
-  final Widget child;
+
+  /// Child which inherits details
+  final Widget? child;
+
+  /// Theme to pass on
   final StreamChatThemeData? streamChatThemeData;
 
-  /// The amount of time that will pass before disconnecting the client in the background
+  /// The amount of time that will pass before disconnecting the client
+  /// in the background
   final Duration backgroundKeepAlive;
 
   /// Handler called whenever the [client] receives a new [Event] while the app
@@ -43,16 +59,10 @@ class StreamChat extends StatefulWidget {
   /// upon the [Event.type]
   final EventHandler? onBackgroundEventReceived;
 
-  StreamChat({
-    Key? key,
-    required this.client,
-    required this.child,
-    this.streamChatThemeData,
-    this.onBackgroundEventReceived,
-    this.backgroundKeepAlive = const Duration(minutes: 1),
-  }) : super(
-          key: key,
-        );
+  /// Stream of connectivity result
+  /// Visible for testing
+  @visibleForTesting
+  final Stream<ConnectivityResult>? connectivityStream;
 
   @override
   StreamChatState createState() => StreamChatState();
@@ -74,6 +84,7 @@ class StreamChat extends StatefulWidget {
 
 /// The current state of the StreamChat widget
 class StreamChatState extends State<StreamChat> {
+  /// Gets client from widget
   StreamChatClient get client => widget.client;
 
   @override
@@ -89,14 +100,14 @@ class StreamChatState extends State<StreamChat> {
             return Theme(
               data: materialTheme.copyWith(
                 primaryIconTheme: streamTheme.primaryIconTheme,
-                accentColor: streamTheme.colorTheme!.accentBlue,
-                scaffoldBackgroundColor: streamTheme.colorTheme!.white,
+                accentColor: streamTheme.colorTheme.accentPrimary,
               ),
               child: StreamChatCore(
                 client: client,
-                child: widget.child,
                 onBackgroundEventReceived: widget.onBackgroundEventReceived,
                 backgroundKeepAlive: widget.backgroundKeepAlive,
+                connectivityStream: widget.connectivityStream,
+                child: widget.child ?? const Offstage(),
               ),
             );
           },
@@ -109,32 +120,39 @@ class StreamChatState extends State<StreamChat> {
     BuildContext context,
     StreamChatThemeData? themeData,
   ) {
-    final defaultTheme = StreamChatThemeData.getDefaultTheme(Theme.of(context));
-    return defaultTheme.merge(themeData) ?? themeData!;
+    final appBrightness = Theme.of(context).brightness;
+    final defaultTheme = StreamChatThemeData(brightness: appBrightness);
+    return defaultTheme.merge(themeData);
   }
+
+  // coverage:ignore-start
 
   /// The current user
-  User? get user => widget.client.state.user;
+  @Deprecated('Use `.currentUser` instead, Will be removed in future releases')
+  User? get user => widget.client.state.currentUser;
 
   /// The current user as a stream
-  Stream<User?> get userStream => widget.client.state.userStream;
+  @Deprecated(
+    'Use `.currentUserStream` instead, Will be removed in future releases',
+  )
+  Stream<User?> get userStream => widget.client.state.currentUserStream;
 
-  @override
-  void initState() {
-    super.initState();
-    client.state?.totalUnreadCountStream?.listen((count) {
-      // if (count > 0) {
-      //   FlutterAppBadger.updateBadgeCount(count);
-      // } else {
-      //   FlutterAppBadger.removeBadge();
-      // }
-    });
-  }
+  // coverage:ignore-end
+
+  /// The current user
+  User? get currentUser => widget.client.state.currentUser;
+
+  /// The current user as a stream
+  Stream<User?> get currentUserStream => widget.client.state.currentUserStream;
 
   @override
   void didChangeDependencies() {
-    final locale = ui.window.locale;
-    Jiffy.locale(locale.languageCode);
+    final currentLocale = Localizations.localeOf(context);
+    final languageCode = currentLocale.languageCode;
+    final availableLocales = Jiffy.getAllAvailableLocales();
+    if (availableLocales.contains(languageCode)) {
+      Jiffy.locale(languageCode);
+    }
     super.didChangeDependencies();
   }
 }

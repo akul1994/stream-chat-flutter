@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:stream_chat_flutter/src/channel_info.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
-import '../stream_chat_flutter.dart';
-import 'channel_info.dart';
-import 'option_list_tile.dart';
-
+/// Bottom Sheet with options
 class ChannelBottomSheet extends StatefulWidget {
-  final VoidCallback? onViewInfoTap;
+  /// Constructor for creating bottom sheet
+  const ChannelBottomSheet({Key? key, this.onViewInfoTap}) : super(key: key);
 
-  ChannelBottomSheet({this.onViewInfoTap});
+  /// Callback when 'View Info' is tapped
+  final VoidCallback? onViewInfoTap;
 
   @override
   _ChannelBottomSheetState createState() => _ChannelBottomSheetState();
@@ -16,56 +18,58 @@ class ChannelBottomSheet extends StatefulWidget {
 class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
   bool _showActions = true;
 
+  late StreamChannelState _streamChannelState;
+  late StreamChatThemeData _streamChatThemeData;
+  late StreamChatState _streamChatState;
+
   @override
   Widget build(BuildContext context) {
-    var channel = StreamChannel.of(context).channel;
+    final channel = _streamChannelState.channel;
 
-    var members = channel.state!.members;
+    final members = channel.state?.members ?? [];
 
-    var userAsMember =
-        members.firstWhere((e) => e.user!.id == StreamChat.of(context).user!.id);
-    var isOwner = userAsMember.role == 'owner';
+    final userAsMember = members
+        .firstWhere((e) => e.user?.id == _streamChatState.currentUser?.id);
+    final isOwner = userAsMember.role == 'owner';
 
     return Material(
-      color: StreamChatTheme.of(context).colorTheme!.white,
+      color: _streamChatThemeData.colorTheme.barsBg,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16.0),
-          topRight: Radius.circular(16.0),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
       ),
       child: !_showActions
-          ? SizedBox()
+          ? const SizedBox()
           : ListView(
               shrinkWrap: true,
               children: [
-                SizedBox(
-                  height: 24.0,
+                const SizedBox(
+                  height: 24,
                 ),
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ChannelName(
-                      textStyle:
-                          StreamChatTheme.of(context).textTheme!.headlineBold,
+                      textStyle: _streamChatThemeData.textTheme.headlineBold,
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 5.0,
+                const SizedBox(
+                  height: 5,
                 ),
                 Center(
                   child: ChannelInfo(
                     showTypingIndicator: false,
-                    channel: StreamChannel.of(context).channel,
-                    textStyle: StreamChatTheme.of(context)
-                        .channelPreviewTheme!
-                        .subtitle,
+                    channel: _streamChannelState.channel,
+                    textStyle:
+                        _streamChatThemeData.channelPreviewTheme.subtitle,
                   ),
                 ),
-                SizedBox(
-                  height: 17.0,
+                const SizedBox(
+                  height: 17,
                 ),
                 if (channel.isDistinct && channel.memberCount == 2)
                   Column(
@@ -73,27 +77,27 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
                       UserAvatar(
                         user: members
                             .firstWhere(
-                                (e) => e.user!.id != userAsMember.user!.id)
-                            .user,
-                        constraints: BoxConstraints(
-                          maxHeight: 64.0,
-                          maxWidth: 64.0,
+                                (e) => e.user?.id != userAsMember.user?.id)
+                            .user!,
+                        constraints: const BoxConstraints(
+                          maxHeight: 64,
+                          maxWidth: 64,
                         ),
-                        borderRadius: BorderRadius.circular(32.0),
+                        borderRadius: BorderRadius.circular(32),
                         onlineIndicatorConstraints:
-                            BoxConstraints.tight(Size(12.0, 12.0)),
+                            BoxConstraints.tight(const Size(12, 12)),
                       ),
-                      SizedBox(
-                        height: 6.0,
+                      const SizedBox(
+                        height: 6,
                       ),
                       Text(
                         members
-                            .firstWhere(
-                                (e) => e.user!.id != userAsMember.user!.id)
-                            .user!
-                            .name,
-                        style:
-                            StreamChatTheme.of(context).textTheme!.footnoteBold,
+                                .firstWhere(
+                                    (e) => e.user?.id != userAsMember.user?.id)
+                                .user
+                                ?.name ??
+                            '',
+                        style: _streamChatThemeData.textTheme.footnoteBold,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -101,66 +105,63 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
                   ),
                 if (!(channel.isDistinct && channel.memberCount == 2))
                   Container(
-                    height: 94.0,
+                    height: 94,
                     alignment: Alignment.center,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: members.length,
                       shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Column(
-                            children: [
-                              UserAvatar(
-                                user: members[index].user,
-                                constraints: BoxConstraints(
-                                  maxHeight: 64.0,
-                                  maxWidth: 64.0,
-                                ),
-                                borderRadius: BorderRadius.circular(32.0),
-                                onlineIndicatorConstraints:
-                                    BoxConstraints.tight(Size(12.0, 12.0)),
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          children: [
+                            UserAvatar(
+                              user: members[index].user!,
+                              constraints: const BoxConstraints.tightFor(
+                                height: 64,
+                                width: 64,
                               ),
-                              SizedBox(
-                                height: 6.0,
-                              ),
-                              Text(
-                                members[index].user!.name,
-                                style: StreamChatTheme.of(context)
-                                    .textTheme!
-                                    .footnoteBold,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                              borderRadius: BorderRadius.circular(32),
+                              onlineIndicatorConstraints:
+                                  BoxConstraints.tight(const Size(12, 12)),
+                            ),
+                            const SizedBox(
+                              height: 6,
+                            ),
+                            Text(
+                              members[index].user?.name ?? '',
+                              style:
+                                  _streamChatThemeData.textTheme.footnoteBold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                SizedBox(
-                  height: 24.0,
+                const SizedBox(
+                  height: 24,
                 ),
                 OptionListTile(
                   leading: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: StreamSvgIcon.user(
-                      color: StreamChatTheme.of(context).colorTheme!.grey,
+                      color: _streamChatThemeData.colorTheme.textLowEmphasis,
                     ),
                   ),
-                  title: 'View Info',
+                  title: context.translations.viewInfoLabel,
                   onTap: widget.onViewInfoTap,
                 ),
                 if (!channel.isDistinct)
                   OptionListTile(
                     leading: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: StreamSvgIcon.userRemove(
-                        color: StreamChatTheme.of(context).colorTheme!.grey,
+                        color: _streamChatThemeData.colorTheme.textLowEmphasis,
                       ),
                     ),
-                    title: 'Leave Group',
+                    title: context.translations.leaveGroupLabel,
                     onTap: () async {
                       setState(() {
                         _showActions = false;
@@ -174,14 +175,13 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
                 if (isOwner)
                   OptionListTile(
                     leading: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: StreamSvgIcon.delete(
-                        color: StreamChatTheme.of(context).colorTheme!.accentRed,
+                        color: _streamChatThemeData.colorTheme.accentError,
                       ),
                     ),
-                    title: 'Delete Conversation',
-                    titleColor:
-                        StreamChatTheme.of(context).colorTheme!.accentRed,
+                    title: context.translations.deleteConversationLabel,
+                    titleColor: _streamChatThemeData.colorTheme.accentError,
                     onTap: () async {
                       setState(() {
                         _showActions = false;
@@ -194,12 +194,12 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
                   ),
                 OptionListTile(
                   leading: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: StreamSvgIcon.closeSmall(
-                      color: StreamChatTheme.of(context).colorTheme!.grey,
+                      color: _streamChatThemeData.colorTheme.textLowEmphasis,
                     ),
                   ),
-                  title: 'Cancel',
+                  title: context.translations.cancelLabel,
                   onTap: () {
                     Navigator.pop(context);
                   },
@@ -209,18 +209,26 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    _streamChannelState = StreamChannel.of(context);
+    _streamChatThemeData = StreamChatTheme.of(context);
+    _streamChatState = StreamChat.of(context);
+    super.didChangeDependencies();
+  }
+
   Future<void> _showDeleteDialog() async {
     final res = await showConfirmationDialog(
       context,
-      title: 'Delete Conversation',
-      okText: 'DELETE',
-      question: 'Are you sure you want to delete this conversation?',
-      cancelText: 'CANCEL',
+      title: context.translations.deleteConversationLabel,
+      okText: context.translations.deleteLabel,
+      question: context.translations.deleteConversationQuestion,
+      cancelText: context.translations.cancelLabel,
       icon: StreamSvgIcon.delete(
-        color: StreamChatTheme.of(context).colorTheme!.accentRed,
+        color: _streamChatThemeData.colorTheme.accentError,
       ),
     );
-    var channel = StreamChannel.of(context).channel;
+    final channel = _streamChannelState.channel;
     if (res == true) {
       await channel.delete();
       Navigator.pop(context);
@@ -230,17 +238,20 @@ class _ChannelBottomSheetState extends State<ChannelBottomSheet> {
   Future<void> _showLeaveDialog() async {
     final res = await showConfirmationDialog(
       context,
-      title: 'Leave conversation',
-      okText: 'LEAVE',
-      question: 'Are you sure you want to leave this conversation?',
-      cancelText: 'CANCEL',
+      title: context.translations.leaveConversationLabel,
+      okText: context.translations.leaveLabel,
+      question: context.translations.leaveConversationQuestion,
+      cancelText: context.translations.cancelLabel,
       icon: StreamSvgIcon.userRemove(
-        color: StreamChatTheme.of(context).colorTheme!.accentRed,
+        color: _streamChatThemeData.colorTheme.accentError,
       ),
     );
-    var channel = StreamChannel.of(context).channel;
     if (res == true) {
-      await channel.removeMembers([StreamChat.of(context).user!.id]);
+      final channel = _streamChannelState.channel;
+      final user = _streamChatState.currentUser;
+      if (user != null) {
+        await channel.removeMembers([user.id]);
+      }
       Navigator.pop(context);
     }
   }

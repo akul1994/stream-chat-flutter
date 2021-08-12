@@ -1,9 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 
+/// Widget to display deleted message
 class DeletedMessage extends StatelessWidget {
+  /// Constructor to create [DeletedMessage]
   const DeletedMessage({
     Key? key,
     required this.messageTheme,
@@ -14,7 +15,7 @@ class DeletedMessage extends StatelessWidget {
   }) : super(key: key);
 
   /// The theme of the message
-  final MessageTheme? messageTheme;
+  final MessageTheme messageTheme;
 
   /// The border radius of the message text
   final BorderRadiusGeometry? borderRadiusGeometry;
@@ -30,42 +31,29 @@ class DeletedMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Transform(
-      transform: Matrix4.rotationY(reverse ? pi : 0),
-      alignment: Alignment.center,
-      child: Material(
-        color: messageTheme!.messageBackgroundColor,
-        shape: shape ??
-            RoundedRectangleBorder(
-              borderRadius: borderRadiusGeometry ?? BorderRadius.zero,
-              side: borderSide ??
-                  BorderSide(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? StreamChatTheme.of(context)
-                            .colorTheme!
-                            .white
-                            .withAlpha(24)
-                        : StreamChatTheme.of(context)
-                            .colorTheme!
-                            .black
-                            .withAlpha(24),
-                  ),
-            ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 8.0,
-            horizontal: 16,
+    final chatThemeData = StreamChatTheme.of(context);
+    return Material(
+      color: messageTheme.messageBackgroundColor,
+      shape: shape ??
+          RoundedRectangleBorder(
+            borderRadius: borderRadiusGeometry ?? BorderRadius.zero,
+            side: borderSide ??
+                BorderSide(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? chatThemeData.colorTheme.barsBg.withAlpha(24)
+                      : chatThemeData.colorTheme.textHighEmphasis.withAlpha(24),
+                ),
           ),
-          child: Transform(
-            transform: Matrix4.rotationY(reverse ? pi : 0),
-            alignment: Alignment.center,
-            child: Text(
-              'Message deleted',
-              style: messageTheme!.messageText!.copyWith(
-                fontStyle: FontStyle.italic,
-                color: messageTheme!.createdAt!.color,
-              ),
-            ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 16,
+        ),
+        child: Text(
+          context.translations.messageDeletedLabel,
+          style: messageTheme.messageText?.copyWith(
+            fontStyle: FontStyle.italic,
+            color: messageTheme.createdAt?.color,
           ),
         ),
       ),

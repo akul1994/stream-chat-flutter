@@ -1,11 +1,20 @@
-class ReactionIcon {
-  final String? type;
-  final String? assetName;
-  final String? emoji;
+import 'package:flutter/material.dart';
 
+/// Reaction icon data
+class ReactionIcon {
+  /// Constructor for creating [ReactionIcon]
   ReactionIcon({
-    this.type,
-    this.assetName,
-    this.emoji,
+    required this.type,
+    required this.builder,
   });
+
+  /// Type of reaction
+  final String type;
+
+  /// Asset to display for reaction
+  final Widget Function(
+    BuildContext,
+    bool highlighted,
+    double size,
+  ) builder;
 }
