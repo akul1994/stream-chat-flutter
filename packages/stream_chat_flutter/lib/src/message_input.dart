@@ -2309,6 +2309,7 @@ class MessageInputState extends State<MessageInput> {
     } else {
       message = (widget.initialMessage ?? Message()).copyWith(
         parentId: widget.parentMessage?.id,
+        quotedMessageId : _sendAsDm == true ? widget.parentMessage?.id : null,
         text: text,
         attachments: attachments,
         mentionedUsers:

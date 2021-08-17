@@ -431,8 +431,9 @@ class _MessageListViewState extends State<MessageListView> {
                     if (i == messages.length) return Offstage();
                     if (i == 0) return SizedBox(height: 30);
                     if (i == messages.length + 1) {
-                      final replyCount = widget.parentMessage!.replyCount;
+                      final replyCount = widget.parentMessage?.replyCount ?? 0;
                       return Container(
+                       // margin: EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           gradient: StreamChatTheme.of(context)
                               .colorTheme!
@@ -441,7 +442,7 @@ class _MessageListViewState extends State<MessageListView> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            '$replyCount ${replyCount == 1 ? 'Reply' : 'Replies'}',
+                            replyCount<1 ? 'Start of Thread' : '$replyCount ${replyCount == 1 ? 'Reply' : 'Replies'}',
                             textAlign: TextAlign.center,
                             style: StreamChatTheme.of(context)
                                 .channelTheme!
