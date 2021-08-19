@@ -72,7 +72,7 @@ class _MessageTextState extends State<MessageText> {
             ) {
               if (link.startsWith('@')) {
                 final mentionedUser = widget.message.mentionedUsers.firstWhereOrNull(
-                  (u) => '@${u.name}' == link,
+                  (u) => '@${getUserName(u)}' == link,
                 );
 
                 if (widget.onMentionTap != null) {

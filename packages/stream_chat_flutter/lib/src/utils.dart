@@ -20,6 +20,13 @@ Future<void> launchURL(BuildContext context, String url) async {
   }
 }
 
+String? getUserName(User? user) {
+  return (user?.extraData.containsKey('user_name') == true &&
+          user?.extraData['user_name'] != '')
+      ? user?.extraData['user_name'] as String?
+      : user?.name;
+}
+
 Future<bool?> showConfirmationDialog(
   BuildContext context, {
   String? title,
@@ -108,8 +115,8 @@ Future<bool?> showInfoDialog(
   required StreamChatThemeData theme,
 }) {
   return showModalBottomSheet(
-    backgroundColor:
-        theme.colorTheme!.white ?? StreamChatTheme.of(context).colorTheme!.white,
+    backgroundColor: theme.colorTheme!.white ??
+        StreamChatTheme.of(context).colorTheme!.white,
     context: context,
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -350,12 +357,12 @@ StreamSvgIcon getFileTypeImage(String? type) {
 }
 
 Widget wrapAttachmentWidget(
-    BuildContext context,
-    Widget attachmentWidget,
-    ShapeBorder attachmentShape,
-    bool reverse,
-    BorderRadius borderRadius,
-    ) {
+  BuildContext context,
+  Widget attachmentWidget,
+  ShapeBorder attachmentShape,
+  bool reverse,
+  BorderRadius borderRadius,
+) {
   return ClipRRect(
     borderRadius: borderRadius,
     child: Material(
