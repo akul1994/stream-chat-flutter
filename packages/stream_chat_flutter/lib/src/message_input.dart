@@ -143,6 +143,7 @@ class MessageInput extends StatefulWidget {
     this.showCommandsButton = true,
     this.mentionsTileBuilder,
     this.sharedMedia,
+    this.customAttachmentButtons
   }) : super(key: key);
 
   /// Message to edit
@@ -214,6 +215,10 @@ class MessageInput extends StatefulWidget {
   /// Customize the tile for the mentions overlay
   final MentionTileBuilder? mentionsTileBuilder;
 
+  //Adding custom attachment buttons
+  List<IconButton>? customAttachmentButtons;
+
+
   @override
   MessageInputState createState() => MessageInputState();
 
@@ -256,6 +261,7 @@ class MessageInputState extends State<MessageInput> {
 
   /// The editing controller passed to the input TextField
   TextEditingController? textEditingController;
+
 
   bool get _hasQuotedMessage => widget.quotedMessage != null;
 
@@ -1174,7 +1180,8 @@ class MessageInputState extends State<MessageInput> {
                       : () {
                           pickFile(DefaultAttachmentTypes.video, true);
                         },
-                ),
+                ), ...?widget.customAttachmentButtons,
+
               ],
             ),
             GestureDetector(
