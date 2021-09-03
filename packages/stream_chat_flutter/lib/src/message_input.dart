@@ -265,6 +265,15 @@ class MessageInputState extends State<MessageInput> {
 
   bool get _hasQuotedMessage => widget.quotedMessage != null;
 
+  void setFilePickerState(bool state)
+  {
+    if(_openFilePickerSection!=state) {
+      setState(() {
+        _openFilePickerSection = state;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
