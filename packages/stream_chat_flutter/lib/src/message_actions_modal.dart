@@ -104,7 +104,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     var messageTextLength = widget.message.text!.length;
     if (widget.message.quotedMessage != null) {
       var quotedMessageLength = widget.message.quotedMessage!.text!.length + 40;
-      if (widget.message.quotedMessage!.attachments?.isNotEmpty == true) {
+      if (widget.message.quotedMessage!.attachments.isNotEmpty == true) {
         quotedMessageLength += 40;
       }
       if (quotedMessageLength > messageTextLength) {
@@ -113,12 +113,12 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     }
     final roughSentenceSize =
         messageTextLength * widget.messageTheme!.messageText!.fontSize! * 1.2;
-    final divFactor = widget.message.attachments?.isNotEmpty == true
+    final divFactor = widget.message.attachments.isNotEmpty == true
         ? 1
         : (roughSentenceSize == 0 ? 1 : (roughSentenceSize / roughMaxSize));
 
     final hasFileAttachment =
-        widget.message.attachments?.any((it) => it.type == 'file') == true;
+        widget.message.attachments.any((it) => it.type == 'file') == true;
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

@@ -3,10 +3,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/channel_header.dart';
 import 'package:stream_chat_flutter/src/channel_preview.dart';
+import 'package:stream_chat_flutter/src/extension.dart';
 import 'package:stream_chat_flutter/src/message_input.dart';
 import 'package:stream_chat_flutter/src/reaction_icon.dart';
 import 'package:stream_chat_flutter/src/utils.dart';
-import 'package:stream_chat_flutter/src/extension.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
 /// Inherited widget providing the [StreamChatThemeData] to the widget tree
@@ -105,7 +105,7 @@ class StreamChatThemeData {
       ),
       defaultTheme.textTheme!,
     );
-    return defaultTheme.merge(customizedTheme) ?? customizedTheme;
+    return defaultTheme.merge(customizedTheme);
   }
 
   /// Creates a copy of [StreamChatThemeData] with specified attributes overridden.
@@ -467,16 +467,14 @@ class TextTheme {
   TextTheme merge(TextTheme? other) {
     if (other == null) return this;
     return copyWith(
-      body: body?.merge(other.body) ?? other.body,
-      title: title?.merge(other.title) ?? other.title,
-      headlineBold:
-          headlineBold?.merge(other.headlineBold) ?? other.headlineBold,
-      headline: headline?.merge(other.headline) ?? other.headline,
-      bodyBold: bodyBold?.merge(other.bodyBold) ?? other.bodyBold,
-      footnoteBold:
-          footnoteBold?.merge(other.footnoteBold) ?? other.footnoteBold,
-      footnote: footnote?.merge(other.footnote) ?? other.footnote,
-      captionBold: captionBold?.merge(other.captionBold) ?? other.captionBold,
+      body: body.merge(other.body),
+      title: title.merge(other.title),
+      headlineBold: headlineBold.merge(other.headlineBold),
+      headline: headline.merge(other.headline),
+      bodyBold: bodyBold.merge(other.bodyBold),
+      footnoteBold: footnoteBold.merge(other.footnoteBold),
+      footnote: footnote.merge(other.footnote),
+      captionBold: captionBold.merge(other.captionBold),
     );
   }
 }
@@ -522,7 +520,7 @@ class ColorTheme {
     this.highlight = const Color(0xfffbf4dd),
     this.overlay = const Color.fromRGBO(0, 0, 0, 0.2),
     this.overlayDark = const Color.fromRGBO(0, 0, 0, 0.6),
-    this.bgGradient =  const LinearGradient(
+    this.bgGradient = const LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [

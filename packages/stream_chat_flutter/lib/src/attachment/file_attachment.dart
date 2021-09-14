@@ -55,7 +55,7 @@ class FileAttachment extends AttachmentWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    attachment?.title ?? 'File',
+                    attachment.title ?? 'File',
                     style: StreamChatTheme.of(context).textTheme!.bodyBold,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -180,7 +180,7 @@ class FileAttachment extends AttachmentWidget {
     final channel = StreamChannel.of(context).channel;
     final attachmentId = attachment.id;
     var trailingWidget = trailing;
-    trailingWidget ??= attachment.uploadState?.when(
+    trailingWidget ??= attachment.uploadState.when(
           preparing: () => Padding(
             padding: const EdgeInsets.all(8.0),
             child: _buildButton(
@@ -253,7 +253,7 @@ class FileAttachment extends AttachmentWidget {
     final textStyle = theme.textTheme!.footnote.copyWith(
       color: theme.colorTheme!.grey,
     );
-    return attachment.uploadState?.when(
+    return attachment.uploadState.when(
           preparing: () {
             if (message == null) {
               return Text('${fileSize(size, 2)}', style: textStyle);

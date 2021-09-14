@@ -71,8 +71,9 @@ class ChannelPreview extends StatelessWidget {
                 children: <Widget>[
                   Flexible(
                     child: ChannelName(
-                      textStyle:
-                          StreamChatTheme.of(context).channelPreviewTheme!.title,
+                      textStyle: StreamChatTheme.of(context)
+                          .channelPreviewTheme!
+                          .title,
                     ),
                   ),
                   StreamBuilder<List<Member>>(
@@ -97,7 +98,8 @@ class ChannelPreview extends StatelessWidget {
                   Flexible(child: _buildSubtitle(context)),
                   Builder(
                     builder: (context) {
-                      final lastMessage = channel.state!.messages.lastWhereOrNull(
+                      final lastMessage =
+                          channel.state!.messages.lastWhereOrNull(
                         (m) => !m.isDeleted && m.shadowed != true,
                       );
                       if (lastMessage?.user?.id ==
@@ -113,9 +115,9 @@ class ChannelPreview extends StatelessWidget {
                                     ?.where((element) =>
                                         element.user.id !=
                                         channel.client.state.user!.id)
-                                    ?.where((element) => element.lastRead
+                                    .where((element) => element.lastRead
                                         .isAfter(lastMessage!.createdAt))
-                                    ?.isNotEmpty ==
+                                    .isNotEmpty ==
                                 true,
                           ),
                         );
@@ -192,10 +194,13 @@ class ChannelPreview extends StatelessWidget {
     return TypingIndicator(
       channel: channel,
       alternativeWidget: _buildLastMessage(context),
-      style: StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
-            color:
-                StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.color,
-          ),
+      style:
+          StreamChatTheme.of(context).channelPreviewTheme!.subtitle!.copyWith(
+                color: StreamChatTheme.of(context)
+                    .channelPreviewTheme!
+                    .subtitle!
+                    .color,
+              ),
     );
   }
 
@@ -204,8 +209,8 @@ class ChannelPreview extends StatelessWidget {
       stream: channel.state!.messagesStream,
       initialData: channel.state!.messages,
       builder: (context, snapshot) {
-        final lastMessage = snapshot.data?.lastWhereOrNull(
-            (m) => m.shadowed != true && !m.isDeleted);
+        final lastMessage = snapshot.data
+            ?.lastWhereOrNull((m) => m.shadowed != true && !m.isDeleted);
         if (lastMessage == null) {
           return SizedBox();
         }

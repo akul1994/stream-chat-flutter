@@ -10,7 +10,6 @@ import 'package:stream_chat_flutter/src/info_tile.dart';
 import 'package:stream_chat_flutter/src/message_widget.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/src/system_message.dart';
-import 'package:stream_chat_flutter/src/utils/MainAppColorHelper.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -64,9 +63,9 @@ class MessageDetails {
   ) {
     isMyMessage = message.user!.id == StreamChat.of(context).user!.id;
     isLastUser = index + 1 < messages.length &&
-        message.user!.id == messages[index + 1]?.user?.id;
+        message.user!.id == messages[index + 1].user?.id;
     isNextUser =
-        index - 1 >= 0 && message.user!.id == messages[index - 1]?.user?.id;
+        index - 1 >= 0 && message.user!.id == messages[index - 1].user?.id;
   }
 }
 
@@ -346,7 +345,7 @@ class _MessageListViewState extends State<MessageListView> {
 
     if (_messageListLength != null) {
       if (_bottomPaginationActive || (_inBetweenList && _upToDate)) {
-        if (_itemPositionListener!.itemPositions.value?.isNotEmpty == true) {
+        if (_itemPositionListener!.itemPositions.value.isNotEmpty == true) {
           final first = _itemPositionListener!.itemPositions.value.first;
           final diff = newMessagesListLength - _messageListLength!;
           if (diff > 0) {
@@ -433,7 +432,7 @@ class _MessageListViewState extends State<MessageListView> {
                     if (i == messages.length + 1) {
                       final replyCount = widget.parentMessage?.replyCount ?? 0;
                       return Container(
-                       // margin: EdgeInsets.symmetric(vertical: 16),
+                        // margin: EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           gradient: StreamChatTheme.of(context)
                               .colorTheme!
@@ -442,7 +441,9 @@ class _MessageListViewState extends State<MessageListView> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            replyCount<1 ? 'Start of Thread' : '$replyCount ${replyCount == 1 ? 'Reply' : 'Replies'}',
+                            replyCount < 1
+                                ? 'Start of Thread'
+                                : '$replyCount ${replyCount == 1 ? 'Reply' : 'Replies'}',
                             textAlign: TextAlign.center,
                             style: StreamChatTheme.of(context)
                                 .channelTheme!
@@ -561,8 +562,8 @@ class _MessageListViewState extends State<MessageListView> {
           child: ValueListenableBuilder<Iterable<ItemPosition>>(
             valueListenable: _itemPositionListener!.itemPositions,
             builder: (context, values, _) {
-              final items = _itemPositionListener!.itemPositions?.value;
-              if (items?.isEmpty == true || messages.isEmpty) {
+              final items = _itemPositionListener!.itemPositions.value;
+              if (items.isEmpty == true || messages.isEmpty) {
                 return SizedBox();
               }
 
@@ -893,15 +894,15 @@ class _MessageListViewState extends State<MessageListView> {
           if (read.user.id == userId) return false;
           return (read.lastRead.isAfter(message.createdAt) ||
               read.lastRead.isAtSameMomentAs(message.createdAt));
-        })?.toList() ??
+        }).toList() ??
         [];
 
     final allRead = readList.length >= (channel.memberCount ?? 0) - 1;
     final hasFileAttachment =
-        message.attachments?.any((it) => it.type == 'file') == true;
+        message.attachments.any((it) => it.type == 'file') == true;
 
     final isThreadMessage =
-        message?.parentId != null && message?.showInChannel == true;
+        message.parentId != null && message.showInChannel == true;
 
     final hasReplies = message.replyCount! > 0;
 
@@ -931,7 +932,7 @@ class _MessageListViewState extends State<MessageListView> {
     final isOnlyEmoji = message.text!.isOnlyEmoji;
 
     final hasUrlAttachment =
-        message.attachments?.any((it) => it.ogScrapeUrl != null) == true;
+        message.attachments.any((it) => it.ogScrapeUrl != null) == true;
 
     final borderSide =
         isOnlyEmoji || hasUrlAttachment || (isMyMessage && !hasFileAttachment)

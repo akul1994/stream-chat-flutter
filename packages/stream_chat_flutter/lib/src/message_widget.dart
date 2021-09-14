@@ -20,7 +20,6 @@ import 'package:stream_chat_flutter/src/utils/stream_ui_utils.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 import '../stream_chat_flutter.dart';
-import '../stream_chat_flutter.dart';
 import 'attachment/attachment.dart';
 import 'extension.dart';
 import 'image_group.dart';
@@ -242,7 +241,8 @@ class MessageWidget extends StatefulWidget {
                   ),
                   border,
                   reverse,
-                  attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
+                  attachmentBorderRadiusGeometry as BorderRadius? ??
+                      BorderRadius.zero,
                 ),
               );
             }
@@ -261,13 +261,14 @@ class MessageWidget extends StatefulWidget {
                 onReturnAction: onReturnAction,
                 onAttachmentTap: onAttachmentTap != null
                     ? () {
-                        onAttachmentTap?.call(message, attachments[0]);
+                        onAttachmentTap.call(message, attachments[0]);
                       }
                     : null,
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ??
+                  BorderRadius.zero,
             );
           },
           'video': (context, message, attachments) {
@@ -292,7 +293,7 @@ class MessageWidget extends StatefulWidget {
                     onReturnAction: onReturnAction,
                     onAttachmentTap: onAttachmentTap != null
                         ? () {
-                            onAttachmentTap?.call(message, attachment);
+                            onAttachmentTap.call(message, attachment);
                           }
                         : null,
                   );
@@ -300,7 +301,8 @@ class MessageWidget extends StatefulWidget {
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ??
+                  BorderRadius.zero,
             );
           },
           'giphy': (context, message, attachments) {
@@ -328,7 +330,8 @@ class MessageWidget extends StatefulWidget {
               ),
               border,
               reverse,
-              attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
+              attachmentBorderRadiusGeometry as BorderRadius? ??
+                  BorderRadius.zero,
             );
           },
           'file': (context, message, attachments) {
@@ -355,7 +358,8 @@ class MessageWidget extends StatefulWidget {
                       ),
                       border,
                       reverse,
-                      attachmentBorderRadiusGeometry as BorderRadius? ?? BorderRadius.zero,
+                      attachmentBorderRadiusGeometry as BorderRadius? ??
+                          BorderRadius.zero,
                     );
                   })
                   .insertBetween(SizedBox(
@@ -387,7 +391,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
   bool get showInChannel => widget.showInChannelIndicator;
 
-  bool get hasQuotedMessage => widget.message?.quotedMessage != null;
+  bool get hasQuotedMessage => widget.message.quotedMessage != null;
 
   bool get isSendFailed => widget.message.status == MessageSendingStatus.failed;
 
@@ -400,17 +404,17 @@ class _MessageWidgetState extends State<MessageWidget>
   bool get isFailedState => isSendFailed || isUpdateFailed || isDeleteFailed;
 
   bool get isGiphy =>
-      widget.message.attachments?.any((element) => element.type == 'giphy') ==
+      widget.message.attachments.any((element) => element.type == 'giphy') ==
       true;
 
   bool get hasNonUrlAttachments =>
       widget.message.attachments
-          ?.where((it) => it.ogScrapeUrl == null)
-          ?.isNotEmpty ==
+          .where((it) => it.ogScrapeUrl == null)
+          .isNotEmpty ==
       true;
 
   bool get hasUrlAttachments =>
-      widget.message.attachments?.any((it) => it.ogScrapeUrl != null) == true;
+      widget.message.attachments.any((it) => it.ogScrapeUrl != null) == true;
 
   bool get showBottomRow =>
       showThreadReplyIndicator ||
@@ -423,7 +427,7 @@ class _MessageWidgetState extends State<MessageWidget>
   bool get reverse => widget.reverse;
 
   @override
-  bool get wantKeepAlive => widget.message.attachments?.isNotEmpty == true;
+  bool get wantKeepAlive => widget.message.attachments.isNotEmpty == true;
 
   Message get message => widget.message;
 
@@ -465,7 +469,7 @@ class _MessageWidgetState extends State<MessageWidget>
               Reaction? reaction;
               try {
                 if (widget.message.ownReactions != null) {
-                  reaction = widget.message?.ownReactions?.firstWhere(
+                  reaction = widget.message.ownReactions?.firstWhere(
                       (element) => element.type == reactionIcons![0].type);
                 }
               } catch (e, s) {}
@@ -476,7 +480,7 @@ class _MessageWidgetState extends State<MessageWidget>
                       enforceUnique: false,
                     );
               } else if (widget.message.reactionCounts
-                      ?.containsKey(reaction?.type) ==
+                      ?.containsKey(reaction.type) ==
                   true) {
                 StreamChannel.of(context).channel.deleteReaction(
                       widget.message,
@@ -707,7 +711,7 @@ class _MessageWidgetState extends State<MessageWidget>
   Widget _buildQuotedMessage() {
     final isMyMessage =
         widget.message.user!.id == StreamChat.of(context).user!.id;
-    final onTap = widget.message?.quotedMessage?.isDeleted != true &&
+    final onTap = widget.message.quotedMessage?.isDeleted != true &&
             widget.onQuotedMessageTap != null
         ? () => widget.onQuotedMessageTap!(widget.message.quotedMessageId)
         : null;
@@ -740,10 +744,8 @@ class _MessageWidgetState extends State<MessageWidget>
             SizedBox(width: 8.0),
             Text(
               'Only visible to you',
-              style: StreamChatTheme.of(context)
-                  .textTheme!
-                  .footnote
-                  .copyWith(color: StreamChatTheme.of(context).colorTheme!.grey),
+              style: StreamChatTheme.of(context).textTheme!.footnote.copyWith(
+                  color: StreamChatTheme.of(context).colorTheme!.grey),
             ),
           ],
         ),
@@ -752,7 +754,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
     var children = <Widget>[];
 
-    final threadParticipants = widget.message?.threadParticipants?.take(2);
+    final threadParticipants = widget.message.threadParticipants?.take(2);
     final showThreadParticipants = threadParticipants?.isNotEmpty == true;
     final replyCount = widget.message.replyCount;
 
@@ -897,7 +899,8 @@ class _MessageWidgetState extends State<MessageWidget>
     final ownId = StreamChat.of(context).user!.id;
     final reactionsMap = <String, Reaction>{};
     widget.message.latestReactions?.forEach((element) {
-      if (!reactionsMap.containsKey(element.type) || element.user!.id == ownId) {
+      if (!reactionsMap.containsKey(element.type) ||
+          element.user!.id == ownId) {
         reactionsMap[element.type] = element;
       }
     });
@@ -906,8 +909,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 300),
-      child: (widget.showReactions &&
-              !widget.message.isDeleted)
+      child: (widget.showReactions && !widget.message.isDeleted)
           ? GestureDetector(
               onTap: () => _showMessageReactionsModalBottomSheet(context),
               child: ReactionBubbleCustom(
@@ -955,11 +957,11 @@ class _MessageWidgetState extends State<MessageWidget>
                   widget.showResendMessage && (isSendFailed || isUpdateFailed),
               showCopyMessage: widget.showCopyMessage &&
                   !isFailedState &&
-                  widget.message.text?.trim()?.isNotEmpty == true,
+                  widget.message.text?.trim().isNotEmpty == true,
               showEditMessage: widget.showEditMessage &&
                   !isDeleteFailed &&
                   widget.message.attachments
-                          ?.any((element) => element.type == 'giphy') !=
+                          .any((element) => element.type == 'giphy') !=
                       true,
               showReactions: widget.showReactions,
               showReplyMessage: widget.showReplyMessage &&
@@ -1007,7 +1009,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
   ShapeBorder _getDefaultAttachmentShape(BuildContext context) {
     final hasFiles =
-        widget.message.attachments?.any((it) => it.type == 'file') == true;
+        widget.message.attachments.any((it) => it.type == 'file') == true;
     return RoundedRectangleBorder(
       side: hasFiles
           ? widget.attachmentBorderSide ??
@@ -1060,10 +1062,9 @@ class _MessageWidgetState extends State<MessageWidget>
       padding: widget.attachmentPadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: attachmentList?.insertBetween(SizedBox(
-              height: widget.attachmentPadding.vertical / 2,
-            )) ??
-            [],
+        children: attachmentList.insertBetween(SizedBox(
+          height: widget.attachmentPadding.vertical / 2,
+        )),
       ),
     );
   }
@@ -1164,7 +1165,7 @@ class _MessageWidgetState extends State<MessageWidget>
 
     final streamChatTheme = StreamChatTheme.of(context);
 
-    final hasImage = user.extraData?.containsKey('image') == true &&
+    final hasImage = user.extraData.containsKey('image') == true &&
         user.extraData['image'] != null &&
         user.extraData['image'] != '';
 

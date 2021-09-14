@@ -147,7 +147,7 @@ class _MediaListViewState extends State<MediaListView> {
     final assetList = await PhotoManager.getAssetPathList(
       hasAll: true,
     ).then((value) {
-      if (value?.isNotEmpty == true) {
+      if (value.isNotEmpty == true) {
         return value.singleWhere((element) => element.isAll);
       }
     });
@@ -180,7 +180,7 @@ class MediaThumbnailProvider extends ImageProvider<MediaThumbnailProvider> {
       codec: _loadAsync(key, decode).then((value) => value!),
       scale: 1.0,
       informationCollector: () sync* {
-        yield ErrorDescription('Id: ${media?.id}');
+        yield ErrorDescription('Id: ${media.id}');
       },
     );
   }
@@ -203,12 +203,12 @@ class MediaThumbnailProvider extends ImageProvider<MediaThumbnailProvider> {
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
     final MediaThumbnailProvider typedOther = other;
-    return media?.id == typedOther.media?.id;
+    return media.id == typedOther.media.id;
   }
 
   @override
-  int get hashCode => media?.id?.hashCode ?? 0;
+  int get hashCode => media.id.hashCode;
 
   @override
-  String toString() => '$runtimeType("${media?.id}")';
+  String toString() => '$runtimeType("${media.id}")';
 }

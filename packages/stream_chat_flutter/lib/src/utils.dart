@@ -115,8 +115,7 @@ Future<bool?> showInfoDialog(
   required StreamChatThemeData theme,
 }) {
   return showModalBottomSheet(
-    backgroundColor: theme.colorTheme!.white ??
-        StreamChatTheme.of(context).colorTheme!.white,
+    backgroundColor: theme.colorTheme!.white,
     context: context,
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -136,8 +135,7 @@ Future<bool?> showInfoDialog(
           ),
           Text(
             title!,
-            style: theme.textTheme!.headlineBold ??
-                StreamChatTheme.of(context).textTheme!.headlineBold,
+            style: theme.textTheme!.headlineBold,
           ),
           SizedBox(
             height: 7.0,
@@ -147,8 +145,7 @@ Future<bool?> showInfoDialog(
             height: 36.0,
           ),
           Container(
-            color: theme.colorTheme!.black.withOpacity(.08) ??
-                StreamChatTheme.of(context).colorTheme!.black.withOpacity(.08),
+            color: theme.colorTheme!.black.withOpacity(.08),
             height: 1.0,
           ),
           Row(
@@ -158,11 +155,7 @@ Future<bool?> showInfoDialog(
                 child: Text(
                   okText!,
                   style: TextStyle(
-                      color: theme.colorTheme!.black.withOpacity(0.5) ??
-                          StreamChatTheme.of(context)
-                              .colorTheme!
-                              .black
-                              .withOpacity(0.5),
+                      color: theme.colorTheme!.black.withOpacity(0.5),
                       fontWeight: FontWeight.w400),
                 ),
                 onPressed: () {

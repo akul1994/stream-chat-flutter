@@ -71,7 +71,8 @@ class _MessageTextState extends State<MessageText> {
               String title,
             ) {
               if (link.startsWith('@')) {
-                final mentionedUser = widget.message.mentionedUsers.firstWhereOrNull(
+                final mentionedUser =
+                    widget.message.mentionedUsers.firstWhereOrNull(
                   (u) => '@${getUserName(u)}' == link,
                 );
 
@@ -153,9 +154,9 @@ class _MessageTextState extends State<MessageText> {
 
   String? _replaceMentions(String? text) {
     widget.message.mentionedUsers
-        ?.map((u) => StreamUtils.getUserName(u))
-        ?.toSet()
-        ?.forEach((userName) {
+        .map((u) => StreamUtils.getUserName(u))
+        .toSet()
+        .forEach((userName) {
       text = text!.replaceAll(
           '@$userName', '[@$userName](@${userName!.replaceAll(' ', '')})');
     });

@@ -107,10 +107,10 @@ class QuotedMessageWidget extends StatelessWidget {
       this.showUserAvatar = DisplayWidget.gone})
       : super(key: key);
 
-  bool get _hasAttachments => message!.attachments?.isNotEmpty == true;
+  bool get _hasAttachments => message!.attachments.isNotEmpty == true;
 
   bool get _containsScrapeUrl =>
-      message!.attachments?.any((element) => element.ogScrapeUrl != null) ==
+      message!.attachments.any((element) => element.ogScrapeUrl != null) ==
       true;
 
   bool get _containsText => message?.text?.isNotEmpty == true;
@@ -136,7 +136,7 @@ class QuotedMessageWidget extends StatelessWidget {
   Widget _buildMessage(BuildContext context) {
     final isOnlyEmoji = message!.text!.isOnlyEmoji;
     var msg = _hasAttachments && !_containsText
-        ? message!.copyWith(text: message!.attachments.last?.title ?? '')
+        ? message!.copyWith(text: message!.attachments.last.title ?? '')
         : message!;
     if (msg.text!.length > textLimit) {
       msg = msg.copyWith(text: '${msg.text!.substring(0, textLimit - 3)}...');
@@ -236,7 +236,7 @@ class QuotedMessageWidget extends StatelessWidget {
 
     final streamChatTheme = StreamChatTheme.of(context);
 
-    final hasImage = user.extraData?.containsKey('image') == true &&
+    final hasImage = user.extraData.containsKey('image') == true &&
         user.extraData['image'] != null &&
         user.extraData['image'] != '';
 
@@ -287,10 +287,10 @@ class QuotedMessageWidget extends StatelessWidget {
     } else {
       QuotedMessageAttachmentThumbnailBuilder? attachmentBuilder;
       attachment = message!.attachments.last;
-      if (attachmentThumbnailBuilders?.containsKey(attachment?.type) == true) {
-        attachmentBuilder = attachmentThumbnailBuilders![attachment?.type!];
+      if (attachmentThumbnailBuilders?.containsKey(attachment.type) == true) {
+        attachmentBuilder = attachmentThumbnailBuilders![attachment.type!];
       }
-      attachmentBuilder = _defaultAttachmentBuilder[attachment?.type!];
+      attachmentBuilder = _defaultAttachmentBuilder[attachment.type!];
       if (attachmentBuilder == null) {
         child = Offstage();
       } else {
@@ -352,12 +352,12 @@ class QuotedMessageWidget extends StatelessWidget {
       'giphy': (_, attachment) {
         final size = Size(32, 32);
         return CachedNetworkImage(
-          height: size?.height,
-          width: size?.width,
+          height: size.height,
+          width: size.width,
           placeholder: (_, __) {
             return Container(
-              width: size?.width,
-              height: size?.height,
+              width: size.width,
+              height: size.height,
               child: Center(
                 child: CircularProgressIndicator(),
               ),

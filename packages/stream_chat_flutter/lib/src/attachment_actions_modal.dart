@@ -99,11 +99,16 @@ class AttachmentActionsModal extends StatelessWidget {
                     () {
                       final attachment = message!.attachments[currentIndex];
                       final isImage = attachment.type == 'image';
-                      final Future<String?> Function(Attachment, {void Function(int, int) progressCallback}) saveFile = fileDownloader ?? _downloadAttachment;
-                      final Future<String?> Function(Attachment, {void Function(int, int) progressCallback}) saveImage = imageDownloader ?? _downloadAttachment;
+                      final Future<String?> Function(Attachment,
+                              {void Function(int, int) progressCallback})
+                          saveFile = fileDownloader ?? _downloadAttachment;
+                      final Future<String?> Function(Attachment,
+                              {void Function(int, int) progressCallback})
+                          saveImage = imageDownloader ?? _downloadAttachment;
                       final downloader = isImage ? saveImage : saveFile;
 
-                      final progressNotifier = ValueNotifier<_DownloadProgress?>(
+                      final progressNotifier =
+                          ValueNotifier<_DownloadProgress?>(
                         _DownloadProgress.initial(),
                       );
 
@@ -221,7 +226,7 @@ class AttachmentActionsModal extends StatelessWidget {
         valueListenable: progressNotifier,
         builder: (_, _DownloadProgress? progress, __) {
           // Pop the dialog in case the progress is null or it's completed.
-          if (progress == null || progress?.toProgressIndicatorValue == 1.0) {
+          if (progress == null || progress.toProgressIndicatorValue == 1.0) {
             Future.delayed(
               const Duration(milliseconds: 500),
               Navigator.of(context).pop,
@@ -297,7 +302,7 @@ class AttachmentActionsModal extends StatelessWidget {
       attachment.assetUrl ?? attachment.imageUrl ?? attachment.thumbUrl!,
       (Headers responseHeaders) {
         final contentType = responseHeaders[Headers.contentTypeHeader]!;
-        final mimeType = contentType.first?.split('/')?.last;
+        final mimeType = contentType.first.split('/').last;
         filePath ??= '${appDocDir.path}/${attachment.id}.$mimeType';
         return filePath;
       },

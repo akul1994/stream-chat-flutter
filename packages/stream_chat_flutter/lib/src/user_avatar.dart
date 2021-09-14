@@ -34,7 +34,7 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = user!.extraData?.containsKey('image') == true &&
+    final hasImage = user!.extraData.containsKey('image') == true &&
         user!.extraData['image'] != null &&
         user!.extraData['image'] != '';
     final streamChatTheme = StreamChatTheme.of(context);

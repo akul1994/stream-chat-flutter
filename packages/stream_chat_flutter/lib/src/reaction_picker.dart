@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ezanimation/ezanimation.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/src/stream_svg_icon.dart';
@@ -51,16 +49,15 @@ class _ReactionPickerState extends State<ReactionPicker>
     return Material(
       borderRadius: BorderRadius.circular(24),
       color: StreamChatTheme.of(context).colorTheme!.white,
-     // clipBehavior: Clip.hardEdge,
+      // clipBehavior: Clip.hardEdge,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: reactionIcons
             .map<Widget>((reactionIcon) {
-              final ownReactionIndex = widget.message.ownReactions
-                      ?.indexWhere(
-                          (reaction) => reaction.type == reactionIcon.type) ??
+              final ownReactionIndex = widget.message.ownReactions?.indexWhere(
+                      (reaction) => reaction.type == reactionIcon.type) ??
                   -1;
               var index = reactionIcons.indexOf(reactionIcon);
 
@@ -72,8 +69,8 @@ class _ReactionPickerState extends State<ReactionPicker>
                 //color : MainAppColorHelper.orange(),
                 child: RawMaterialButton(
                   elevation: 0,
-                  padding: EdgeInsets.symmetric(horizontal: 8,vertical: 8),
-                 // clipBehavior: Clip.none,
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  // clipBehavior: Clip.none,
                   // shape: ContinuousRectangleBorder(
                   //   borderRadius: BorderRadius.circular(16),
                   // ),
@@ -255,7 +252,8 @@ class _ReactionPickerState extends State<ReactionPicker>
                               if (ownReactionIndex != -1) {
                                 removeReaction(
                                   context,
-                                  widget.message.ownReactions![ownReactionIndex],
+                                  widget
+                                      .message.ownReactions![ownReactionIndex],
                                 );
                               } else {
                                 sendReaction(
@@ -318,7 +316,7 @@ class _ReactionPickerState extends State<ReactionPicker>
   @override
   void dispose() {
     for (var a in animations) {
-      a?.dispose();
+      a.dispose();
     }
     super.dispose();
   }

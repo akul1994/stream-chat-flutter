@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:stream_chat_flutter/src/stream_chat_theme.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
-import 'dart:ui' as ui;
 
 /// Widget used to provide information about the chat to the widget tree
 ///
@@ -110,7 +110,7 @@ class StreamChatState extends State<StreamChat> {
     StreamChatThemeData? themeData,
   ) {
     final defaultTheme = StreamChatThemeData.getDefaultTheme(Theme.of(context));
-    return defaultTheme.merge(themeData) ?? themeData!;
+    return defaultTheme.merge(themeData);
   }
 
   /// The current user
@@ -122,7 +122,7 @@ class StreamChatState extends State<StreamChat> {
   @override
   void initState() {
     super.initState();
-    client.state?.totalUnreadCountStream?.listen((count) {
+    client.state.totalUnreadCountStream.listen((count) {
       // if (count > 0) {
       //   FlutterAppBadger.updateBadgeCount(count);
       // } else {

@@ -1,16 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:stream_chat_flutter/stream_chat_flutter.dart';
-import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 import 'package:stream_chat_flutter/src/reaction_bubble.dart';
 import 'package:stream_chat_flutter/src/reaction_picker.dart';
 import 'package:stream_chat_flutter/src/stream_chat.dart';
 import 'package:stream_chat_flutter/src/user_avatar.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
+import 'extension.dart';
 import 'message_widget.dart';
 import 'stream_chat_theme.dart';
-import 'extension.dart';
 
 class MessageReactionsModal extends StatelessWidget {
   final Widget Function(BuildContext, Message)? editMessageInputBuilder;
@@ -25,7 +25,6 @@ class MessageReactionsModal extends StatelessWidget {
   final void Function(User)? onUserAvatarTap;
   final BorderRadius? attachmentBorderRadiusGeometry;
 
-
   const MessageReactionsModal({
     Key? key,
     required this.message,
@@ -37,7 +36,8 @@ class MessageReactionsModal extends StatelessWidget {
     this.attachmentShape,
     this.reverse = false,
     this.showUserAvatar = DisplayWidget.show,
-    this.onUserAvatarTap, this.attachmentBorderRadiusGeometry,
+    this.onUserAvatarTap,
+    this.attachmentBorderRadiusGeometry,
   }) : super(key: key);
 
   @override
@@ -49,7 +49,7 @@ class MessageReactionsModal extends StatelessWidget {
     var messageTextLength = message.text!.length;
     if (message.quotedMessage != null) {
       var quotedMessageLength = message.quotedMessage!.text!.length + 40;
-      if (message.quotedMessage!.attachments?.isNotEmpty == true) {
+      if (message.quotedMessage!.attachments.isNotEmpty == true) {
         quotedMessageLength += 40;
       }
       if (quotedMessageLength > messageTextLength) {
@@ -58,7 +58,7 @@ class MessageReactionsModal extends StatelessWidget {
     }
     final roughSentenceSize =
         messageTextLength * messageTheme!.messageText!.fontSize! * 1.2;
-    final divFactor = message.attachments?.isNotEmpty == true
+    final divFactor = message.attachments.isNotEmpty == true
         ? 1
         : (roughSentenceSize == 0 ? 1 : (roughSentenceSize / roughMaxSize));
 
@@ -68,7 +68,7 @@ class MessageReactionsModal extends StatelessWidget {
       curve: Curves.easeInOutBack,
       builder: (context, val, snapshot) {
         final hasFileAttachment =
-            message.attachments?.any((it) => it.type == 'file') == true;
+            message.attachments.any((it) => it.type == 'file') == true;
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTap: () => Navigator.maybePop(context),
@@ -141,7 +141,8 @@ class MessageReactionsModal extends StatelessWidget {
                               showInChannelIndicator: false,
                               textPadding: EdgeInsets.symmetric(
                                 vertical: 8.0,
-                                horizontal: message.text!.isOnlyEmoji ? 0 : 16.0,
+                                horizontal:
+                                    message.text!.isOnlyEmoji ? 0 : 16.0,
                               ),
                               showReactionPickerIndicator: showReactions &&
                                   (message.status ==

@@ -531,9 +531,9 @@ class MessageInputState extends State<MessageInput> {
                   widget.editMessage == null &&
                   StreamChannel.of(context)
                           .channel
-                          ?.config
+                          .config
                           ?.commands
-                          ?.isNotEmpty ==
+                          .isNotEmpty ==
                       true)
                 _buildCommandButton(),
               ...widget.actions ?? [],
@@ -662,7 +662,7 @@ class MessageInputState extends State<MessageInput> {
                           size: 16.0,
                         ),
                         Text(
-                          _chosenCommand?.name?.toUpperCase() ?? '',
+                          _chosenCommand?.name.toUpperCase() ?? '',
                           style: StreamChatTheme.of(context)
                               .textTheme!
                               .footnoteBold
@@ -852,7 +852,7 @@ class MessageInputState extends State<MessageInput> {
                       (widget.showCommandsButton ? 1 : 0) +
                       (widget.disableAttachments ? 0 : 1) >
                   1) &&
-              StreamChannel.of(context).channel?.config?.commands?.isNotEmpty ==
+              StreamChannel.of(context).channel.config?.commands.isNotEmpty ==
                   true;
         });
 
@@ -930,8 +930,8 @@ class MessageInputState extends State<MessageInput> {
               .channel
               .config
               ?.commands
-              ?.where((element) => element.name == s.substring(1))
-              ?.toList() ??
+              .where((element) => element.name == s.substring(1))
+              .toList() ??
           [];
 
       if (matchedCommandsList.length == 1) {
@@ -958,8 +958,8 @@ class MessageInputState extends State<MessageInput> {
             .channel
             .config
             ?.commands
-            ?.where((c) => c.name.contains(text.replaceFirst('/', '')))
-            ?.toList() ??
+            .where((c) => c.name.contains(text.replaceFirst('/', '')))
+            .toList() ??
         [];
 
     if (commands.isEmpty) {
@@ -1405,10 +1405,9 @@ class MessageInputState extends State<MessageInput> {
           .then((res) => res.members);
     }
 
-    final members = StreamChannel.of(context).channel.state!.members?.where((m) {
+    final members = StreamChannel.of(context).channel.state!.members.where((m) {
           return m.user!.name.toLowerCase().contains(query);
-        })?.toList() ??
-        [];
+        }).toList();
 
     if (members.isEmpty) {
       return null;
@@ -1613,7 +1612,7 @@ class MessageInputState extends State<MessageInput> {
   }
 
   void _chooseEmoji(List<String> splits, Emoji emoji) {
-    final rejoin = splits.sublist(0, splits.length - 1).join(':') + emoji.char!;
+    final rejoin = splits.sublist(0, splits.length - 1).join(':') + emoji.char;
 
     textEditingController!.value = TextEditingValue(
       text: rejoin +
@@ -1643,7 +1642,7 @@ class MessageInputState extends State<MessageInput> {
   Widget _buildReplyToMessage() {
     if (!_hasQuotedMessage) return Offstage();
     final containsUrl = widget.quotedMessage!.attachments
-            ?.any((element) => element.ogScrapeUrl != null) ==
+            .any((element) => element.ogScrapeUrl != null) ==
         true;
     return Transform(
       transform: Matrix4.rotationY(pi),
@@ -2009,7 +2008,7 @@ class MessageInputState extends State<MessageInput> {
   void addAttachment(Attachment attachment) {
     setState(() {
       _attachments[attachment.id] = attachment.copyWith(
-        uploadState: attachment.uploadState ?? UploadState.success(),
+        uploadState: attachment.uploadState ,
       );
     });
   }
@@ -2059,7 +2058,7 @@ class MessageInputState extends State<MessageInput> {
         type: type,
         withData: true,
       );
-      if (res?.files?.isNotEmpty == true) {
+      if (res?.files.isNotEmpty == true) {
         file = res!.files.single.toAttachmentFile;
       }
     }
@@ -2452,7 +2451,7 @@ class MessageInputState extends State<MessageInput> {
     _messageIsPresent = true;
     for (final attachment in message.attachments) {
       _attachments[attachment.id] = attachment.copyWith(
-        uploadState: attachment.uploadState ?? UploadState.success(),
+        uploadState: attachment.uploadState ,
       );
     }
   }

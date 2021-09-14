@@ -87,7 +87,7 @@ class ChannelImage extends StatelessWidget {
           String? image;
           if (snapshot.data?.containsKey('image') == true) {
             image = snapshot.data!['image'];
-          } else if (channel.state!.members?.length == 2) {
+          } else if (channel.state!.members.length == 2) {
             final otherMember = channel.state!.members
                 .firstWhere((member) => member.user!.id != streamChat.user!.id);
             return StreamBuilder<User?>(
@@ -173,8 +173,8 @@ class ChannelImage extends StatelessWidget {
                           },
                           fit: BoxFit.cover,
                         )
-                      : StreamChatTheme.of(context)
-                          .defaultChannelImage!(context, channel),
+                      : StreamChatTheme.of(context).defaultChannelImage!(
+                          context, channel),
                   Material(
                     color: Colors.transparent,
                     child: InkWell(
