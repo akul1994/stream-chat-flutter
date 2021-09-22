@@ -295,7 +295,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     final client = StreamChat.of(context).client;
 
     final answer = await (showConfirmationDialog(context,
-        title: 'Flag Message',
+        title: 'Report Message',
         icon: StreamSvgIcon.flag(
           color: StreamChatTheme.of(context).colorTheme!.accentRed,
           size: 24.0,
@@ -525,7 +525,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              'Flag Message',
+              'Report Message',
               style: StreamChatTheme.of(context).textTheme!.body,
             ),
           ],
