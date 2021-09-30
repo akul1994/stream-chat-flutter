@@ -203,7 +203,7 @@ class _ChannelListViewState extends State<ChannelListView> {
       presence: widget.presence!,
       memberLimit: widget.memberLimit,
       messageLimit: widget.messageLimit,
-      pagination: widget.pagination!,
+      // pagination: widget.pagination!,
       channelListController: _channelListController,
       listBuilder: widget.listBuilder ?? _buildListView,
       emptyBuilder: widget.emptyBuilder ?? _buildEmptyWidget,

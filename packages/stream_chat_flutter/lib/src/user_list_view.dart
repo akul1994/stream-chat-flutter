@@ -181,9 +181,9 @@ class _UserListViewState extends State<UserListView>
           ),
       listBuilder:
       widget.listBuilder ?? (context, list) => _buildListView(list),
-      pagination: widget.pagination,
+     // pagination: widget.pagination,
       sort: widget.sort,
-      filter: widget.filter,
+      //filter: widget.filter,
       presence: widget.presence,
       groupAlphabetically: widget.groupAlphabetically,
       userListController: _userListController,
